@@ -198,6 +198,40 @@ body{
 .prow{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
 .pcount{text-align:center;color:var(--muted);font-size:13px;margin-bottom:6px;font-family:'Mitr';}
 
+/* ---------- celebration ---------- */
+.confetti-pc{position:fixed;top:-20px;width:11px;height:16px;z-index:55;pointer-events:none;border-radius:2px;}
+@keyframes fall{
+  0%{transform:translateY(0) rotateZ(0deg);opacity:1}
+  100%{transform:translateY(105vh) rotateZ(720deg);opacity:.9}
+}
+.cheer{font-family:'Mitr';font-weight:700;font-size:clamp(24px,7vw,32px);
+  background:linear-gradient(135deg,var(--ember),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;
+  margin:4px 0 2px;animation:cheerpop .5s cubic-bezier(.3,1.6,.5,1);}
+@keyframes cheerpop{0%{transform:scale(.3) rotate(-6deg);opacity:0}60%{transform:scale(1.12) rotate(2deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+.result-wrap .big{filter:drop-shadow(0 6px 10px rgba(0,0,0,.18));}
+.starrow .s{display:inline-block;}
+.starrow .s.lit{animation:starpop .5s cubic-bezier(.2,1.8,.4,1) backwards;}
+@keyframes starpop{0%{transform:scale(0) rotate(-40deg);opacity:0}55%{transform:scale(1.4) rotate(8deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+.glowring{position:absolute;left:50%;top:54px;width:160px;height:160px;transform:translate(-50%,-50%);
+  background:radial-gradient(circle,#f0b32a55,transparent 65%);border-radius:50%;animation:pulse 1.8s ease-in-out infinite;pointer-events:none;z-index:-1;}
+
+/* ---- tribe-dragon reveal (พิชิตชั้น) ---- */
+.tribe-rev{position:fixed;inset:0;z-index:60;display:none;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px;text-align:center;background:radial-gradient(circle at 50% 40%, #3a2d6bF0, #161229F8);animation:fadein .35s;}
+.tribe-rev.show{display:flex;}
+.tribe-rev .burst{position:absolute;top:38%;left:50%;width:260px;height:260px;transform:translate(-50%,-50%);
+  background:conic-gradient(from 0deg, #f0b32a44, transparent 30deg, #f0b32a44 60deg, transparent 90deg, #f0b32a44 120deg, transparent 150deg, #f0b32a44 180deg, transparent 210deg, #f0b32a44 240deg, transparent 270deg, #f0b32a44 300deg, transparent 330deg);
+  border-radius:50%;animation:spin 9s linear infinite;}
+.tribe-rev .label{font-family:'Mitr';font-weight:600;font-size:15px;color:#ffd98a;letter-spacing:2px;position:relative;animation:cheerpop .5s .1s backwards;}
+.tribe-rev .tdrag{font-size:118px;line-height:1;position:relative;filter:drop-shadow(0 10px 14px rgba(0,0,0,.45));
+  animation:dragrise .8s cubic-bezier(.2,1.4,.4,1);margin:6px 0;}
+@keyframes dragrise{0%{transform:scale(.2) translateY(40px);opacity:0}60%{transform:scale(1.15) translateY(-6px)}100%{transform:scale(1) translateY(0);opacity:1}}
+.tribe-rev .tdname{font-family:'Mitr';font-weight:700;font-size:26px;color:#fff;position:relative;animation:cheerpop .5s .25s backwards;}
+.tribe-rev .tdfrom{font-family:'Mali';font-size:15px;color:#cbb8e8;margin-top:4px;position:relative;animation:cheerpop .5s .35s backwards;}
+.tribe-rev .tdnote{margin-top:14px;font-size:13px;color:#9a86c8;position:relative;}
+.tribe-rev .btn{margin-top:22px;position:relative;}
+.tribe-rev.king .burst{background:conic-gradient(from 0deg,#ffe9a8,transparent 20deg,#f0b32a 40deg,transparent 60deg,#ffe9a8 80deg,transparent 100deg,#f0b32a 120deg,transparent 140deg,#ffe9a8 160deg,transparent 180deg,#f0b32a 200deg,transparent 220deg,#ffe9a8 240deg,transparent 260deg,#f0b32a 280deg,transparent 300deg,#ffe9a8 320deg,transparent 340deg);}
+
 /* ---------- toast / fx ---------- */
 .fx{position:fixed;pointer-events:none;font-size:26px;z-index:50;animation:fxrise 1s ease-out forwards;}
 @keyframes fxrise{0%{opacity:1;transform:translateY(0) scale(.7)}100%{opacity:0;transform:translateY(-90px) scale(1.3)}}
@@ -276,8 +310,10 @@ footer{text-align:center;color:var(--muted);font-size:11px;margin-top:18px;opaci
   <!-- RESULT -->
   <section class="screen" id="result">
     <div class="result-wrap">
+      <div class="glowring" id="resGlow" style="display:none"></div>
       <div class="big" id="resEmoji">🎉</div>
       <h2 id="resTitle">ผ่านด่าน!</h2>
+      <div class="cheer" id="resCheer"></div>
       <div class="starrow" id="resStars"></div>
       <div><span class="reward">🪙 <span id="resCoins">0</span> เหรียญ</span></div>
       <div id="resBonus" style="margin:6px 0 2px;"></div>
@@ -336,6 +372,15 @@ footer{text-align:center;color:var(--muted);font-size:11px;margin-top:18px;opaci
 </div>
 
 <div class="reveal" id="reveal" onclick="closeReveal()"></div>
+<div class="tribe-rev" id="tribeRev">
+  <div class="burst"></div>
+  <div class="label">⚔️ พิชิตชั้นสำเร็จ!</div>
+  <div class="tdrag" id="trDrag">🐲</div>
+  <div class="tdname" id="trName">มังกรเผ่า</div>
+  <div class="tdfrom" id="trFrom">เข้าร่วมเผ่าอ่านไทยแล้ว</div>
+  <div class="tdnote">✨ ไปดูได้ใน World of Dragons</div>
+  <button class="btn gold" onclick="closeTribeRev()">เยี่ยมไปเลย!</button>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -628,6 +673,8 @@ function answer(btn,ok){
     else renderQ();
   },ok?700:1250);
 }
+function tierConquered(t){const lv=tierLevels(t);return (S.stars[lvKey(t,lv.length-1)]||0)>0;}
+function allTiersConquered(){return TIERS.every(T=>tierConquered(T.n));}
 function finishLevel(){
   const total=Q.words.length;
   const stars = Q.correct===total?3 : Q.correct>=Math.ceil(total*0.7)?2 : Q.correct>=Math.ceil(total*0.5)?1:0;
@@ -637,13 +684,25 @@ function finishLevel(){
   if(stars>prev)S.stars[k]=stars;
   let coins=Q.coins + (firstClear?10:0) + stars*2;
   S.coins+=coins;save();
-  // result screen
+  // ----- พิชิตชั้น? (ผ่านด่านบอสของชั้นด้วยดาว>0) → ปลดมังกรเผ่า -----
+  const isBoss = (Q.idx === tierLevels(Q.tier).length-1);
+  let revealDrg=null, revealKing=false;
+  if(isBoss && stars>0){
+    let newKing=false;
+    const newTribe = awardTribeDragon(THAI_TRIBE[Q.tier-1].id);
+    if(allTiersConquered()) newKing = awardTribeDragon(THAI_KING.id);
+    if(newKing){ revealDrg=THAI_KING; revealKing=true; }
+    else if(newTribe){ revealDrg=THAI_TRIBE[Q.tier-1]; }
+  }
+  // ----- result screen -----
   go('result');
   document.getElementById('resEmoji').textContent = stars===3?'🏆':stars>0?'🎉':'💪';
   document.getElementById('resTitle').textContent = stars>0?'ผ่านด่าน!':'เกือบแล้ว ลองอีกที!';
+  document.getElementById('resCheer').textContent = stars>0?cheerText(stars):'';
+  document.getElementById('resGlow').style.display = stars===3?'block':'none';
   const sr=document.getElementById('resStars');sr.innerHTML='';
   for(let i=0;i<3;i++){const s=document.createElement('span');s.className='s'+(i<stars?' lit':'');s.textContent='★';
-    s.style.animationDelay=(i*0.15)+'s';sr.appendChild(s);}
+    s.style.animationDelay=(0.25+i*0.22)+'s';sr.appendChild(s);}
   document.getElementById('resCoins').textContent=coins;
   document.getElementById('resBonus').innerHTML = firstClear?'<span style="color:var(--jade-d);font-family:Mitr;font-weight:600">+ โบนัสผ่านครั้งแรก 10 🪙</span>':'';
   // next button
@@ -655,7 +714,11 @@ function finishLevel(){
   } else {
     nextBtn.textContent='เยี่ยม! 🐉';nextBtn.onclick=()=>{renderSpire();go('spire');};
   }
-  if(stars>0)setTimeout(()=>burst('⭐'),300);
+  // ----- celebration -----
+  if(stars===3){ setTimeout(()=>confetti(80),350); }
+  else if(stars>0){ setTimeout(()=>confetti(40),350); }
+  // โมเมนต์ใหญ่: ได้มังกรเผ่า (โผล่หลังเห็นดาวสักครู่)
+  if(revealDrg){ setTimeout(()=>tribeReveal(revealDrg,revealKing), 1200); }
 }
 function quitQuiz(){ if(confirm('ออกจากด่านนี้? ความคืบหน้าในด่านจะไม่ถูกบันทึก'))go('levels'),renderLevels(); }
 
@@ -846,6 +909,63 @@ function toast(msg){
   const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
   clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2200);
 }
+
+/* ---------- CELEBRATION ---------- */
+const CONFETTI_COLORS=['#e8602c','#f0b32a','#2fa37a','#3a86c8','#7a47b0','#ffd98a','#fff'];
+function confetti(n=70){
+  for(let i=0;i<n;i++){
+    const c=document.createElement('div');c.className='confetti-pc';
+    c.style.left=Math.random()*100+'vw';
+    c.style.background=CONFETTI_COLORS[i%CONFETTI_COLORS.length];
+    const dur=2.2+Math.random()*1.8, delay=Math.random()*0.5;
+    c.style.animation=`fall ${dur}s linear ${delay}s forwards`;
+    if(Math.random()<.5)c.style.width='8px',c.style.height='8px',c.style.borderRadius='50%';
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),(dur+delay)*1000+100);
+  }
+}
+const CHEERS_3=['สุดยอดไปเลย! 🎉','เก่งมากพอดี! 🌟','เพอร์เฟกต์! ⭐','เจ๋งสุด ๆ! 🐉','ดาวครบสามดวง! 🏆'];
+const CHEERS_OK=['เยี่ยมมาก! 👏','ทำได้ดีมาก! 💪','ผ่านแล้ว เก่งจัง! ✨','สู้ ๆ ไปต่อกันเลย! 🔥'];
+function cheerText(stars){
+  const pool = stars===3?CHEERS_3:CHEERS_OK;
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+/* ---- มังกรเผ่าอ่านไทย: พิชิตชั้น N → ปลดมังกรเผ่าตัว N (เขียนลงคลังกลาง World) ---- */
+const THAI_TRIBE = [
+  {id:'thai_consonant', e:'🐲', name:'มังกรพยัญชนะ'},
+  {id:'thai_vowel',     e:'🐉', name:'มังกรสระ'},
+  {id:'thai_lead',      e:'🐊', name:'มังกรอักษรนำ'},
+  {id:'thai_tone',      e:'🎶', name:'มังกรวรรณยุกต์'},
+  {id:'thai_collector', e:'💎', name:'มังกรนักสะสม'},
+];
+const THAI_KING={id:'thai_king', e:'👑', name:'พญามังกรไทย'};
+const WORLD_KEY='worldofdragons_v1';
+function awardTribeDragon(dragonId){
+  // เขียนลง localStorage key กลางที่ World of Dragons อ่าน (แชร์โดเมนเดียวกัน)
+  try{
+    const W=JSON.parse(localStorage.getItem(WORLD_KEY)||'{}');
+    W.tribes=W.tribes||{}; W.tribes.thai=W.tribes.thai||[];
+    if(!W.tribes.thai.includes(dragonId)){
+      W.tribes.thai.push(dragonId); W.updated=Date.now();
+      localStorage.setItem(WORLD_KEY, JSON.stringify(W));
+      return true; // ตัวใหม่
+    }
+  }catch(e){}
+  return false;
+}
+function tribeReveal(drg, isKing){
+  const rev=document.getElementById('tribeRev');
+  rev.classList.toggle('king',!!isKing);
+  document.getElementById('trDrag').textContent=drg.e;
+  document.getElementById('trName').textContent=drg.name;
+  document.querySelector('#tribeRev .label').textContent = isKing?'🏰 พิชิตหอคอยทั้งหมด!':'⚔️ พิชิตชั้นสำเร็จ!';
+  document.getElementById('trFrom').textContent = isKing?'พอดีคือเจ้าแห่งเผ่าอ่านไทยแล้ว!':'เข้าร่วมเผ่าอ่านไทยแล้ว';
+  rev.classList.add('show');
+  confetti(isKing?140:90);
+  if(isKing)setTimeout(()=>confetti(100),600);
+}
+function closeTribeRev(){document.getElementById('tribeRev').classList.remove('show');}
 
 /* ---------- BOOT ---------- */
 renderHome();
