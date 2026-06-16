@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Dragon Thai — หอคอยมังกรนักอ่าน</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600;700&family=Sarabun:wght@400;600;700&family=Mali:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#1b1733;        /* twilight cave sky */
+  --night2:#2c2456;
+  --parch:#f7ecd4;        /* warm parchment (not generic cream) */
+  --parch2:#efdcb6;
+  --card:#fffaf0;
+  --ember:#e8602c;        /* dragon fire */
+  --ember-d:#c14515;
+  --gold:#f0b32a;
+  --gold-d:#b97f12;
+  --jade:#2fa37a;         /* dragon scale */
+  --jade-d:#1d7a58;
+  --plum:#7a47b0;
+  --sky:#3a86c8;
+  --ink:#2b2118;
+  --muted:#9a7d52;
+  --line:#e0c79a;
+  --bad:#d3543f;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Sarabun',sans-serif;color:var(--ink);
+  background:
+    radial-gradient(1200px 500px at 50% -10%, #efe0bd 0%, transparent 60%),
+    var(--parch);
+  min-height:100vh;overflow-x:hidden;
+}
+#app{max-width:520px;margin:0 auto;min-height:100vh;position:relative;padding-bottom:20px;}
+.screen{display:none;padding:16px 16px 24px;animation:fadein .35s ease;}
+.screen.active{display:block;}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ---------- top bar ---------- */
+.topbar{display:flex;align-items:center;gap:8px;justify-content:space-between;
+  background:linear-gradient(135deg,var(--night),var(--night2));
+  border-radius:18px;padding:10px 14px;color:#fff;box-shadow:0 4px 0 #120f24;margin-bottom:14px;}
+.coins,.gems,.streakpill{display:flex;align-items:center;gap:5px;font-family:'Mitr';font-weight:600;font-size:15px;
+  background:rgba(255,255,255,.12);padding:4px 11px;border-radius:20px;}
+.coins{color:var(--gold);} .gems .n{color:#fff;} .streakpill{color:#ffd27a;font-size:13px;}
+.topbar .ic{font-size:17px;}
+
+/* ---------- buttons ---------- */
+.btn{font-family:'Mitr';font-weight:600;border:none;border-radius:16px;cursor:pointer;color:#fff;
+  padding:14px 18px;font-size:17px;box-shadow:0 4px 0 var(--ember-d);background:var(--ember);transition:transform .07s,box-shadow .07s;}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ember-d);}
+.btn.gold{background:var(--gold);box-shadow:0 4px 0 var(--gold-d);color:#43320b;}
+.btn.jade{background:var(--jade);box-shadow:0 4px 0 var(--jade-d);}
+.btn.ghost{background:#fff;color:var(--ink);box-shadow:0 3px 0 var(--line);border:1.5px solid var(--line);}
+.btn.big{width:100%;padding:18px;font-size:19px;display:flex;align-items:center;justify-content:center;gap:10px;}
+.btn:disabled{filter:grayscale(.6) opacity(.6);cursor:not-allowed;box-shadow:0 4px 0 #999;}
+.backbtn{background:none;border:none;font-family:'Mitr';font-weight:600;font-size:15px;color:var(--muted);
+  cursor:pointer;padding:6px 4px;margin-bottom:6px;display:inline-flex;align-items:center;gap:5px;}
+
+/* ---------- home ---------- */
+.hero{text-align:center;margin:6px 0 18px;}
+.hero .dragon{font-size:74px;line-height:1;filter:drop-shadow(0 6px 6px rgba(0,0,0,.18));animation:float 3.4s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-10px) rotate(2deg)}}
+.hero h1{font-family:'Mitr';font-weight:700;font-size:30px;margin:6px 0 0;color:var(--ink);letter-spacing:.5px;}
+.hero .sub{font-family:'Mali';color:var(--ember-d);font-size:15px;margin-top:2px;}
+.menu{display:flex;flex-direction:column;gap:13px;margin-top:4px;}
+.menu .btn .em{font-size:24px;}
+.menu .label{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;}
+.menu .label small{font-family:'Sarabun';font-weight:600;font-size:12px;opacity:.85;}
+
+.daily{background:var(--card);border:2px dashed var(--gold);border-radius:16px;padding:12px 14px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;}
+.daily .t{font-family:'Mitr';font-weight:600;font-size:15px;}
+.daily .d{font-size:12.5px;color:var(--muted);}
+.daily.claimed{border-style:solid;border-color:var(--line);opacity:.75;}
+
+/* ---------- spire ---------- */
+.spire-title{font-family:'Mitr';font-weight:700;font-size:22px;text-align:center;margin:2px 0 4px;}
+.spire-sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:14px;}
+.floor{position:relative;border-radius:18px;padding:16px 16px;margin-bottom:13px;color:#fff;cursor:pointer;
+  box-shadow:0 5px 0 rgba(0,0,0,.18);transition:transform .08s,box-shadow .08s;overflow:hidden;}
+.floor:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.18);}
+.floor .fnum{position:absolute;right:12px;top:8px;font-family:'Mitr';font-weight:700;font-size:46px;opacity:.20;}
+.floor .ftag{font-family:'Mali';font-size:12.5px;opacity:.9;}
+.floor .fname{font-family:'Mitr';font-weight:700;font-size:20px;margin:1px 0 6px;}
+.floor .fdragon{font-size:30px;position:absolute;right:16px;bottom:10px;filter:drop-shadow(0 3px 3px rgba(0,0,0,.25));}
+.floor .stars{font-size:15px;letter-spacing:2px;color:var(--gold);}
+.floor.locked{filter:grayscale(.75) brightness(.8);cursor:not-allowed;}
+.floor.locked::after{content:"🔒 ผ่านชั้นก่อนหน้าก่อนนะ";position:absolute;inset:0;display:flex;align-items:center;
+  justify-content:center;background:rgba(20,16,30,.55);font-family:'Mitr';font-weight:600;font-size:14px;color:#fff;}
+.floor.f1{background:linear-gradient(135deg,#3a8f6b,#2c7a55);}
+.floor.f2{background:linear-gradient(135deg,#c98a2a,#a86d15);}
+.floor.f3{background:linear-gradient(135deg,#3a7bbf,#2c5e98);}
+.floor.f4{background:linear-gradient(135deg,#8a4db0,#6a3a90);}
+.floor.f5{background:linear-gradient(135deg,#d35a2c,#b03d15);}
+
+/* ---------- levels ---------- */
+.lvgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-top:6px;}
+.lvnode{aspect-ratio:1;border-radius:16px;background:var(--card);border:2px solid var(--line);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;
+  font-family:'Mitr';font-weight:700;font-size:22px;box-shadow:0 3px 0 var(--line);position:relative;transition:transform .08s;}
+.lvnode:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line);}
+.lvnode .ls{font-size:11px;letter-spacing:1px;color:var(--gold);margin-top:2px;height:13px;}
+.lvnode.done{background:#fff7e6;border-color:var(--gold);}
+.lvnode.locked{filter:grayscale(.6) opacity(.55);cursor:not-allowed;}
+.lvnode.boss{background:linear-gradient(135deg,#fff,#ffeccb);border-color:var(--ember);}
+.lvnode .crown{position:absolute;top:-10px;font-size:17px;}
+
+/* ---------- quiz ---------- */
+.qhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.qdots{display:flex;gap:5px;}
+.qdots i{width:10px;height:10px;border-radius:50%;background:var(--line);display:block;}
+.qdots i.on{background:var(--jade);} .qdots i.cur{background:var(--ember);transform:scale(1.25);}
+.qcoins{font-family:'Mitr';font-weight:600;color:var(--gold-d);font-size:14px;}
+.qmascot{text-align:center;font-size:40px;margin:2px 0 -4px;animation:float 3s ease-in-out infinite;}
+.qcard{background:var(--card);border-radius:22px;border:2px solid var(--line);box-shadow:0 5px 0 var(--line);
+  padding:20px 16px 22px;text-align:center;margin-bottom:14px;}
+.qprompt{font-family:'Mali';color:var(--ember-d);font-size:16px;margin-bottom:6px;}
+.qword{font-family:'Sarabun';font-weight:700;font-size:clamp(46px,17vw,76px);line-height:1.1;margin:6px 0 2px;color:var(--ink);}
+.qword.read{font-size:clamp(40px,14vw,64px);}
+.listen-big{font-size:60px;cursor:pointer;background:none;border:none;animation:pulse 1.6s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.saybtn{margin-top:8px;background:var(--sky);color:#fff;border:none;border-radius:20px;padding:7px 16px;
+  font-family:'Mitr';font-weight:600;font-size:14px;cursor:pointer;box-shadow:0 3px 0 #275f8f;display:inline-flex;gap:6px;align-items:center;}
+.saybtn:active{transform:translateY(2px);box-shadow:0 1px 0 #275f8f;}
+.opts{display:grid;gap:11px;}
+.opts.emoji{grid-template-columns:1fr 1fr;}
+.opt{font-family:'Mitr';font-weight:600;background:var(--card);border:2px solid var(--line);border-radius:16px;
+  cursor:pointer;box-shadow:0 4px 0 var(--line);transition:transform .07s;padding:15px;font-size:22px;color:var(--ink);}
+.opt:active{transform:translateY(2px);box-shadow:0 2px 0 var(--line);}
+.opt.emo{font-size:46px;padding:18px 10px;}
+.opt.ok{background:#e7f7ee;border-color:var(--jade);box-shadow:0 4px 0 var(--jade-d);animation:pop .3s;}
+.opt.no{background:#fbe7e2;border-color:var(--bad);box-shadow:0 4px 0 #a83b2a;}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.07)}100%{transform:scale(1)}}
+.opt:disabled{cursor:default;}
+
+/* ---------- result ---------- */
+.result-wrap{text-align:center;padding-top:14px;}
+.result-wrap .big{font-size:64px;animation:bounce .7s;}
+@keyframes bounce{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+.result-wrap h2{font-family:'Mitr';font-weight:700;font-size:26px;margin:8px 0 2px;}
+.starrow{font-size:40px;letter-spacing:6px;margin:8px 0;}
+.starrow .s{opacity:.25;} .starrow .s.lit{opacity:1;animation:pop .4s;}
+.reward{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:14px;margin:14px 0;
+  font-family:'Mitr';font-weight:600;font-size:18px;color:var(--gold-d);display:inline-flex;align-items:center;gap:8px;}
+
+/* ---------- hatch ---------- */
+.hatch-wrap{text-align:center;padding-top:8px;}
+.hatch-wrap h2{font-family:'Mitr';font-weight:700;font-size:23px;margin:4px 0 2px;}
+.hatch-wrap .hsub{color:var(--muted);font-size:13px;margin-bottom:14px;}
+.egg{font-size:120px;line-height:1.1;margin:14px 0;cursor:pointer;display:inline-block;filter:drop-shadow(0 10px 8px rgba(0,0,0,.18));}
+.egg.shake{animation:shake .5s ease-in-out 3;}
+@keyframes shake{0%,100%{transform:rotate(0)}20%{transform:rotate(-12deg)}40%{transform:rotate(10deg)}60%{transform:rotate(-8deg)}80%{transform:rotate(6deg)}}
+.cost{font-family:'Mitr';font-weight:600;color:var(--gold-d);font-size:15px;margin-bottom:6px;}
+.reveal{position:fixed;inset:0;background:rgba(20,16,40,.86);display:none;align-items:center;justify-content:center;z-index:40;flex-direction:column;padding:24px;animation:fadein .3s;}
+.reveal.show{display:flex;}
+.dcard{border-radius:24px;padding:26px 22px;text-align:center;width:84%;max-width:320px;box-shadow:0 0 40px rgba(255,255,255,.3);animation:bounce .6s;}
+.dcard .dem{font-size:96px;line-height:1;filter:drop-shadow(0 6px 6px rgba(0,0,0,.3));}
+.dcard .dn{font-family:'Mitr';font-weight:700;font-size:24px;color:#fff;margin-top:8px;}
+.dcard .dr{font-family:'Mitr';font-weight:600;font-size:13px;color:#fff;opacity:.9;margin-top:2px;letter-spacing:1px;}
+.dcard .dnew{display:inline-block;background:#fff;color:var(--ember-d);font-family:'Mitr';font-weight:700;
+  font-size:12px;padding:3px 12px;border-radius:20px;margin-top:10px;}
+.sparkles{position:absolute;font-size:24px;pointer-events:none;}
+
+/* ---------- den ---------- */
+.den-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px;}
+.den-head h2{font-family:'Mitr';font-weight:700;font-size:22px;margin:0;}
+.den-head .cnt{font-family:'Mitr';color:var(--muted);font-size:14px;}
+.dengrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.dtile{border-radius:18px;padding:14px 8px 12px;text-align:center;cursor:pointer;transition:transform .08s;position:relative;overflow:hidden;}
+.dtile:active{transform:scale(.96);}
+.dtile .e{font-size:48px;line-height:1;}
+.dtile .nm{font-family:'Mitr';font-weight:600;font-size:13px;margin-top:5px;color:#fff;}
+.dtile.have{box-shadow:0 4px 0 rgba(0,0,0,.18);}
+.dtile.locked{background:#e5d6b8!important;box-shadow:0 4px 0 #cbb88f;}
+.dtile.locked .e{filter:grayscale(1) brightness(.4) opacity(.5);}
+.dtile.locked .nm{color:#9a8455;}
+.rar{position:absolute;top:6px;left:8px;font-size:10px;font-family:'Mitr';font-weight:700;color:#fff;opacity:.85;}
+
+/* rarity backgrounds */
+.r-common{background:linear-gradient(135deg,#5a9e78,#3f8060);}
+.r-rare{background:linear-gradient(135deg,#4a86c4,#356297);}
+.r-epic{background:linear-gradient(135deg,#9259c0,#6c3d96);}
+.r-legend{background:linear-gradient(135deg,#f0b32a,#d3791a);}
+
+/* ---------- practice ---------- */
+.pcard{background:var(--card);border-radius:22px;border:2px solid var(--line);box-shadow:0 5px 0 var(--line);
+  padding:26px 16px;text-align:center;margin:10px 0 14px;min-height:220px;display:flex;flex-direction:column;justify-content:center;cursor:pointer;}
+.pcard .pw{font-family:'Sarabun';font-weight:700;font-size:clamp(48px,18vw,84px);color:var(--ink);}
+.pcard .pr{font-family:'Mali';color:var(--ember-d);font-size:26px;margin-top:10px;}
+.pcard .phint{color:var(--muted);font-size:13px;margin-top:14px;}
+.pcard .pe{font-size:40px;margin-top:6px;}
+.prow{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.pcount{text-align:center;color:var(--muted);font-size:13px;margin-bottom:6px;font-family:'Mitr';}
+
+/* ---------- toast / fx ---------- */
+.fx{position:fixed;pointer-events:none;font-size:26px;z-index:50;animation:fxrise 1s ease-out forwards;}
+@keyframes fxrise{0%{opacity:1;transform:translateY(0) scale(.7)}100%{opacity:0;transform:translateY(-90px) scale(1.3)}}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--night);color:#fff;
+  font-family:'Mitr';font-weight:600;font-size:14px;padding:11px 20px;border-radius:24px;z-index:60;
+  box-shadow:0 6px 18px rgba(0,0,0,.3);opacity:0;transition:opacity .3s, transform .3s;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-4px);}
+footer{text-align:center;color:var(--muted);font-size:11px;margin-top:18px;opacity:.8;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HOME -->
+  <section class="screen active" id="home">
+    <div class="topbar">
+      <span class="coins"><span class="ic">🪙</span><span id="coinHome">0</span></span>
+      <span class="streakpill"><span class="ic">🔥</span><span id="streakHome">0</span> วัน</span>
+      <span class="gems"><span class="ic">🐉</span><span class="n" id="dragCntHome">0</span>/<span id="dragTotHome">0</span></span>
+    </div>
+
+    <div class="hero">
+      <div class="dragon">🐉</div>
+      <h1>มังกรนักอ่าน</h1>
+      <div class="sub">Dragon Thai · ไต่หอคอย เก็บมังกร ฝึกอ่านไทย</div>
+    </div>
+
+    <div class="daily" id="daily">
+      <div>
+        <div class="t">🎁 ของขวัญรายวัน</div>
+        <div class="d" id="dailyDesc">เข้ามาเล่นทุกวันรับเหรียญฟรี</div>
+      </div>
+      <button class="btn gold" id="dailyBtn" style="padding:11px 16px;font-size:15px;">รับเลย</button>
+    </div>
+
+    <div class="menu">
+      <button class="btn big" onclick="go('spire')"><span class="em">🏰</span><span class="label">ผจญภัย — หอคอยมังกร<small>อ่านคำ ผ่านด่าน เก็บดาว</small></span></button>
+      <button class="btn big jade" onclick="startPractice()"><span class="em">📖</span><span class="label">ฝึกอ่าน — ทบทวนคำ<small>เปิดการ์ดคำที่เคยเจอ</small></span></button>
+      <button class="btn big gold" onclick="go('hatch')"><span class="em">🥚</span><span class="label">ฟักไข่มังกร<small>ใช้เหรียญสุ่มมังกรใหม่</small></span></button>
+      <button class="btn big ghost" onclick="renderDen();go('den')"><span class="em">🐲</span><span class="label">คลังมังกร<small>ดูมังกรที่สะสมไว้</small></span></button>
+    </div>
+    <footer>1492W · สำหรับพอดี · ไฟล์เดียวจบ เล่นออฟไลน์ได้</footer>
+  </section>
+
+  <!-- SPIRE -->
+  <section class="screen" id="spire">
+    <button class="backbtn" onclick="go('home')">‹ กลับหน้าหลัก</button>
+    <div class="spire-title">🏰 หอคอยมังกร</div>
+    <div class="spire-sub">ไต่ขึ้นทีละชั้น แต่ละชั้นยากขึ้น มีมังกรเฝ้าอยู่</div>
+    <div id="floors"></div>
+  </section>
+
+  <!-- LEVELS -->
+  <section class="screen" id="levels">
+    <button class="backbtn" onclick="go('spire')">‹ กลับหอคอย</button>
+    <div class="spire-title" id="lvTitle"></div>
+    <div class="spire-sub" id="lvSub"></div>
+    <div class="lvgrid" id="lvGrid"></div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="screen" id="quiz">
+    <button class="backbtn" onclick="quitQuiz()">‹ ออกจากด่าน</button>
+    <div class="qhead">
+      <div class="qdots" id="qdots"></div>
+      <div class="qcoins">🪙 <span id="qcoin">0</span></div>
+    </div>
+    <div class="qmascot" id="qmascot">🐲</div>
+    <div class="qcard">
+      <div class="qprompt" id="qprompt"></div>
+      <div id="qbody"></div>
+    </div>
+    <div class="opts" id="opts"></div>
+  </section>
+
+  <!-- RESULT -->
+  <section class="screen" id="result">
+    <div class="result-wrap">
+      <div class="big" id="resEmoji">🎉</div>
+      <h2 id="resTitle">ผ่านด่าน!</h2>
+      <div class="starrow" id="resStars"></div>
+      <div><span class="reward">🪙 <span id="resCoins">0</span> เหรียญ</span></div>
+      <div id="resBonus" style="margin:6px 0 2px;"></div>
+      <div style="display:flex;gap:11px;margin-top:18px;">
+        <button class="btn ghost" style="flex:1" onclick="go('levels');renderLevels();">เลือกด่าน</button>
+        <button class="btn" style="flex:1" id="resNext">ด่านต่อไป ›</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- HATCH -->
+  <section class="screen" id="hatch">
+    <button class="backbtn" onclick="go('home')">‹ กลับหน้าหลัก</button>
+    <div class="hatch-wrap">
+      <h2>🥚 ฟักไข่มังกร</h2>
+      <div class="hsub">กดไข่เพื่อฟัก ลุ้นมังกรหายากระดับตำนาน!</div>
+      <div class="cost" id="hatchBal">🪙 เหรียญของเรา: 0</div>
+      <div class="egg" id="egg" onclick="doHatch()">🥚</div>
+      <div>
+        <button class="btn gold big" id="hatchBtn" onclick="doHatch()">ฟักไข่ · 🪙 <span id="hatchCost">20</span></button>
+      </div>
+      <div class="hsub" style="margin-top:12px;">เล่นด่านเก็บเหรียญเพื่อมาฟักเพิ่มได้เรื่อย ๆ</div>
+    </div>
+  </section>
+
+  <!-- DEN -->
+  <section class="screen" id="den">
+    <button class="backbtn" onclick="go('home')">‹ กลับหน้าหลัก</button>
+    <div class="den-head">
+      <h2>🐲 คลังมังกร</h2>
+      <span class="cnt" id="denCnt"></span>
+    </div>
+    <div class="dengrid" id="dengrid"></div>
+  </section>
+
+  <!-- PRACTICE -->
+  <section class="screen" id="practice">
+    <button class="backbtn" onclick="go('home')">‹ กลับหน้าหลัก</button>
+    <div class="spire-title">📖 ฝึกอ่าน</div>
+    <div class="pcount" id="pcount"></div>
+    <div class="pcard" id="pcard" onclick="flipPractice()">
+      <div id="pfront"></div>
+    </div>
+    <div class="prow" id="prow" style="display:none;">
+      <button class="btn ghost" onclick="ratePractice(false)">ทบทวนอีก</button>
+      <button class="btn jade" onclick="ratePractice(true)">อ่านได้ ✓</button>
+    </div>
+    <div id="pdone" style="display:none;text-align:center;padding-top:20px;">
+      <div style="font-size:54px">🌟</div>
+      <h2 style="font-family:'Mitr'">เก่งมาก พอดี!</h2>
+      <p style="color:var(--muted)">ทบทวนครบแล้ว กลับมาใหม่พรุ่งนี้ได้นะ</p>
+      <button class="btn" onclick="go('home')">กลับหน้าหลัก</button>
+    </div>
+  </section>
+
+</div>
+
+<div class="reveal" id="reveal" onclick="closeReveal()"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ DRAGON THAI — game logic ============ */
+'use strict';
+
+/* ---------- WORD DATA (5 tiers, easy → hard) ----------
+   w = คำ, e = emoji (ถ้ามี), reads = [คำอ่านถูก, ตัวลวง...] เฉพาะคำที่อ่านไม่ตรงรูป */
+const WORDS = [
+  // Tier 1 — คำมีตัวสะกด สระคงรูป
+  {w:'ช้าง',e:'🐘',t:1},{w:'แมว',e:'🐈',t:1},{w:'ลิง',e:'🐒',t:1},{w:'ดาว',e:'⭐',t:1},
+  {w:'บ้าน',e:'🏠',t:1},{w:'จาน',e:'🍽️',t:1},{w:'ปาก',e:'👄',t:1},{w:'ตีน',e:'🦶',t:1},
+  {w:'ลูก',e:'👶',t:1},{w:'ยาย',e:'👵',t:1},{w:'แดง',e:'🟥',t:1},{w:'ขาว',e:'🤍',t:1},
+  // Tier 2 — สระเปลี่ยนรูป (อะ→ั, เอะ→เ็, แอะ→แ็)
+  {w:'วัน',e:'📅',t:2},{w:'ฝัน',e:'💭',t:2},{w:'ฟัน',e:'🦷',t:2},{w:'จับ',e:'🤝',t:2},
+  {w:'นั่ง',e:'🪑',t:2},{w:'เป็ด',e:'🦆',t:2},{w:'เด็ก',e:'🧒',t:2},{w:'เห็น',e:'👀',t:2},
+  {w:'เล็บ',e:'💅',t:2},{w:'เก็บ',e:'🧺',t:2},{w:'แข็ง',e:'💪',t:2},{w:'เข็ม',e:'🪡',t:2},
+  // Tier 3 — สระลดรูป (โอะหาย, เออ→เิ, อัว→ว, อือ→ื)
+  {w:'คน',e:'🧍',t:3},{w:'ลม',e:'💨',t:3},{w:'นก',e:'🐦',t:3},{w:'ฝน',e:'🌧️',t:3},
+  {w:'ส้ม',e:'🍊',t:3},{w:'เดิน',e:'🚶',t:3},{w:'เงิน',e:'💰',t:3},{w:'เกิด',e:'🎂',t:3},
+  {w:'สวน',e:'🌳',t:3},{w:'ดวง',e:'🌙',t:3},{w:'คืน',e:'🌃',t:3},{w:'มืด',e:'⚫',t:3},
+  {w:'ยืน',e:'🧍‍♂️',t:3},{w:'ตื่น',e:'⏰',t:3},
+  // Tier 4 — อักษรนำ / สระลดเสียง (อ่านไม่ตรงรูป → เลือกคำอ่าน)
+  {w:'ขนม',e:'🍪',t:4,reads:['ขะ-หฺนม','ขอ-นม','คะ-นม']},
+  {w:'ถนน',e:'🛣️',t:4,reads:['ถะ-หฺนน','ถอ-นน','ทะ-นน']},
+  {w:'ตลาด',e:'🏪',t:4,reads:['ตะ-หฺลาด','ตอ-ลาด','ตะ-ลาด']},
+  {w:'สนาม',e:'🏟️',t:4,reads:['สะ-หฺนาม','สอ-นาม','สะ-นาม']},
+  {w:'ฉลาด',e:'🧠',t:4,reads:['ฉะ-หฺลาด','ฉอ-ลาด','ฉะ-ลาด']},
+  {w:'จมูก',e:'👃',t:4,reads:['จะ-หฺมูก','จอ-มูก','จะ-มูก']},
+  {w:'สนุก',e:'🎉',t:4,reads:['สะ-หฺนุก','สอ-นุก','สะ-นุก']},
+  {w:'อร่อย',e:'😋',t:4,reads:['อะ-หฺร่อย','ออ-ร่อย','อะ-ร่อย']},
+  {w:'สบาย',e:'😌',t:4,reads:['สะ-บาย','สอ-บาย','สะ-หฺบาย']},
+  {w:'สบู่',e:'🧼',t:4,reads:['สะ-บู่','สอ-บู่','สะ-หฺบู่']},
+  // Tier 5 — คำควบกล้ำ + ร เสียง ออ + คำยาว
+  {w:'ปลา',e:'🐟',t:5},{w:'ครู',e:'👩‍🏫',t:5},{w:'ขวด',e:'🍼',t:5},{w:'เพลง',e:'🎵',t:5},
+  {w:'กลม',e:'⚪',t:5},{w:'กระต่าย',e:'🐰',t:5},{w:'โรงเรียน',e:'🏫',t:5},{w:'นาฬิกา',e:'🕐',t:5},
+  {w:'ละคร',e:'🎭',t:5,reads:['ละ-คอน','ละ-คอ-ระ','ละ-คฺระ']},
+  {w:'นคร',e:'🏙️',t:5,reads:['นะ-คอน','นะ-คอ-ระ','นอ-คอน']},
+  {w:'พร',e:'🙏',t:5,reads:['พอน','พะ-ระ','พอ-ระ']},
+  {w:'อักษร',e:'🔤',t:5,reads:['อัก-สอน','อัก-สะ-ระ','อัก-สอ-ระ']},
+];
+WORDS.forEach((x,i)=>x.id='w'+i);
+
+const TIERS = [
+  {n:1,cls:'f1',tag:'ขั้นแรก · มีตัวสะกด',name:'ลานมังกรน้อย',drag:'🐲'},
+  {n:2,cls:'f2',tag:'ไม้หันอากาศ · สระเปลี่ยนรูป',name:'ถ้ำไม้หันอากาศ',drag:'🐉'},
+  {n:3,cls:'f3',tag:'สระลดรูป · รูปหาย',name:'ถ้ำสระซ่อนรูป',drag:'🦕'},
+  {n:4,cls:'f4',tag:'อักษรนำ · อ่านไม่ตรงรูป',name:'วิหารอักษรนำ',drag:'🐊'},
+  {n:5,cls:'f5',tag:'คำควบกล้ำ · คำยาก',name:'ยอดหอควบกล้ำ',drag:'🔥'},
+];
+
+/* ---------- DRAGON DATA (gacha collection) ---------- */
+const DRAGONS = [
+  // common
+  {id:'d1',n:'น้องเขียว',e:'🐲',r:'common'},{id:'d2',n:'เกล็ดหิน',e:'🦎',r:'common'},
+  {id:'d3',n:'ใบไม้',e:'🌿',r:'common'},{id:'d4',n:'ก้อนเมฆ',e:'☁️',r:'common'},
+  {id:'d5',n:'ลมโชย',e:'🍃',r:'common'},{id:'d6',n:'น้องดิน',e:'🦖',r:'common'},
+  // rare
+  {id:'d7',n:'ฟ้าคราม',e:'🐉',r:'rare'},{id:'d8',n:'เกลียวคลื่น',e:'🌊',r:'rare'},
+  {id:'d9',n:'สายฟ้า',e:'⚡',r:'rare'},{id:'d10',n:'ดอกซากุระ',e:'🌸',r:'rare'},
+  {id:'d11',n:'ใบเมเปิล',e:'🍁',r:'rare'},
+  // epic
+  {id:'d12',n:'เปลวเพลิง',e:'🔥',r:'epic'},{id:'d13',n:'ราตรีนิล',e:'🌙',r:'epic'},
+  {id:'d14',n:'แก้วมณี',e:'💎',r:'epic'},{id:'d15',n:'สายรุ้ง',e:'🌈',r:'epic'},
+  // legend
+  {id:'d16',n:'มังกรทองคำ',e:'✨',r:'legend'},{id:'d17',n:'จักรพรรดิ',e:'👑',r:'legend'},
+  {id:'d18',n:'ดาวตก',e:'☄️',r:'legend'},
+];
+const RAR = {common:{th:'ธรรมดา',cls:'r-common',w:62},rare:{th:'หายาก',cls:'r-rare',w:26},
+  epic:{th:'เอพิก',cls:'r-epic',w:9},legend:{th:'ตำนาน',cls:'r-legend',w:3}};
+const HATCH_COST = 20;
+
+/* ---------- STATE / STORAGE ---------- */
+const KEY='dragonthai_v1';
+let S = load();
+function load(){
+  let d={coins:30,owned:[],stars:{},srs:{},seen:[],streak:0,lastDaily:null};
+  try{const r=localStorage.getItem(KEY);if(r)d=Object.assign(d,JSON.parse(r));}catch(e){}
+  return d;
+}
+function save(){ try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){} }
+
+/* ---------- LEVEL STRUCTURE ---------- */
+const PER_LEVEL=4;
+function tierWords(t){return WORDS.filter(w=>w.t===t);}
+function tierLevels(t){ // chunk a tier's words into levels of PER_LEVEL
+  const ws=tierWords(t),out=[];
+  for(let i=0;i<ws.length;i+=PER_LEVEL) out.push(ws.slice(i,i+PER_LEVEL));
+  return out;
+}
+const lvKey=(t,i)=>'t'+t+'-'+i;
+function tierStars(t){ // total stars earned in a tier
+  let s=0;tierLevels(t).forEach((_,i)=>{s+=S.stars[lvKey(t,i)]||0;});return s;
+}
+function tierMaxStars(t){return tierLevels(t).length*3;}
+function tierUnlocked(t){ // tier 1 always; others need >=60% stars of previous tier
+  if(t===1)return true;
+  const prev=t-1;return tierStars(prev) >= Math.ceil(tierMaxStars(prev)*0.5);
+}
+function levelUnlocked(t,i){
+  if(!tierUnlocked(t))return false;
+  if(i===0)return true;
+  return (S.stars[lvKey(t,i-1)]||0)>0; // beat previous level
+}
+
+/* ---------- NAVIGATION ---------- */
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='home')renderHome();
+  if(id==='spire')renderSpire();
+  if(id==='hatch')renderHatch();
+}
+function renderHome(){
+  document.getElementById('coinHome').textContent=S.coins;
+  document.getElementById('streakHome').textContent=S.streak;
+  document.getElementById('dragCntHome').textContent=S.owned.length;
+  document.getElementById('dragTotHome').textContent=DRAGONS.length;
+  renderDaily();
+}
+
+/* ---------- DAILY BONUS ---------- */
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function renderDaily(){
+  const box=document.getElementById('daily'),btn=document.getElementById('dailyBtn'),desc=document.getElementById('dailyDesc');
+  if(S.lastDaily===todayStr()){
+    box.classList.add('claimed');btn.disabled=true;btn.textContent='รับแล้ว';
+    desc.textContent='รับของขวัญวันนี้แล้ว เจอกันใหม่พรุ่งนี้!';
+  }else{
+    box.classList.remove('claimed');btn.disabled=false;btn.textContent='รับเลย';
+    desc.textContent='เข้ามาเล่นทุกวันรับเหรียญฟรี + ต่อสตรีค';
+  }
+}
+document.getElementById('dailyBtn').onclick=function(){
+  if(S.lastDaily===todayStr())return;
+  // streak: consecutive day?
+  const y=new Date(Date.now()-864e5).toISOString().slice(0,10);
+  S.streak = (S.lastDaily===y)? S.streak+1 : 1;
+  S.lastDaily=todayStr();
+  const bonus=10+Math.min(S.streak,7)*2;
+  S.coins+=bonus;save();renderHome();
+  burst('🪙');toast('รับ '+bonus+' เหรียญ! สตรีค '+S.streak+' วัน 🔥');
+};
+
+/* ---------- SPIRE ---------- */
+function renderSpire(){
+  const el=document.getElementById('floors');el.innerHTML='';
+  // render top (tier 5) to bottom (tier 1) like climbing a tower
+  [...TIERS].reverse().forEach(T=>{
+    const t=T.n,unlocked=tierUnlocked(t),got=tierStars(t),max=tierMaxStars(t);
+    const d=document.createElement('div');
+    d.className='floor '+T.cls+(unlocked?'':' locked');
+    d.innerHTML=`<div class="fnum">${t}</div>
+      <div class="ftag">${T.tag}</div>
+      <div class="fname">${T.name}</div>
+      <div class="stars">${'★'.repeat(Math.round(got/ (max/Math.min(5,max))))||''} <span style="color:#fff;opacity:.85;font-family:Mitr;font-size:13px">${got}/${max} ดาว</span></div>
+      <div class="fdragon">${T.drag}</div>`;
+    if(unlocked)d.onclick=()=>{curTier=t;renderLevels();go('levels');};
+    el.appendChild(d);
+  });
+}
+
+/* ---------- LEVELS ---------- */
+let curTier=1;
+function renderLevels(){
+  const T=TIERS[curTier-1];
+  document.getElementById('lvTitle').textContent=T.drag+' '+T.name;
+  document.getElementById('lvSub').textContent=T.tag+' · เลือกด่าน';
+  const grid=document.getElementById('lvGrid');grid.innerHTML='';
+  const lvls=tierLevels(curTier);
+  lvls.forEach((words,i)=>{
+    const unlocked=levelUnlocked(curTier,i),stars=S.stars[lvKey(curTier,i)]||0,boss=(i===lvls.length-1);
+    const n=document.createElement('div');
+    n.className='lvnode'+(stars>0?' done':'')+(unlocked?'':' locked')+(boss?' boss':'');
+    n.innerHTML=(boss?'<div class="crown">👑</div>':'')+(unlocked?(i+1):'🔒')+
+      `<div class="ls">${stars>0?'★'.repeat(stars):''}</div>`;
+    if(unlocked)n.onclick=()=>startLevel(curTier,i);
+    grid.appendChild(n);
+  });
+}
+
+/* ---------- QUIZ ENGINE ---------- */
+let Q={tier:1,idx:0,words:[],pos:0,correct:0,coins:0};
+function startLevel(t,i){
+  const words=tierLevels(t)[i].slice();
+  shuffle(words);
+  Q={tier:t,idx:i,words,pos:0,correct:0,coins:0};
+  // mark seen for practice
+  words.forEach(w=>{if(!S.seen.includes(w.id))S.seen.push(w.id);});
+  save();
+  go('quiz');renderQ();
+}
+function renderQ(){
+  const dots=document.getElementById('qdots');dots.innerHTML='';
+  Q.words.forEach((_,k)=>{const i=document.createElement('i');
+    i.className=k<Q.pos?'on':(k===Q.pos?'cur':'');dots.appendChild(i);});
+  document.getElementById('qcoin').textContent=Q.coins;
+  document.getElementById('qmascot').textContent=TIERS[Q.tier-1].drag;
+  const w=Q.words[Q.pos];
+  const qtype=questionType(w);
+  const prompt=document.getElementById('qprompt'),body=document.getElementById('qbody'),opts=document.getElementById('opts');
+  opts.className='opts';body.className='';
+  if(qtype==='emoji'){
+    prompt.textContent='คำนี้คือรูปไหน?';
+    body.innerHTML=`<div class="qword">${w.w}</div>
+      <button class="saybtn" onclick="say('${w.w}')">🔊 ฟังเสียง</button>`;
+    opts.classList.add('emoji');
+    const choices=emojiChoices(w);
+    opts.innerHTML='';
+    choices.forEach(c=>{const b=document.createElement('button');
+      b.className='opt emo';b.textContent=c.e;
+      b.onclick=()=>answer(b,c.w===w.w);opts.appendChild(b);});
+  } else if(qtype==='read'){
+    prompt.textContent='อ่านว่าอะไร?';
+    body.innerHTML=`<div class="qword read">${w.w}</div>
+      <button class="saybtn" onclick="say('${w.w}')">🔊 ฟังเสียง</button>`;
+    const choices=shuffle(w.reads.slice());
+    opts.innerHTML='';
+    choices.forEach(r=>{const b=document.createElement('button');
+      b.className='opt';b.textContent=r;
+      b.onclick=()=>answer(b,r===w.reads[0]);opts.appendChild(b);});
+  } else { // listen
+    prompt.textContent='กดฟังเสียง แล้วเลือกคำที่ได้ยิน';
+    body.innerHTML=`<button class="listen-big" onclick="say('${w.w}')">🔊</button>
+      <div style="color:var(--muted);font-size:13px;margin-top:4px">แตะลำโพงเพื่อฟังซ้ำ</div>`;
+    const choices=wordChoices(w);
+    opts.innerHTML='';
+    choices.forEach(c=>{const b=document.createElement('button');
+      b.className='opt';b.textContent=c.w;
+      b.onclick=()=>answer(b,c.w===w.w);opts.appendChild(b);});
+    setTimeout(()=>say(w.w),250);
+  }
+}
+function questionType(w){
+  if(w.reads) return 'read';            // อักษรนำ / ร เสียงออ
+  const canListen = ttsReady && thVoice; // only ask listen-questions if a Thai voice exists
+  if(canListen && Math.random()<0.5) return 'listen';
+  return 'emoji';                        // every non-reads word has an emoji
+}
+function emojiChoices(w){
+  const pool=WORDS.filter(x=>x.e && x.id!==w.id);
+  shuffle(pool);
+  const arr=[{e:w.e,w:w.w}];
+  for(const p of pool){if(arr.length>=4)break;if(!arr.some(a=>a.e===p.e))arr.push({e:p.e,w:p.w});}
+  return shuffle(arr);
+}
+function wordChoices(w){
+  let pool=WORDS.filter(x=>x.t===w.t && x.id!==w.id);
+  if(pool.length<3)pool=pool.concat(WORDS.filter(x=>x.id!==w.id && !pool.includes(x)));
+  shuffle(pool);
+  const arr=[{w:w.w}];
+  for(const p of pool){if(arr.length>=4)break;if(!arr.some(a=>a.w===p.w))arr.push({w:p.w});}
+  return shuffle(arr);
+}
+function answer(btn,ok){
+  const all=document.querySelectorAll('#opts .opt');
+  all.forEach(b=>b.disabled=true);
+  const w=Q.words[Q.pos];
+  if(ok){
+    btn.classList.add('ok');Q.correct++;Q.coins+=3;
+    document.getElementById('qcoin').textContent=Q.coins;
+    burstAt(btn,'🪙');say(w.w);
+  }else{
+    btn.classList.add('no');
+    // reveal correct
+    all.forEach(b=>{
+      const isRightEmoji=b.classList.contains('emo')&&b.textContent===w.e;
+      const isRightText=!b.classList.contains('emo')&&(b.textContent===w.w||(w.reads&&b.textContent===w.reads[0]));
+      if(isRightEmoji||isRightText)b.classList.add('ok');
+    });
+    say(w.w);
+  }
+  setTimeout(()=>{
+    Q.pos++;
+    if(Q.pos>=Q.words.length)finishLevel();
+    else renderQ();
+  },ok?700:1250);
+}
+function finishLevel(){
+  const total=Q.words.length;
+  const stars = Q.correct===total?3 : Q.correct>=Math.ceil(total*0.7)?2 : Q.correct>=Math.ceil(total*0.5)?1:0;
+  const k=lvKey(Q.tier,Q.idx);
+  const prev=S.stars[k]||0;
+  const firstClear = prev===0 && stars>0;
+  if(stars>prev)S.stars[k]=stars;
+  let coins=Q.coins + (firstClear?10:0) + stars*2;
+  S.coins+=coins;save();
+  // result screen
+  go('result');
+  document.getElementById('resEmoji').textContent = stars===3?'🏆':stars>0?'🎉':'💪';
+  document.getElementById('resTitle').textContent = stars>0?'ผ่านด่าน!':'เกือบแล้ว ลองอีกที!';
+  const sr=document.getElementById('resStars');sr.innerHTML='';
+  for(let i=0;i<3;i++){const s=document.createElement('span');s.className='s'+(i<stars?' lit':'');s.textContent='★';
+    s.style.animationDelay=(i*0.15)+'s';sr.appendChild(s);}
+  document.getElementById('resCoins').textContent=coins;
+  document.getElementById('resBonus').innerHTML = firstClear?'<span style="color:var(--jade-d);font-family:Mitr;font-weight:600">+ โบนัสผ่านครั้งแรก 10 🪙</span>':'';
+  // next button
+  const lvls=tierLevels(Q.tier);
+  const nextBtn=document.getElementById('resNext');
+  if(Q.idx+1<lvls.length){
+    nextBtn.style.display='';nextBtn.textContent='ด่านต่อไป ›';
+    nextBtn.onclick=()=>{ if(levelUnlocked(Q.tier,Q.idx+1))startLevel(Q.tier,Q.idx+1); else {renderLevels();go('levels');} };
+  } else {
+    nextBtn.textContent='เยี่ยม! 🐉';nextBtn.onclick=()=>{renderSpire();go('spire');};
+  }
+  if(stars>0)setTimeout(()=>burst('⭐'),300);
+}
+function quitQuiz(){ if(confirm('ออกจากด่านนี้? ความคืบหน้าในด่านจะไม่ถูกบันทึก'))go('levels'),renderLevels(); }
+
+/* ---------- HATCH (gacha) ---------- */
+function renderHatch(){
+  document.getElementById('hatchBal').textContent='🪙 เหรียญของเรา: '+S.coins;
+  document.getElementById('hatchCost').textContent=HATCH_COST;
+  document.getElementById('hatchBtn').disabled = S.coins<HATCH_COST;
+}
+let hatching=false;
+function doHatch(){
+  if(hatching)return;
+  if(S.coins<HATCH_COST){toast('เหรียญไม่พอ — ไปเล่นด่านเก็บเหรียญก่อนนะ');return;}
+  hatching=true;
+  S.coins-=HATCH_COST;save();renderHatch();
+  const egg=document.getElementById('egg');
+  egg.classList.add('shake');
+  setTimeout(()=>{
+    egg.classList.remove('shake');
+    const drg=rollDragon();
+    const isNew=!S.owned.includes(drg.id);
+    if(isNew)S.owned.push(drg.id);
+    else {S.coins+=5;save();} // duplicate → small refund
+    save();renderHatch();renderHome();
+    showReveal(drg,isNew);
+    hatching=false;
+  },1600);
+}
+function rollDragon(){
+  const roll=Math.random()*100;let acc=0,rar='common';
+  // weighted pick by rarity (legend rarest first)
+  const order=[['legend',RAR.legend.w],['epic',RAR.epic.w],['rare',RAR.rare.w],['common',RAR.common.w]];
+  for(const [k,wgt] of order){acc+=wgt;if(roll<=acc){rar=k;break;}}
+  const pool=DRAGONS.filter(d=>d.r===rar);
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+function showReveal(d,isNew){
+  const rev=document.getElementById('reveal');
+  const R=RAR[d.r];
+  rev.innerHTML=`<div class="dcard ${R.cls}">
+      <div class="dem">${d.e}</div>
+      <div class="dn">${d.n}</div>
+      <div class="dr">${'★'.repeat(d.r==='legend'?4:d.r==='epic'?3:d.r==='rare'?2:1)} ${R.th}</div>
+      ${isNew?'<div class="dnew">✨ มังกรใหม่!</div>':'<div class="dnew" style="background:#eee;color:#777">มีอยู่แล้ว · +5 🪙</div>'}
+    </div>
+    <button class="btn gold" style="margin-top:18px" onclick="closeReveal()">เยี่ยม!</button>`;
+  rev.classList.add('show');
+  if(d.r==='legend'||d.r==='epic'){for(let i=0;i<14;i++)setTimeout(()=>burst('✨'),i*70);}
+}
+function closeReveal(){document.getElementById('reveal').classList.remove('show');}
+
+/* ---------- DEN (collection) ---------- */
+function renderDen(){
+  document.getElementById('denCnt').textContent=S.owned.length+'/'+DRAGONS.length+' ตัว';
+  const g=document.getElementById('dengrid');g.innerHTML='';
+  DRAGONS.forEach(d=>{
+    const have=S.owned.includes(d.id),R=RAR[d.r];
+    const t=document.createElement('div');
+    t.className='dtile '+(have?('have '+R.cls):'locked');
+    t.innerHTML=`<span class="rar">${have?R.th:'???'}</span>
+      <div class="e">${have?d.e:'🥚'}</div>
+      <div class="nm">${have?d.n:'ยังไม่พบ'}</div>`;
+    if(have)t.onclick=()=>toast(d.n+' · '+R.th+' '+('★'.repeat(d.r==='legend'?4:d.r==='epic'?3:d.r==='rare'?2:1)));
+    g.appendChild(t);
+  });
+}
+
+/* ---------- PRACTICE (Leitner SRS flashcards) ---------- */
+let P={queue:[],pos:0,flipped:false};
+function startPractice(){
+  // pool = seen words; if few seen, seed with tier 1+2
+  let pool = S.seen.length? S.seen.map(id=>WORDS.find(w=>w.id===id)).filter(Boolean)
+                          : WORDS.filter(w=>w.t<=2);
+  // order by SRS box (lower = review sooner), then random
+  pool.sort((a,b)=>(S.srs[a.id]||0)-(S.srs[b.id]||0)||Math.random()-0.5);
+  P={queue:pool.slice(0,12),pos:0,flipped:false};
+  if(P.queue.length===0){toast('ยังไม่มีคำให้ทบทวน ลองเล่นด่านก่อนนะ');return;}
+  go('practice');renderPractice();
+}
+function renderPractice(){
+  document.getElementById('pdone').style.display='none';
+  document.getElementById('pcard').style.display='';
+  document.getElementById('prow').style.display='none';
+  document.getElementById('pcount').textContent='ทบทวน '+(P.pos+1)+' / '+P.queue.length;
+  const w=P.queue[P.pos];P.flipped=false;
+  document.getElementById('pfront').innerHTML=`<div class="pw">${w.w}</div>
+    <div class="phint">แตะการ์ดเพื่อดูคำอ่าน</div>`;
+}
+function flipPractice(){
+  if(P.flipped)return;P.flipped=true;
+  const w=P.queue[P.pos];
+  const reading = w.reads? w.reads[0] : w.w;
+  document.getElementById('pfront').innerHTML=`<div class="pw">${w.w}</div>
+    <div class="pr">${reading}</div>
+    ${w.e?`<div class="pe">${w.e}</div>`:''}
+    <button class="saybtn" style="margin-top:12px" onclick="event.stopPropagation();say('${w.w}')">🔊 ฟังเสียง</button>`;
+  document.getElementById('prow').style.display='grid';
+  say(w.w);
+}
+function ratePractice(known){
+  const w=P.queue[P.pos];
+  const box=S.srs[w.id]||0;
+  S.srs[w.id]= known? Math.min(box+1,5) : Math.max(box-1,0);
+  save();
+  P.pos++;
+  if(P.pos>=P.queue.length){
+    document.getElementById('pcard').style.display='none';
+    document.getElementById('prow').style.display='none';
+    document.getElementById('pcount').textContent='';
+    document.getElementById('pdone').style.display='';
+    burst('🌟');
+  } else renderPractice();
+}
+
+/* ---------- TEXT TO SPEECH ---------- */
+let thVoice=null,ttsReady=('speechSynthesis' in window);
+function loadVoices(){
+  if(!ttsReady)return;
+  try{
+    const vs=speechSynthesis.getVoices();
+    thVoice = vs.find(v=>v.lang==='th-TH') || vs.find(v=>/th/i.test(v.lang)) || null;
+  }catch(e){ttsReady=false;}
+}
+if(ttsReady){loadVoices();speechSynthesis.onvoiceschanged=loadVoices;}
+function say(text){
+  if(!ttsReady||!text)return;
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='th-TH';u.rate=.72;u.pitch=1.05;
+    if(thVoice)u.voice=thVoice;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- FX / TOAST ---------- */
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function burst(ch){
+  const f=document.createElement('div');f.className='fx';f.textContent=ch;
+  f.style.left=(42+Math.random()*16)+'%';f.style.top='46%';
+  document.body.appendChild(f);setTimeout(()=>f.remove(),1000);
+}
+function burstAt(el,ch){
+  const r=el.getBoundingClientRect();
+  const f=document.createElement('div');f.className='fx';f.textContent=ch;
+  f.style.left=(r.left+r.width/2-12)+'px';f.style.top=(r.top-6)+'px';
+  document.body.appendChild(f);setTimeout(()=>f.remove(),1000);
+}
+let toastT;
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+/* ---------- BOOT ---------- */
+renderHome();
+
+</script>
+</body>
+</html>
