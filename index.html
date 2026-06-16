@@ -346,19 +346,28 @@ footer{text-align:center;color:var(--muted);font-size:11px;margin-top:18px;opaci
    w = คำ, e = emoji (ถ้ามี), reads = [คำอ่านถูก, ตัวลวง...] เฉพาะคำที่อ่านไม่ตรงรูป */
 const WORDS = [
   // Tier 1 — คำมีตัวสะกด สระคงรูป
-  {w:'ช้าง',e:'🐘',t:1},{w:'แมว',e:'🐈',t:1},{w:'ลิง',e:'🐒',t:1},{w:'ดาว',e:'⭐',t:1},
-  {w:'บ้าน',e:'🏠',t:1},{w:'จาน',e:'🍽️',t:1},{w:'ปาก',e:'👄',t:1},{w:'ตีน',e:'🦶',t:1},
-  {w:'ลูก',e:'👶',t:1},{w:'ยาย',e:'👵',t:1},{w:'แดง',e:'🟥',t:1},{w:'ขาว',e:'🤍',t:1},
+  {w:'ช้าง',e:'🐘',t:1,sp:['ชอ','อา','งอ']},{w:'แมว',e:'🐈',t:1,sp:['มอ','แอ','วอ']},
+  {w:'ลิง',e:'🐒',t:1,sp:['ลอ','อิ','งอ']},{w:'ดาว',e:'⭐',t:1,sp:['ดอ','อา','วอ']},
+  {w:'บ้าน',e:'🏠',t:1,sp:['บอ','อา','นอ']},{w:'จาน',e:'🍽️',t:1,sp:['จอ','อา','นอ']},
+  {w:'ปาก',e:'👄',t:1,sp:['ปอ','อา','กอ']},{w:'กิน',e:'🍚',t:1,sp:['กอ','อิ','นอ']},
+  {w:'ลูก',e:'👶',t:1,sp:['ลอ','อู','กอ']},{w:'ยาย',e:'👵',t:1,sp:['ยอ','อา','ยอ']},
+  {w:'แดง',e:'🟥',t:1,sp:['ดอ','แอ','งอ']},{w:'ขาว',e:'🤍',t:1,sp:['ขอ','อา','วอ']},
   // Tier 2 — สระเปลี่ยนรูป (อะ→ั, เอะ→เ็, แอะ→แ็)
-  {w:'วัน',e:'📅',t:2},{w:'ฝัน',e:'💭',t:2},{w:'ฟัน',e:'🦷',t:2},{w:'จับ',e:'🤝',t:2},
-  {w:'นั่ง',e:'🪑',t:2},{w:'เป็ด',e:'🦆',t:2},{w:'เด็ก',e:'🧒',t:2},{w:'เห็น',e:'👀',t:2},
-  {w:'เล็บ',e:'💅',t:2},{w:'เก็บ',e:'🧺',t:2},{w:'แข็ง',e:'💪',t:2},{w:'เข็ม',e:'🪡',t:2},
+  {w:'วัน',e:'📅',t:2,sp:['วอ','อะ','นอ']},{w:'ฝัน',e:'💭',t:2,sp:['ฝอ','อะ','นอ']},
+  {w:'ฟัน',e:'🦷',t:2,sp:['ฟอ','อะ','นอ']},{w:'จับ',e:'🤝',t:2,sp:['จอ','อะ','บอ']},
+  {w:'นั่ง',e:'🪑',t:2,sp:['นอ','อะ','งอ']},{w:'เป็ด',e:'🦆',t:2,sp:['ปอ','เอะ','ดอ']},
+  {w:'เด็ก',e:'🧒',t:2,sp:['ดอ','เอะ','กอ']},{w:'เห็น',e:'👀',t:2,sp:['หอ','เอะ','นอ']},
+  {w:'เล็บ',e:'💅',t:2,sp:['ลอ','เอะ','บอ']},{w:'เก็บ',e:'🧺',t:2,sp:['กอ','เอะ','บอ']},
+  {w:'แข็ง',e:'💪',t:2,sp:['ขอ','แอะ','งอ']},{w:'เข็ม',e:'🪡',t:2,sp:['ขอ','เอะ','มอ']},
   // Tier 3 — สระลดรูป (โอะหาย, เออ→เิ, อัว→ว, อือ→ื)
-  {w:'คน',e:'🧍',t:3},{w:'ลม',e:'💨',t:3},{w:'นก',e:'🐦',t:3},{w:'ฝน',e:'🌧️',t:3},
-  {w:'ส้ม',e:'🍊',t:3},{w:'เดิน',e:'🚶',t:3},{w:'เงิน',e:'💰',t:3},{w:'เกิด',e:'🎂',t:3},
-  {w:'สวน',e:'🌳',t:3},{w:'ดวง',e:'🌙',t:3},{w:'คืน',e:'🌃',t:3},{w:'มืด',e:'⚫',t:3},
-  {w:'ยืน',e:'🧍‍♂️',t:3},{w:'ตื่น',e:'⏰',t:3},
-  // Tier 4 — อักษรนำ / สระลดเสียง (อ่านไม่ตรงรูป → เลือกคำอ่าน)
+  {w:'คน',e:'🧍',t:3,sp:['คอ','โอะ','นอ']},{w:'ลม',e:'💨',t:3,sp:['ลอ','โอะ','มอ']},
+  {w:'นก',e:'🐦',t:3,sp:['นอ','โอะ','กอ']},{w:'ฝน',e:'🌧️',t:3,sp:['ฝอ','โอะ','นอ']},
+  {w:'ส้ม',e:'🍊',t:3,sp:['สอ','โอะ','มอ']},{w:'เดิน',e:'🚶',t:3,sp:['ดอ','เออ','นอ']},
+  {w:'เงิน',e:'💰',t:3,sp:['งอ','เออ','นอ']},{w:'เกิด',e:'🎂',t:3,sp:['กอ','เออ','ดอ']},
+  {w:'สวน',e:'🌳',t:3,sp:['สอ','อัว','นอ']},{w:'ดวง',e:'🌙',t:3,sp:['ดอ','อัว','งอ']},
+  {w:'คืน',e:'🌃',t:3,sp:['คอ','อือ','นอ']},{w:'มืด',e:'⚫',t:3,sp:['มอ','อือ','ดอ']},
+  {w:'ยืน',e:'🧍‍♂️',t:3,sp:['ยอ','อือ','นอ']},{w:'ตื่น',e:'⏰',t:3,sp:['ตอ','อือ','นอ']},
+  // Tier 4 — อักษรนำ / สระลดเสียง (อ่านไม่ตรงรูป → เลือกคำอ่าน) · สะกดจาก reads
   {w:'ขนม',e:'🍪',t:4,reads:['ขะ-หฺนม','ขอ-นม','คะ-นม']},
   {w:'ถนน',e:'🛣️',t:4,reads:['ถะ-หฺนน','ถอ-นน','ทะ-นน']},
   {w:'ตลาด',e:'🏪',t:4,reads:['ตะ-หฺลาด','ตอ-ลาด','ตะ-ลาด']},
@@ -370,11 +379,13 @@ const WORDS = [
   {w:'สบาย',e:'😌',t:4,reads:['สะ-บาย','สอ-บาย','สะ-หฺบาย']},
   {w:'สบู่',e:'🧼',t:4,reads:['สะ-บู่','สอ-บู่','สะ-หฺบู่']},
   // Tier 5 — คำควบกล้ำ + ร เสียง ออ + คำยาว
-  {w:'ปลา',e:'🐟',t:5},{w:'ครู',e:'👩‍🏫',t:5},{w:'ขวด',e:'🍼',t:5},{w:'เพลง',e:'🎵',t:5},
-  {w:'กลม',e:'⚪',t:5},{w:'กระต่าย',e:'🐰',t:5},{w:'โรงเรียน',e:'🏫',t:5},{w:'นาฬิกา',e:'🕐',t:5},
+  {w:'ปลา',e:'🐟',t:5,sp:['ปลอ','อา']},{w:'ครู',e:'👩‍🏫',t:5,sp:['ครอ','อู']},
+  {w:'ขวด',e:'🍼',t:5,sp:['ขวอ','โอะ','ดอ']},{w:'เพลง',e:'🎵',t:5,sp:['พลอ','เอ','งอ']},
+  {w:'กลม',e:'⚪',t:5,sp:['กลอ','โอะ','มอ']},{w:'กระต่าย',e:'🐰',t:5,sp:['กระ','ต่าย']},
+  {w:'โรงเรียน',e:'🏫',t:5,sp:['โรง','เรียน']},{w:'นาฬิกา',e:'🕐',t:5,sp:['นา','ฬิ','กา']},
   {w:'ละคร',e:'🎭',t:5,reads:['ละ-คอน','ละ-คอ-ระ','ละ-คฺระ']},
   {w:'นคร',e:'🏙️',t:5,reads:['นะ-คอน','นะ-คอ-ระ','นอ-คอน']},
-  {w:'พร',e:'🙏',t:5,reads:['พอน','พะ-ระ','พอ-ระ']},
+  {w:'พร',e:'🙏',t:5,sp:[],reads:['พอน','พะ-ระ','พอ-ระ']},
   {w:'อักษร',e:'🔤',t:5,reads:['อัก-สอน','อัก-สะ-ระ','อัก-สอ-ระ']},
 ];
 WORDS.forEach((x,i)=>x.id='w'+i);
@@ -542,7 +553,7 @@ function renderQ(){
   if(qtype==='emoji'){
     prompt.textContent='คำนี้คือรูปไหน?';
     body.innerHTML=`<div class="qword">${w.w}</div>
-      <button class="saybtn" onclick="say('${w.w}')">🔊 ฟังเสียง</button>`;
+      <button class="saybtn" onclick="spell('${w.w}')">🔊 ฟัง & สะกด</button>`;
     opts.classList.add('emoji');
     const choices=emojiChoices(w);
     opts.innerHTML='';
@@ -552,7 +563,7 @@ function renderQ(){
   } else if(qtype==='read'){
     prompt.textContent='อ่านว่าอะไร?';
     body.innerHTML=`<div class="qword read">${w.w}</div>
-      <button class="saybtn" onclick="say('${w.w}')">🔊 ฟังเสียง</button>`;
+      <button class="saybtn" onclick="spell('${w.w}')">🔊 ฟัง & สะกด</button>`;
     const choices=shuffle(w.reads.slice());
     opts.innerHTML='';
     choices.forEach(r=>{const b=document.createElement('button');
@@ -598,7 +609,7 @@ function answer(btn,ok){
   if(ok){
     btn.classList.add('ok');Q.correct++;Q.coins+=3;
     document.getElementById('qcoin').textContent=Q.coins;
-    burstAt(btn,'🪙');say(w.w);
+    burstAt(btn,'🪙');spell(w.w);
   }else{
     btn.classList.add('no');
     // reveal correct
@@ -607,7 +618,7 @@ function answer(btn,ok){
       const isRightText=!b.classList.contains('emo')&&(b.textContent===w.w||(w.reads&&b.textContent===w.reads[0]));
       if(isRightEmoji||isRightText)b.classList.add('ok');
     });
-    say(w.w);
+    spell(w.w);
   }
   setTimeout(()=>{
     Q.pos++;
@@ -738,9 +749,9 @@ function flipPractice(){
   document.getElementById('pfront').innerHTML=`<div class="pw">${w.w}</div>
     <div class="pr">${reading}</div>
     ${w.e?`<div class="pe">${w.e}</div>`:''}
-    <button class="saybtn" style="margin-top:12px" onclick="event.stopPropagation();say('${w.w}')">🔊 ฟังเสียง</button>`;
+    <button class="saybtn" style="margin-top:12px" onclick="event.stopPropagation();spell('${w.w}')">🔊 ฟัง & สะกด</button>`;
   document.getElementById('prow').style.display='grid';
-  say(w.w);
+  spell(w.w);
 }
 function ratePractice(known){
   const w=P.queue[P.pos];
@@ -767,14 +778,42 @@ function loadVoices(){
   }catch(e){ttsReady=false;}
 }
 if(ttsReady){loadVoices();speechSynthesis.onvoiceschanged=loadVoices;}
+// strip phinthu (◌ฺ U+0E3A) so the voice reads อักษรนำ syllables smoothly
+function clean(t){return (t||'').replace(/\u0E3A/g,'');}
+function utter(text,rate,onend){
+  const u=new SpeechSynthesisUtterance(clean(text));
+  u.lang='th-TH';u.rate=rate;u.pitch=1.05;
+  if(thVoice)u.voice=thVoice;
+  if(onend){u.onend=onend;u.onerror=onend;}
+  speechSynthesis.speak(u);
+}
+// อ่านคำเต็มอย่างเดียว
 function say(text){
   if(!ttsReady||!text)return;
+  try{speechSynthesis.cancel();utter(text,.72);}catch(e){}
+}
+// อ่านสะกดทีละส่วน แล้วปิดท้ายด้วยคำเต็ม เช่น แข็ง → ขอ-แอะ-งอ-แข็ง
+function spellSeq(word){
+  const w = (typeof word==='string') ? WORDS.find(x=>x.w===word) : word;
+  const full = w ? w.w : word;
+  let seq;
+  if(w && Array.isArray(w.sp)) seq = w.sp.slice();          // สูตรสะกดที่กำหนดเอง
+  else if(w && w.reads) seq = w.reads[0].split('-');         // อักษรนำ/ร ออ → แยกพยางค์จากคำอ่าน
+  else seq = [];
+  return seq.concat([full]);                                // ปิดท้ายด้วยคำเต็มเสมอ
+}
+function spell(word){
+  if(!ttsReady)return;
   try{
     speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(text);
-    u.lang='th-TH';u.rate=.72;u.pitch=1.05;
-    if(thVoice)u.voice=thVoice;
-    speechSynthesis.speak(u);
+    const seq=spellSeq(word);
+    let i=0;
+    const step=()=>{
+      if(i>=seq.length)return;
+      const last=(i===seq.length-1);
+      utter(seq[i], last?.72:.55, ()=>{ i++; setTimeout(step,last?0:230); });
+    };
+    step();
   }catch(e){}
 }
 
