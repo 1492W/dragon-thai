@@ -454,6 +454,7 @@ function levelUnlocked(t,i){
 
 /* ---------- NAVIGATION ---------- */
 function go(id){
+  if(typeof stopSpeak==='function')stopSpeak();   // cut any lingering audio on screen change
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
@@ -541,6 +542,7 @@ function startLevel(t,i){
   go('quiz');renderQ();
 }
 function renderQ(){
+  if(typeof stopSpeak==='function')stopSpeak();   // cut the previous answer's spelling before showing the next question
   const dots=document.getElementById('qdots');dots.innerHTML='';
   Q.words.forEach((_,k)=>{const i=document.createElement('i');
     i.className=k<Q.pos?'on':(k===Q.pos?'cur':'');dots.appendChild(i);});
@@ -787,10 +789,14 @@ function utter(text,rate,onend){
   if(onend){u.onend=onend;u.onerror=onend;}
   speechSynthesis.speak(u);
 }
+// --- playback control: a token that invalidates any in-flight spelling sequence ---
+let speakGen=0;
+function stopSpeak(){ speakGen++; try{ if(ttsReady)speechSynthesis.cancel(); }catch(e){} }
 // อ่านคำเต็มอย่างเดียว
 function say(text){
   if(!ttsReady||!text)return;
-  try{speechSynthesis.cancel();utter(text,.72);}catch(e){}
+  stopSpeak();                       // ยกเลิกเสียง/การสะกดเก่าให้เด็ดขาดก่อน
+  try{utter(text,.95);}catch(e){}
 }
 // อ่านสะกดทีละส่วน แล้วปิดท้ายด้วยคำเต็ม เช่น แข็ง → ขอ-แอะ-งอ-แข็ง
 function spellSeq(word){
@@ -804,14 +810,19 @@ function spellSeq(word){
 }
 function spell(word){
   if(!ttsReady)return;
+  stopSpeak();                       // ตัดของเก่าก่อน แล้วจองรอบใหม่
+  const myGen=speakGen;
   try{
-    speechSynthesis.cancel();
     const seq=spellSeq(word);
     let i=0;
     const step=()=>{
+      if(myGen!==speakGen) return;   // มีเสียงใหม่เข้ามาแล้ว → รอบนี้ตายทันที ไม่พูดทับ
       if(i>=seq.length)return;
       const last=(i===seq.length-1);
-      utter(seq[i], last?.92:.82, ()=>{ i++; setTimeout(step,last?0:120); });
+      utter(seq[i], last?1.0:.95, ()=>{
+        if(myGen!==speakGen) return; // เช็คอีกครั้งหลังพูดจบ ก่อนตั้งคิวชิ้นถัดไป
+        i++; setTimeout(step,last?0:70);
+      });
     };
     step();
   }catch(e){}
