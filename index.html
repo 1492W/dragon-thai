@@ -1,459 +1,1505 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#0a0606" />
-  <title>Dragon Math · Pordee</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Uncial+Antiqua&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=phase6" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Dragon Thai — หอคอยมังกรนักอ่าน</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600;700&family=Sarabun:wght@400;600;700&family=Mali:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#1b1733;        /* twilight cave sky */
+  --night2:#2c2456;
+  --parch:#f7ecd4;        /* warm parchment (not generic cream) */
+  --parch2:#efdcb6;
+  --card:#fffaf0;
+  --ember:#e8602c;        /* dragon fire */
+  --ember-d:#c14515;
+  --gold:#f0b32a;
+  --gold-d:#b97f12;
+  --jade:#2fa37a;         /* dragon scale */
+  --jade-d:#1d7a58;
+  --plum:#7a47b0;
+  --sky:#3a86c8;
+  --ink:#2b2118;
+  --muted:#9a7d52;
+  --line:#e0c79a;
+  --bad:#d3543f;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Sarabun',sans-serif;color:var(--ink);
+  background:
+    radial-gradient(1200px 500px at 50% -10%, #efe0bd 0%, transparent 60%),
+    var(--parch);
+  min-height:100vh;overflow-x:hidden;
+}
+#app{max-width:520px;margin:0 auto;min-height:100vh;position:relative;padding-bottom:20px;}
+.screen{display:none;padding:16px 16px 24px;animation:fadein .35s ease;}
+.screen.active{display:block;}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ---------- top bar ---------- */
+.topbar{display:flex;align-items:center;gap:8px;justify-content:space-between;
+  background:linear-gradient(135deg,var(--night),var(--night2));
+  border-radius:18px;padding:10px 14px;color:#fff;box-shadow:0 4px 0 #120f24;margin-bottom:14px;}
+.coins,.gems,.streakpill{display:flex;align-items:center;gap:5px;font-family:'Mitr';font-weight:600;font-size:15px;
+  background:rgba(255,255,255,.12);padding:4px 11px;border-radius:20px;}
+.coins{color:var(--gold);} .gems .n{color:#fff;} .streakpill{color:#ffd27a;font-size:13px;}
+.topbar .ic{font-size:17px;}
+
+/* ---------- buttons ---------- */
+.btn{font-family:'Mitr';font-weight:600;border:none;border-radius:16px;cursor:pointer;color:#fff;
+  padding:14px 18px;font-size:17px;box-shadow:0 4px 0 var(--ember-d);background:var(--ember);transition:transform .07s,box-shadow .07s;}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ember-d);}
+.btn.gold{background:var(--gold);box-shadow:0 4px 0 var(--gold-d);color:#43320b;}
+.btn.jade{background:var(--jade);box-shadow:0 4px 0 var(--jade-d);}
+.btn.ghost{background:#fff;color:var(--ink);box-shadow:0 3px 0 var(--line);border:1.5px solid var(--line);}
+.btn.big{width:100%;padding:18px;font-size:19px;display:flex;align-items:center;justify-content:center;gap:10px;}
+.btn:disabled{filter:grayscale(.6) opacity(.6);cursor:not-allowed;box-shadow:0 4px 0 #999;}
+.backbtn{background:none;border:none;font-family:'Mitr';font-weight:600;font-size:15px;color:var(--muted);
+  cursor:pointer;padding:6px 4px;margin-bottom:6px;display:inline-flex;align-items:center;gap:5px;}
+
+/* ---------- home ---------- */
+.hero{text-align:center;margin:6px 0 18px;}
+.hero .dragon{font-size:74px;line-height:1;filter:drop-shadow(0 6px 6px rgba(0,0,0,.18));animation:float 3.4s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-10px) rotate(2deg)}}
+.hero h1{font-family:'Mitr';font-weight:700;font-size:30px;margin:6px 0 0;color:var(--ink);letter-spacing:.5px;}
+.hero .sub{font-family:'Mali';color:var(--ember-d);font-size:15px;margin-top:2px;}
+.menu{display:flex;flex-direction:column;gap:13px;margin-top:4px;}
+.menu .btn .em{font-size:24px;}
+.menu .label{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;}
+.menu .label small{font-family:'Sarabun';font-weight:600;font-size:12px;opacity:.85;}
+
+.daily{background:var(--card);border:2px dashed var(--gold);border-radius:16px;padding:12px 14px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;}
+.daily .t{font-family:'Mitr';font-weight:600;font-size:15px;}
+.daily .d{font-size:12.5px;color:var(--muted);}
+.daily.claimed{border-style:solid;border-color:var(--line);opacity:.75;}
+
+/* ---------- spire ---------- */
+.spire-title{font-family:'Mitr';font-weight:700;font-size:22px;text-align:center;margin:2px 0 4px;}
+.spire-sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:14px;}
+.floor{position:relative;border-radius:18px;padding:16px 16px;margin-bottom:13px;color:#fff;cursor:pointer;
+  box-shadow:0 5px 0 rgba(0,0,0,.18);transition:transform .08s,box-shadow .08s;overflow:hidden;}
+.floor:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.18);}
+.floor .fnum{position:absolute;right:12px;top:8px;font-family:'Mitr';font-weight:700;font-size:46px;opacity:.20;}
+.floor .ftag{font-family:'Mali';font-size:12.5px;opacity:.9;}
+.floor .fname{font-family:'Mitr';font-weight:700;font-size:20px;margin:1px 0 6px;}
+.floor .fdragon{font-size:30px;position:absolute;right:16px;bottom:10px;filter:drop-shadow(0 3px 3px rgba(0,0,0,.25));}
+.floor .stars{font-size:15px;letter-spacing:2px;color:var(--gold);}
+.floor.locked{filter:grayscale(.75) brightness(.8);cursor:not-allowed;}
+.floor.locked::after{content:"🔒 ผ่านชั้นก่อนหน้าก่อนนะ";position:absolute;inset:0;display:flex;align-items:center;
+  justify-content:center;background:rgba(20,16,30,.55);font-family:'Mitr';font-weight:600;font-size:14px;color:#fff;}
+.floor.f1{background:linear-gradient(135deg,#3a8f6b,#2c7a55);}
+.floor.f2{background:linear-gradient(135deg,#c98a2a,#a86d15);}
+.floor.f3{background:linear-gradient(135deg,#3a7bbf,#2c5e98);}
+.floor.f4{background:linear-gradient(135deg,#8a4db0,#6a3a90);}
+.floor.f5{background:linear-gradient(135deg,#d35a2c,#b03d15);}
+
+/* ---------- levels ---------- */
+.lvgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-top:6px;}
+.lvnode{aspect-ratio:1;border-radius:16px;background:var(--card);border:2px solid var(--line);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;
+  font-family:'Mitr';font-weight:700;font-size:22px;box-shadow:0 3px 0 var(--line);position:relative;transition:transform .08s;}
+.lvnode:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line);}
+.lvnode .ls{font-size:11px;letter-spacing:1px;color:var(--gold);margin-top:2px;height:13px;}
+.lvnode.done{background:#fff7e6;border-color:var(--gold);}
+.lvnode.locked{filter:grayscale(.6) opacity(.55);cursor:not-allowed;}
+.lvnode.boss{background:linear-gradient(135deg,#fff,#ffeccb);border-color:var(--ember);}
+.lvnode .crown{position:absolute;top:-10px;font-size:17px;}
+
+/* ---------- quiz ---------- */
+.qhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.qdots{display:flex;gap:5px;}
+.qdots i{width:10px;height:10px;border-radius:50%;background:var(--line);display:block;}
+.qdots i.on{background:var(--jade);} .qdots i.cur{background:var(--ember);transform:scale(1.25);}
+.qcoins{font-family:'Mitr';font-weight:600;color:var(--gold-d);font-size:14px;}
+.qmascot{text-align:center;font-size:40px;margin:2px 0 -4px;animation:float 3s ease-in-out infinite;}
+.qcard{background:var(--card);border-radius:22px;border:2px solid var(--line);box-shadow:0 5px 0 var(--line);
+  padding:20px 16px 22px;text-align:center;margin-bottom:14px;}
+.qprompt{font-family:'Mali';color:var(--ember-d);font-size:16px;margin-bottom:6px;}
+.qword{font-family:'Sarabun';font-weight:700;font-size:clamp(46px,17vw,76px);line-height:1.1;margin:6px 0 2px;color:var(--ink);}
+.qword.read{font-size:clamp(40px,14vw,64px);}
+.listen-big{font-size:60px;cursor:pointer;background:none;border:none;animation:pulse 1.6s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.saybtn{margin-top:8px;background:var(--sky);color:#fff;border:none;border-radius:20px;padding:7px 16px;
+  font-family:'Mitr';font-weight:600;font-size:14px;cursor:pointer;box-shadow:0 3px 0 #275f8f;display:inline-flex;gap:6px;align-items:center;}
+.saybtn:active{transform:translateY(2px);box-shadow:0 1px 0 #275f8f;}
+.opts{display:grid;gap:11px;}
+.opts.emoji{grid-template-columns:1fr 1fr;}
+.opt{font-family:'Mali';font-weight:600;background:var(--card);border:2px solid var(--line);border-radius:16px;
+  cursor:pointer;box-shadow:0 4px 0 var(--line);transition:transform .07s;padding:15px;font-size:23px;color:var(--ink);}
+.opt:active{transform:translateY(2px);box-shadow:0 2px 0 var(--line);}
+.opt.emo{font-size:46px;padding:18px 10px;}
+.opt.ok{background:#e7f7ee;border-color:var(--jade);box-shadow:0 4px 0 var(--jade-d);animation:pop .3s;}
+.opt.no{background:#fbe7e2;border-color:var(--bad);box-shadow:0 4px 0 #a83b2a;}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.07)}100%{transform:scale(1)}}
+.opt:disabled{cursor:default;}
+
+/* ---------- result ---------- */
+.result-wrap{text-align:center;padding-top:14px;}
+.result-wrap .big{font-size:64px;animation:bounce .7s;}
+@keyframes bounce{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+.result-wrap h2{font-family:'Mitr';font-weight:700;font-size:26px;margin:8px 0 2px;}
+.starrow{font-size:40px;letter-spacing:6px;margin:8px 0;}
+.starrow .s{opacity:.25;} .starrow .s.lit{opacity:1;animation:pop .4s;}
+.reward{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:14px;margin:14px 0;
+  font-family:'Mitr';font-weight:600;font-size:18px;color:var(--gold-d);display:inline-flex;align-items:center;gap:8px;}
+
+/* ---------- hatch ---------- */
+.hatch-wrap{text-align:center;padding-top:8px;}
+.hatch-wrap h2{font-family:'Mitr';font-weight:700;font-size:23px;margin:4px 0 2px;}
+.hatch-wrap .hsub{color:var(--muted);font-size:13px;margin-bottom:14px;}
+.egg{font-size:120px;line-height:1.1;margin:14px 0;cursor:pointer;display:inline-block;filter:drop-shadow(0 10px 8px rgba(0,0,0,.18));}
+.egg.shake{animation:shake .5s ease-in-out 3;}
+@keyframes shake{0%,100%{transform:rotate(0)}20%{transform:rotate(-12deg)}40%{transform:rotate(10deg)}60%{transform:rotate(-8deg)}80%{transform:rotate(6deg)}}
+.cost{font-family:'Mitr';font-weight:600;color:var(--gold-d);font-size:15px;margin-bottom:6px;}
+.reveal{position:fixed;inset:0;background:rgba(20,16,40,.86);display:none;align-items:center;justify-content:center;z-index:40;flex-direction:column;padding:24px;animation:fadein .3s;}
+.reveal.show{display:flex;}
+.dcard{border-radius:24px;padding:26px 22px;text-align:center;width:84%;max-width:320px;box-shadow:0 0 40px rgba(255,255,255,.3);animation:bounce .6s;}
+.dcard .dem{font-size:96px;line-height:1;filter:drop-shadow(0 6px 6px rgba(0,0,0,.3));}
+.dcard .dn{font-family:'Mitr';font-weight:700;font-size:24px;color:#fff;margin-top:8px;}
+.dcard .dr{font-family:'Mitr';font-weight:600;font-size:13px;color:#fff;opacity:.9;margin-top:2px;letter-spacing:1px;}
+.dcard .dnew{display:inline-block;background:#fff;color:var(--ember-d);font-family:'Mitr';font-weight:700;
+  font-size:12px;padding:3px 12px;border-radius:20px;margin-top:10px;}
+.sparkles{position:absolute;font-size:24px;pointer-events:none;}
+
+/* ---------- den ---------- */
+.den-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px;}
+.den-head h2{font-family:'Mitr';font-weight:700;font-size:22px;margin:0;}
+.den-head .cnt{font-family:'Mitr';color:var(--muted);font-size:14px;}
+.dengrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.dtile{border-radius:18px;padding:14px 8px 12px;text-align:center;cursor:pointer;transition:transform .08s;position:relative;overflow:hidden;}
+.dtile:active{transform:scale(.96);}
+.dtile .e{font-size:48px;line-height:1;}
+.dtile .nm{font-family:'Mitr';font-weight:600;font-size:13px;margin-top:5px;color:#fff;}
+.dtile.have{box-shadow:0 4px 0 rgba(0,0,0,.18);}
+.dtile.locked{background:#e5d6b8!important;box-shadow:0 4px 0 #cbb88f;}
+.dtile.locked .e{filter:grayscale(1) brightness(.4) opacity(.5);}
+.dtile.locked .nm{color:#9a8455;}
+.rar{position:absolute;top:6px;left:8px;font-size:10px;font-family:'Mitr';font-weight:700;color:#fff;opacity:.85;}
+
+/* rarity backgrounds */
+.r-common{background:linear-gradient(135deg,#5a9e78,#3f8060);}
+.r-rare{background:linear-gradient(135deg,#4a86c4,#356297);}
+.r-epic{background:linear-gradient(135deg,#9259c0,#6c3d96);}
+.r-legend{background:linear-gradient(135deg,#f0b32a,#d3791a);}
+
+/* ---------- practice ---------- */
+.pcard{background:var(--card);border-radius:22px;border:2px solid var(--line);box-shadow:0 5px 0 var(--line);
+  padding:26px 16px;text-align:center;margin:10px 0 14px;min-height:220px;display:flex;flex-direction:column;justify-content:center;cursor:pointer;}
+.pcard .pw{font-family:'Sarabun';font-weight:700;font-size:clamp(48px,18vw,84px);color:var(--ink);}
+.pcard .pr{font-family:'Mali';color:var(--ember-d);font-size:26px;margin-top:10px;}
+.pcard .phint{color:var(--muted);font-size:13px;margin-top:14px;}
+.pcard .pe{font-size:40px;margin-top:6px;}
+.prow{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.pcount{text-align:center;color:var(--muted);font-size:13px;margin-bottom:6px;font-family:'Mitr';}
+
+/* ---------- celebration ---------- */
+.confetti-pc{position:fixed;top:-20px;width:11px;height:16px;z-index:55;pointer-events:none;border-radius:2px;}
+@keyframes fall{
+  0%{transform:translateY(0) rotateZ(0deg);opacity:1}
+  100%{transform:translateY(105vh) rotateZ(720deg);opacity:.9}
+}
+.cheer{font-family:'Mitr';font-weight:700;font-size:clamp(24px,7vw,32px);
+  background:linear-gradient(135deg,var(--ember),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;
+  margin:4px 0 2px;animation:cheerpop .5s cubic-bezier(.3,1.6,.5,1);}
+@keyframes cheerpop{0%{transform:scale(.3) rotate(-6deg);opacity:0}60%{transform:scale(1.12) rotate(2deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+.result-wrap .big{filter:drop-shadow(0 6px 10px rgba(0,0,0,.18));}
+.starrow .s{display:inline-block;}
+.starrow .s.lit{animation:starpop .5s cubic-bezier(.2,1.8,.4,1) backwards;}
+@keyframes starpop{0%{transform:scale(0) rotate(-40deg);opacity:0}55%{transform:scale(1.4) rotate(8deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+.glowring{position:absolute;left:50%;top:54px;width:160px;height:160px;transform:translate(-50%,-50%);
+  background:radial-gradient(circle,#f0b32a55,transparent 65%);border-radius:50%;animation:pulse 1.8s ease-in-out infinite;pointer-events:none;z-index:-1;}
+
+/* ---- tribe-dragon reveal (พิชิตชั้น) ---- */
+.tribe-rev{position:fixed;inset:0;z-index:60;display:none;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px;text-align:center;background:radial-gradient(circle at 50% 40%, #3a2d6bF0, #161229F8);animation:fadein .35s;}
+.tribe-rev.show{display:flex;}
+.tribe-rev .burst{position:absolute;top:38%;left:50%;width:260px;height:260px;transform:translate(-50%,-50%);
+  background:conic-gradient(from 0deg, #f0b32a44, transparent 30deg, #f0b32a44 60deg, transparent 90deg, #f0b32a44 120deg, transparent 150deg, #f0b32a44 180deg, transparent 210deg, #f0b32a44 240deg, transparent 270deg, #f0b32a44 300deg, transparent 330deg);
+  border-radius:50%;animation:spin 9s linear infinite;}
+.tribe-rev .label{font-family:'Mitr';font-weight:600;font-size:15px;color:#ffd98a;letter-spacing:2px;position:relative;animation:cheerpop .5s .1s backwards;}
+.tribe-rev .tdrag{font-size:118px;line-height:1;position:relative;filter:drop-shadow(0 10px 14px rgba(0,0,0,.45));
+  animation:dragrise .8s cubic-bezier(.2,1.4,.4,1);margin:6px 0;}
+@keyframes dragrise{0%{transform:scale(.2) translateY(40px);opacity:0}60%{transform:scale(1.15) translateY(-6px)}100%{transform:scale(1) translateY(0);opacity:1}}
+.tribe-rev .tdname{font-family:'Mitr';font-weight:700;font-size:26px;color:#fff;position:relative;animation:cheerpop .5s .25s backwards;}
+.tribe-rev .tdfrom{font-family:'Mali';font-size:15px;color:#cbb8e8;margin-top:4px;position:relative;animation:cheerpop .5s .35s backwards;}
+.tribe-rev .tdnote{margin-top:14px;font-size:13px;color:#9a86c8;position:relative;}
+.tribe-rev .btn{margin-top:22px;position:relative;}
+.tribe-rev.king .burst{background:conic-gradient(from 0deg,#ffe9a8,transparent 20deg,#f0b32a 40deg,transparent 60deg,#ffe9a8 80deg,transparent 100deg,#f0b32a 120deg,transparent 140deg,#ffe9a8 160deg,transparent 180deg,#f0b32a 200deg,transparent 220deg,#ffe9a8 240deg,transparent 260deg,#f0b32a 280deg,transparent 300deg,#ffe9a8 320deg,transparent 340deg);}
+
+/* ---------- toast / fx ---------- */
+.fx{position:fixed;pointer-events:none;font-size:26px;z-index:50;animation:fxrise 1s ease-out forwards;}
+@keyframes fxrise{0%{opacity:1;transform:translateY(0) scale(.7)}100%{opacity:0;transform:translateY(-90px) scale(1.3)}}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--night);color:#fff;
+  font-family:'Mitr';font-weight:600;font-size:14px;padding:11px 20px;border-radius:24px;z-index:60;
+  box-shadow:0 6px 18px rgba(0,0,0,.3);opacity:0;transition:opacity .3s, transform .3s;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-4px);}
+footer{text-align:center;color:var(--muted);font-size:11px;margin-top:18px;opacity:.8;}
+
+.lvlhdr{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:16px 2px 7px;padding:9px 13px;border-radius:13px;box-shadow:0 3px 8px #0004}
+.lvlhdr .lvlbadge{font-family:'Mitr';font-weight:700;font-size:16px;color:#fff;text-shadow:0 1px 2px #0005}
+.lvlhdr .lvlname{font-family:'Sarabun';font-weight:600;font-size:13px;color:#ffffffe6;flex:1;min-width:90px}
+.lvlhdr .lvlprog{font-family:'Mitr';font-size:12px;color:#fff;background:#0003;padding:2px 8px;border-radius:8px}
+.florow{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:7px;margin:0 2px 2px}
+.flonode{background:#fffaf0;border-radius:13px;padding:9px 7px;text-align:center;cursor:pointer;border:2px solid #eadcbf;box-shadow:0 2px 5px #0003;transition:transform .06s}
+.flonode:active{transform:scale(.96)}
+.flonode.locked{opacity:.55;filter:grayscale(.5);cursor:default}
+.flonode .flname{font-family:'Sarabun';font-weight:700;font-size:15px;color:var(--ink,#2b2118);line-height:1.12}
+.flonode .fltag{font-family:'Sarabun';font-size:10px;color:#8a7355;margin-top:1px;line-height:1.1}
+.flonode .flstars{font-family:'Mitr';font-size:11px;color:var(--ember);margin-top:4px}
+</style>
 </head>
 <body>
-  <!-- Animated background -->
-  <div class="bg-layer bg-embers" aria-hidden="true"></div>
-  <div class="bg-layer bg-grain" aria-hidden="true"></div>
+<div id="app">
 
-  <main id="app">
-    <!-- ========== HOME SCREEN ========== -->
-    <section id="screen-home" class="screen active">
-      <div class="hero">
-        <div class="hero-crest">🐉</div>
-        <h1 class="hero-title">Dragon Math</h1>
-        <p class="hero-sub">The Lair of <span id="player-name">Pordee</span></p>
-      </div>
-
-      <div class="stats-strip">
-        <div class="stat">
-          <span class="stat-icon">🪙</span>
-          <span class="stat-value" id="home-coins">0</span>
-          <span class="stat-label">Gold</span>
-        </div>
-        <div class="stat">
-          <span class="stat-icon">🐲</span>
-          <span class="stat-value" id="home-dragons">0</span>
-          <span class="stat-label">Dragons</span>
-        </div>
-        <div class="stat">
-          <span class="stat-icon">🏯</span>
-          <span class="stat-value" id="home-floor">1</span>
-          <span class="stat-label">Tower</span>
-        </div>
-      </div>
-
-      <nav class="menu">
-        <button class="menu-card" data-nav="practice">
-          <span class="menu-icon">⚔️</span>
-          <span class="menu-title">Train</span>
-          <span class="menu-desc">Sharpen your mind</span>
-        </button>
-        <button class="menu-card" data-nav="tables">
-          <span class="menu-icon">✖️</span>
-          <span class="menu-title">Table Trials</span>
-          <span class="menu-desc">Master the times-tables</span>
-        </button>
-        <button class="menu-card" data-nav="forge">
-          <span class="menu-icon">🔨</span>
-          <span class="menu-title">Factor Forge</span>
-          <span class="menu-desc">Break numbers · simplify</span>
-        </button>
-        <button class="menu-card menu-card-primary" data-nav="battle-setup">
-          <span class="menu-icon">🏯</span>
-          <span class="menu-title">Dragon Tower</span>
-          <span class="menu-desc">Battle · Floor <span id="menu-floor">1</span></span>
-        </button>
-        <button class="menu-card" data-nav="shop">
-          <span class="menu-icon">🔥</span>
-          <span class="menu-title">Shop</span>
-          <span class="menu-desc">Summon dragons</span>
-          <span id="daily-dot" class="daily-dot"></span>
-        </button>
-        <button class="menu-card" data-nav="hoard">
-          <span class="menu-icon">💎</span>
-          <span class="menu-title">Hoard</span>
-          <span class="menu-desc">Your collection</span>
-        </button>
-      </nav>
-
-      <a href="https://1492w.github.io/world-of-dragons/" style="display:block;text-align:center;margin:4px auto 14px;max-width:300px;background:linear-gradient(135deg,#3a2f7a,#241a52);color:#f4d985;text-decoration:none;font-family:'Cinzel',serif;font-weight:600;font-size:14px;padding:12px;border-radius:12px;border:1px solid rgba(244,217,133,.35);letter-spacing:.5px">🏰 World of Dragons</a>
-
-      <div class="home-foot">
-        <button class="text-btn" id="restore-btn" style="color:var(--gold-bright);font-size:14px;">🎁 Restore Pordee's Dragons</button>
-        <br/>
-        <button class="text-btn" id="reset-btn">Reset progress</button>
-      </div>
-    </section>
-
-    <!-- ========== PRACTICE SETUP ========== -->
-    <section id="screen-practice" class="screen">
-      <header class="screen-header">
-        <button class="back-btn" data-nav="home">‹ Lair</button>
-        <h2>Training Grounds</h2>
-        <div class="coins-mini"><span>🪙</span><span id="practice-coins">0</span></div>
-      </header>
-
-      <div class="section-body">
-        <h3 class="section-label">Mode</h3>
-        <div class="option-grid">
-          <button class="option-card mode-option selected" data-mode="sprint">
-            <span class="opt-icon">⏱️</span>
-            <span class="opt-title">Sprint</span>
-            <span class="opt-desc">60 seconds. Answer as many as you can.</span>
-          </button>
-          <button class="option-card mode-option" data-mode="streak">
-            <span class="opt-icon">🔥</span>
-            <span class="opt-title">Streak</span>
-            <span class="opt-desc">Keep going. One mistake ends the run.</span>
-          </button>
-          <button class="option-card mode-option" data-mode="beat">
-            <span class="opt-icon">🏁</span>
-            <span class="opt-title">Beat Your Time</span>
-            <span class="opt-desc">20 questions. Beat your best time.</span>
-          </button>
-        </div>
-
-        <h3 class="section-label">Operations</h3>
-        <div class="op-row">
-          <button class="op-chip selected" data-op="add">+</button>
-          <button class="op-chip selected" data-op="sub">−</button>
-          <button class="op-chip" data-op="mul">×</button>
-          <button class="op-chip" data-op="div">÷</button>
-        </div>
-
-        <h3 class="section-label">Dragons at your side <span class="muted">(up to 3)</span></h3>
-        <div id="practice-dragon-picker" class="dragon-picker"></div>
-      </div>
-
-      <div class="screen-footer">
-        <button class="btn-primary btn-large" id="practice-start">Begin Training 🔥</button>
-      </div>
-    </section>
-
-    <!-- ========== PRACTICE PLAY ========== -->
-    <section id="screen-play" class="screen play-screen">
-      <header class="play-header">
-        <button class="quit-btn" id="quit-play">✕</button>
-        <div class="play-stats">
-          <div class="play-stat"><span id="play-timer">60</span><small>time</small></div>
-          <div class="play-stat"><span id="play-score">0</span><small>correct</small></div>
-          <div class="play-stat"><span id="play-coins-run">0</span><small>🪙 gold</small></div>
-        </div>
-      </header>
-
-      <div class="play-stage">
-        <div id="play-question" class="question"></div>
-        <div id="play-answer" class="answer-display">&nbsp;</div>
-        <div id="play-feedback" class="feedback"></div>
-      </div>
-
-      <div class="keypad" id="keypad">
-        <button data-key="1">1</button><button data-key="2">2</button><button data-key="3">3</button>
-        <button data-key="4">4</button><button data-key="5">5</button><button data-key="6">6</button>
-        <button data-key="7">7</button><button data-key="8">8</button><button data-key="9">9</button>
-        <button data-key="-" class="key-sign">±</button><button data-key="0">0</button><button data-key="del" class="key-del">⌫</button>
-      </div>
-    </section>
-
-    <!-- ========== RESULTS ========== -->
-    <section id="screen-results" class="screen">
-      <div class="results-card">
-        <div class="results-crest">🐉</div>
-        <h2 id="results-title">Victory</h2>
-        <p id="results-sub" class="results-sub"></p>
-
-        <div class="results-grid" id="results-grid"></div>
-
-        <div class="results-coins">
-          <div class="coin-burst">🪙</div>
-          <div class="coin-amount">+<span id="results-coins">0</span></div>
-          <div class="coin-label">gold earned</div>
-        </div>
-
-        <div id="results-drop" class="results-drop hidden">
-          <div class="drop-title">A dragon appears!</div>
-          <div class="drop-card" id="results-drop-card"></div>
-        </div>
-
-        <div id="results-slow" class="results-slow hidden"></div>
-
-        <div class="results-actions">
-          <button class="btn-ghost" data-nav="home">To Lair</button>
-          <button class="btn-primary" id="results-again">Again</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== SHOP ========== -->
-    <section id="screen-shop" class="screen">
-      <header class="screen-header">
-        <button class="back-btn" data-nav="home">‹ Lair</button>
-        <h2>Dragon Shop</h2>
-        <div class="coins-mini"><span>🪙</span><span id="shop-coins">0</span></div>
-      </header>
-      <div class="section-body">
-        <div class="shop-tabs">
-          <button class="shop-tab selected" data-tab="dragons">🐉 Dragons</button>
-          <button class="shop-tab" data-tab="eggs">🥚 Eggs</button>
-        </div>
-        <div id="shop-grid" class="shop-grid"></div>
-      </div>
-    </section>
-
-    <!-- ========== HOARD ========== -->
-    <section id="screen-hoard" class="screen">
-      <header class="screen-header">
-        <button class="back-btn" data-nav="home">‹ Lair</button>
-        <h2>Your Hoard</h2>
-        <div class="coins-mini"><span>🪙</span><span id="hoard-coins">0</span></div>
-      </header>
-      <div class="section-body">
-        <div id="hoard-grid" class="hoard-grid"></div>
-      </div>
-    </section>
-
-    <!-- ========== BATTLE SETUP ========== -->
-    <section id="screen-battle-setup" class="screen">
-      <header class="screen-header">
-        <button class="back-btn" data-nav="home">‹ Lair</button>
-        <h2>Tower · Floor <span id="battle-floor-label">1</span></h2>
-        <div class="coins-mini"><span>🪙</span><span id="battle-coins">0</span></div>
-      </header>
-      <div class="section-body">
-        <div id="battle-preview" class="battle-preview">
-          <div class="enemy-preview">
-            <div class="enemy-emoji" id="enemy-emoji">🐲</div>
-            <div class="enemy-name" id="enemy-name">Shadow Wyrmling</div>
-            <div class="enemy-stats">
-              <span>❤️ <span id="enemy-hp">100</span> HP</span>
-              <span>🪙 <span id="enemy-reward">25</span> reward</span>
-            </div>
-          </div>
-        </div>
-
-        <h3 class="section-label">Your Team <span class="muted">(up to 3)</span></h3>
-        <div id="battle-dragon-picker" class="dragon-picker"></div>
-
-        <div class="battle-rules">
-          <h4>Battle Rules</h4>
-          <ul>
-            <li><strong>&lt; 2s</strong> answer → <span class="hot">Critical!</span> (30 dmg)</li>
-            <li><strong>&lt; 4s</strong> answer → 20 dmg</li>
-            <li><strong>&lt; 6s</strong> answer → 15 dmg</li>
-            <li>Slow or wrong → You lose 1 ❤️</li>
-            <li>You have <strong>3 ❤️</strong>. Zero = defeat.</li>
-          </ul>
-        </div>
-      </div>
-      <div class="screen-footer">
-        <button class="btn-primary btn-large" id="battle-start">Enter the Tower ⚔️</button>
-      </div>
-    </section>
-
-    <!-- ========== BATTLE PLAY ========== -->
-    <section id="screen-battle" class="screen battle-screen">
-      <header class="battle-header">
-        <button class="quit-btn" id="quit-battle">✕</button>
-        <div class="floor-badge">Floor <span id="battle-floor-num">1</span></div>
-        <div class="hearts" id="battle-hearts">❤️❤️❤️</div>
-      </header>
-
-      <div class="battle-arena">
-        <div class="enemy-card">
-          <div class="enemy-emoji-lg" id="battle-enemy-emoji">🐲</div>
-          <div class="enemy-name-lg" id="battle-enemy-name">Shadow Wyrmling</div>
-          <div class="hp-bar">
-            <div class="hp-fill" id="battle-hp-fill"></div>
-            <div class="hp-text"><span id="battle-hp-cur">100</span> / <span id="battle-hp-max">100</span></div>
-          </div>
-        </div>
-
-        <div class="floating-fx" id="battle-fx"></div>
-
-        <div class="battle-timer">
-          <div class="timer-ring">
-            <svg viewBox="0 0 100 100">
-              <circle class="ring-bg" cx="50" cy="50" r="45" />
-              <circle class="ring-fg" id="timer-ring-fg" cx="50" cy="50" r="45" />
-            </svg>
-            <div class="timer-num" id="battle-time">10</div>
-          </div>
-        </div>
-
-        <div class="battle-question" id="battle-question"></div>
-        <div class="battle-answer" id="battle-answer">&nbsp;</div>
-      </div>
-
-      <div class="keypad" id="battle-keypad">
-        <button data-bkey="1">1</button><button data-bkey="2">2</button><button data-bkey="3">3</button>
-        <button data-bkey="4">4</button><button data-bkey="5">5</button><button data-bkey="6">6</button>
-        <button data-bkey="7">7</button><button data-bkey="8">8</button><button data-bkey="9">9</button>
-        <button data-bkey="-" class="key-sign">±</button><button data-bkey="0">0</button><button data-bkey="del" class="key-del">⌫</button>
-      </div>
-    </section>
-
-    <!-- ========== TABLE TRIALS (select) ========== -->
-    <section id="screen-tables" class="screen">
-      <header class="screen-header">
-        <button class="back-btn" data-nav="home">‹ Lair</button>
-        <h2>Table Trials</h2>
-        <div class="coins-mini"><span>🪙</span><span id="tables-coins">0</span></div>
-      </header>
-      <div class="section-body">
-        <p class="tables-intro">Pick a dragon rune and master its times-table. Answer fast (under 3s) without stumbling to seal a fact. 🐉</p>
-        <div id="gauntlet-wrap" class="hidden">
-          <h3 class="section-label gauntlet-label">🔥 Dragon's Gauntlet <span class="muted">reclaim the runes that escaped you</span></h3>
-          <div id="gauntlet-grid" class="gauntlet-grid"></div>
-        </div>
-        <h3 class="section-label">Times-tables</h3>
-        <div id="tables-grid" class="rune-grid"></div>
-      </div>
-    </section>
-
-    <!-- ========== TABLE RUN (play) ========== -->
-    <section id="screen-tablerun" class="screen play-screen">
-      <header class="play-header">
-        <button class="quit-btn" id="quit-tablerun">✕</button>
-        <div class="tablerun-titlewrap">
-          <div class="tablerun-title" id="tablerun-title">Trial of ×2</div>
-          <div class="tablerun-prog" id="tablerun-prog">1 / 12</div>
-        </div>
-      </header>
-      <div class="tablerun-tip" id="tablerun-tip"></div>
-      <div class="play-stage">
-        <div id="tablerun-q" class="question"></div>
-        <div id="tablerun-answer" class="battle-answer">&nbsp;</div>
-        <div id="tablerun-feedback" class="feedback"></div>
-        <div id="tablerun-mastery" class="tt-dots"></div>
-      </div>
-      <div class="keypad" id="tablerun-keypad">
-        <button data-tkey="1">1</button><button data-tkey="2">2</button><button data-tkey="3">3</button>
-        <button data-tkey="4">4</button><button data-tkey="5">5</button><button data-tkey="6">6</button>
-        <button data-tkey="7">7</button><button data-tkey="8">8</button><button data-tkey="9">9</button>
-        <button data-tkey="ok" class="key-sign">✓</button><button data-tkey="0">0</button><button data-tkey="del" class="key-del">⌫</button>
-      </div>
-    </section>
-
-    <!-- ========== FACTOR FORGE (select) ========== -->
-    <section id="screen-forge" class="screen">
-      <header class="screen-header">
-        <button class="back-btn" data-nav="home">‹ Lair</button>
-        <h2>Factor Forge</h2>
-        <div class="coins-mini"><span>🪙</span><span id="forge-coins">0</span></div>
-      </header>
-      <div class="section-body">
-        <p class="tables-intro">Break numbers into prime shards, then simplify fractions — the secret to fast division. 🔨</p>
-        <div id="forge-gauntlet-wrap" class="hidden">
-          <h3 class="section-label gauntlet-label">🔥 Forge Gauntlet <span class="muted">redo the ones that slipped</span></h3>
-          <div id="forge-gauntlet-grid" class="gauntlet-grid"></div>
-        </div>
-        <h3 class="section-label">Modes</h3>
-        <div class="forge-modes">
-          <button class="forge-mode" id="forge-mode-shatter">
-            <span class="forge-emoji">💎</span>
-            <span class="forge-body">
-              <span class="forge-title">Prime Shatter</span>
-              <span class="forge-desc">27 → 3 × 3 × 3 · break to prime shards</span>
-            </span>
-            <span class="gauntlet-go">▶</span>
-          </button>
-          <button class="forge-mode" id="forge-mode-simplify">
-            <span class="forge-emoji">✂️</span>
-            <span class="forge-body">
-              <span class="forge-title">Simplify</span>
-              <span class="forge-desc">27/15 → 9/5 · reduce with common factors</span>
-            </span>
-            <span class="gauntlet-go">▶</span>
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== FACTOR FORGE (run) ========== -->
-    <section id="screen-forgerun" class="screen play-screen">
-      <header class="play-header">
-        <button class="quit-btn" id="quit-forgerun">✕</button>
-        <div class="tablerun-titlewrap">
-          <div class="tablerun-title" id="forgerun-title">Prime Shatter</div>
-          <div class="tablerun-prog" id="forgerun-prog">1 / 10</div>
-        </div>
-      </header>
-      <div class="tablerun-tip" id="forgerun-prompt"></div>
-      <div class="play-stage">
-        <div id="forgerun-target" class="forge-target"></div>
-        <div id="forgerun-work" class="forge-work"></div>
-        <div id="forgerun-answer" class="battle-answer">&nbsp;</div>
-        <div id="forgerun-feedback" class="feedback"></div>
-      </div>
-      <div class="keypad" id="forgerun-keypad">
-        <button data-fkey="1">1</button><button data-fkey="2">2</button><button data-fkey="3">3</button>
-        <button data-fkey="4">4</button><button data-fkey="5">5</button><button data-fkey="6">6</button>
-        <button data-fkey="7">7</button><button data-fkey="8">8</button><button data-fkey="9">9</button>
-        <button data-fkey="del" class="key-del">⌫</button><button data-fkey="0">0</button><button data-fkey="ok" class="key-sign">✓</button>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- ========== MODALS ========== -->
-  <!-- Hatch modal -->
-  <div id="modal-hatch" class="modal">
-    <div class="modal-card modal-hatch-card">
-      <div class="modal-header">
-        <h3 id="hatch-title">The egg hatches...</h3>
-      </div>
-      <div class="hatch-stage">
-        <div id="hatch-egg" class="hatch-egg-phase">🥚</div>
-        <div id="hatch-reveal" class="hatch-reveal">
-          <div class="hatch-burst"></div>
-          <div id="hatch-emoji" class="hatch-dragon-emoji">🐲</div>
-          <div id="hatch-name" class="hatch-dragon-name">Dragon</div>
-          <div id="hatch-rarity" class="modal-rarity"></div>
-          <div id="hatch-desc" class="hatch-dragon-desc"></div>
-        </div>
-      </div>
-      <button class="btn-primary btn-large" data-close-modal="modal-hatch">Claim</button>
+  <!-- HOME -->
+  <section class="screen active" id="home">
+    <div class="topbar">
+      <span class="coins"><span class="ic">🪙</span><span id="coinHome">0</span></span>
+      <span class="streakpill"><span class="ic">🔥</span><span id="streakHome">0</span> วัน</span>
+      <span class="gems"><span class="ic">🐉</span><span class="n" id="dragCntHome">0</span>/<span id="dragTotHome">0</span></span>
     </div>
-  </div>
 
-  <!-- Ascend modal -->
-  <div id="modal-ascend" class="modal">
-    <div class="modal-card modal-ascend-card">
-      <div class="ascend-aura"></div>
-      <div class="modal-header">
-        <h3>✨ ASCENDED ✨</h3>
-      </div>
-      <div id="ascend-emoji" class="hatch-dragon-emoji ascend-glow">✨🐲</div>
-      <div id="ascend-name" class="hatch-dragon-name">Ember Lord</div>
-      <div id="ascend-rarity" class="modal-rarity"></div>
-      <div id="ascend-desc" class="hatch-dragon-desc"></div>
-      <button class="btn-primary btn-large" data-close-modal="modal-ascend">Behold</button>
+    <div class="hero">
+      <div class="dragon">🐉</div>
+      <h1>มังกรนักอ่าน</h1>
+      <div class="sub">Dragon Thai · ไต่หอคอย เก็บมังกร ฝึกอ่านไทย</div>
     </div>
-  </div>
 
-  <!-- Daily bonus modal -->
-  <div id="modal-daily" class="modal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3>Daily Bonus</h3>
+    <div class="daily" id="daily">
+      <div>
+        <div class="t">🎁 ของขวัญรายวัน</div>
+        <div class="d" id="dailyDesc">เข้ามาเล่นทุกวันรับเหรียญฟรี</div>
       </div>
-      <div class="daily-streak">Day <span id="daily-streak-preview">1</span></div>
-      <div class="daily-reward" id="daily-reward-preview">+30 Gold</div>
-      <div class="daily-streak-info">
-        🔥 Keep your streak going! Miss a day and it resets.
-        <br/>Day 7 = Rare Egg · Day 14 = Mythic Egg
-      </div>
-      <div class="modal-actions">
-        <button class="btn-ghost" id="daily-close-btn">Later</button>
-        <button class="btn-primary" id="daily-claim-btn">Claim</button>
-      </div>
-      <div class="daily-confirm" id="daily-reward-text" style="display:none"></div>
+      <button class="btn gold" id="dailyBtn" style="padding:11px 16px;font-size:15px;">รับเลย</button>
     </div>
-  </div>
 
-  <!-- Toast -->
-  <div id="toast" class="toast"></div>
+    <div class="menu">
+      <button class="btn big" onclick="go('spire')"><span class="em">🏰</span><span class="label">ผจญภัย — หอคอยมังกร<small>อ่านคำ ผ่านด่าน เก็บดาว</small></span></button>
+      <button class="btn big jade" onclick="startPractice()"><span class="em">⛓️</span><span class="label">เรือนจำคำ — ฝึกซ้ำ<small id="homeJailSub">ปลดปล่อยคำที่ยังไม่คล่อง</small></span></button>
+      <button class="btn big gold" onclick="go('hatch')"><span class="em">🥚</span><span class="label">ฟักไข่มังกร<small>ใช้เหรียญสุ่มมังกรใหม่</small></span></button>
+      <button class="btn big ghost" onclick="renderDen();go('den')"><span class="em">🐲</span><span class="label">คลังมังกร<small>ดูมังกรที่สะสมไว้</small></span></button>
+    </div>
+    <a href="https://1492w.github.io/world-of-dragons/" style="display:block;text-align:center;margin:14px auto 4px;max-width:330px;background:linear-gradient(135deg,#7a5cc0,#4a3585);color:#fff;text-decoration:none;font-family:'Mitr';font-weight:600;font-size:14px;padding:12px;border-radius:14px;box-shadow:0 3px 9px rgba(74,53,133,.3)">🏰 กลับสู่ World of Dragons</a>
+    <footer>1492W · สำหรับพอดี · ไฟล์เดียวจบ เล่นออฟไลน์ได้</footer>
+  </section>
 
-  <script src="game.js?v=phase6"></script>
+  <!-- SPIRE -->
+  <section class="screen" id="spire">
+    <button class="backbtn" onclick="go('home')">‹ กลับหน้าหลัก</button>
+    <div class="spire-title">🏰 หอคอยมังกร</div>
+    <div class="spire-sub">ไต่ขึ้นทีละชั้น แต่ละชั้นยากขึ้น มีมังกรเฝ้าอยู่</div>
+    <div id="floors"></div>
+  </section>
+
+  <!-- LEVELS -->
+  <section class="screen" id="levels">
+    <button class="backbtn" onclick="go('spire')">‹ กลับหอคอย</button>
+    <div class="spire-title" id="lvTitle"></div>
+    <div class="spire-sub" id="lvSub"></div>
+    <div class="lvgrid" id="lvGrid"></div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="screen" id="quiz">
+    <button class="backbtn" onclick="quitQuiz()">‹ ออกจากด่าน</button>
+    <div class="qhead">
+      <div class="qdots" id="qdots"></div>
+      <div class="qcoins">🪙 <span id="qcoin">0</span></div>
+    </div>
+    <div class="qmascot" id="qmascot">🐲</div>
+    <div class="qcard">
+      <div class="qprompt" id="qprompt"></div>
+      <div id="qbody"></div>
+    </div>
+    <div class="opts" id="opts"></div>
+  </section>
+
+  <!-- RESULT -->
+  <section class="screen" id="result">
+    <div class="result-wrap">
+      <div class="glowring" id="resGlow" style="display:none"></div>
+      <div class="big" id="resEmoji">🎉</div>
+      <h2 id="resTitle">ผ่านด่าน!</h2>
+      <div class="cheer" id="resCheer"></div>
+      <div class="starrow" id="resStars"></div>
+      <div><span class="reward">🪙 <span id="resCoins">0</span> เหรียญ</span></div>
+      <div id="resBonus" style="margin:6px 0 2px;"></div>
+      <div style="display:flex;gap:11px;margin-top:18px;">
+        <button class="btn ghost" style="flex:1" onclick="go('levels');renderLevels();">เลือกด่าน</button>
+        <button class="btn" style="flex:1" id="resNext">ด่านต่อไป ›</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- HATCH -->
+  <section class="screen" id="hatch">
+    <button class="backbtn" onclick="go('home')">‹ กลับหน้าหลัก</button>
+    <div class="hatch-wrap">
+      <h2>🥚 ฟักไข่มังกร</h2>
+      <div class="hsub">กดไข่เพื่อฟัก ลุ้นมังกรหายากระดับตำนาน!</div>
+      <div class="cost" id="hatchBal">🪙 เหรียญของเรา: 0</div>
+      <div class="egg" id="egg" onclick="doHatch()">🥚</div>
+      <div>
+        <button class="btn gold big" id="hatchBtn" onclick="doHatch()">ฟักไข่ · 🪙 <span id="hatchCost">20</span></button>
+      </div>
+      <div class="hsub" style="margin-top:12px;">เล่นด่านเก็บเหรียญเพื่อมาฟักเพิ่มได้เรื่อย ๆ</div>
+    </div>
+  </section>
+
+  <!-- DEN -->
+  <section class="screen" id="den">
+    <button class="backbtn" onclick="go('home')">‹ กลับหน้าหลัก</button>
+    <div class="den-head">
+      <h2>🐲 คลังมังกร</h2>
+      <span class="cnt" id="denCnt"></span>
+    </div>
+    <div class="dengrid" id="dengrid"></div>
+  </section>
+
+  <!-- PRACTICE -->
+  <section class="screen" id="practice">
+    <button class="backbtn" onclick="go('home')">‹ กลับหน้าหลัก</button>
+    <div class="spire-title">⛓️ เรือนจำคำ</div>
+    <div id="pintro" style="text-align:center;padding-top:6px">
+      <div style="font-size:58px;margin:4px 0">🐉⛓️</div>
+      <p style="color:var(--muted);font-size:14px;max-width:300px;margin:0 auto 14px">คำที่ยังอ่านไม่คล่องจะถูกขังไว้ที่นี่ — อ่านให้ถูกและไวเพื่อปลดปล่อยมันออกไป!</p>
+      <div style="font-family:'Mitr';font-size:17px;margin-bottom:18px">มีคำติดอยู่ <span id="jailCount" style="color:var(--ember);font-weight:700;font-size:26px">0</span> คำ</div>
+      <button class="btn big jade" id="jailStartBtn" onclick="startJail()" style="max-width:280px;margin:0 auto"><span class="label" id="jailStartLabel">🔓 เริ่มช่วยคำ</span></button>
+      <div id="jailEmpty" style="display:none;color:var(--jade-d);font-family:'Mitr';font-size:16px;line-height:1.5">✨ เรือนจำว่างเปล่า เก่งมากพอดี!<br><span style="font-size:13px;color:var(--muted);font-family:'Sarabun'">เล่นด่านต่อไปเพื่อเจอคำใหม่ ๆ</span></div>
+    </div>
+    <div id="pdone" style="display:none;text-align:center;padding-top:20px;">
+      <div id="pdoneEmoji" style="font-size:54px">🎉</div>
+      <h2 id="pdoneTitle" style="font-family:'Mitr'">ปล่อยได้ 0 คำ!</h2>
+      <p id="pdoneMsg" style="color:var(--muted)"></p>
+      <button class="btn" onclick="go('home')" style="margin-top:8px">กลับหน้าหลัก</button>
+    </div>
+  </section>
+
+</div>
+
+<div class="reveal" id="reveal" onclick="closeReveal()"></div>
+<div class="tribe-rev" id="tribeRev">
+  <div class="burst"></div>
+  <div class="label">⚔️ พิชิตชั้นสำเร็จ!</div>
+  <div class="tdrag" id="trDrag">🐲</div>
+  <div class="tdname" id="trName">มังกรเผ่า</div>
+  <div class="tdfrom" id="trFrom">เข้าร่วมเผ่าอ่านไทยแล้ว</div>
+  <div class="tdnote">✨ ไปดูได้ใน World of Dragons</div>
+  <button class="btn gold" onclick="closeTribeRev()">เยี่ยมไปเลย!</button>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ DRAGON THAI — game logic ============ */
+'use strict';
+
+/* ---------- WORD DATA (5 tiers, easy → hard) ----------
+   w = คำ, e = emoji (ถ้ามี), reads = [คำอ่านถูก, ตัวลวง...] เฉพาะคำที่อ่านไม่ตรงรูป */
+const WORDS = [
+  {w:'ตา',e:'👁️',t:1,sp:['ตอ','อา']},
+  {w:'ม้า',e:'🐴',t:1,sp:['มอ','อา','มา','ไม้โท']},
+  {w:'ป้า',t:1,sp:['ปอ','อา','ปา','ไม้โท']},
+  {w:'ขา',e:'🦵',t:1,sp:['ขอ','อา']},
+  {w:'ช้า',t:1,sp:['ชอ','อา','ชา','ไม้โท']},
+  {w:'หู',e:'👂',t:1,sp:['หอ','อู']},
+  {w:'ปู',e:'🦀',t:1,sp:['ปอ','อู']},
+  {w:'งู',e:'🐍',t:1,sp:['งอ','อู']},
+  {w:'ดู',e:'👀',t:1,sp:['ดอ','อู']},
+  {w:'ดี',e:'👍',t:1,sp:['ดอ','อี']},
+  {w:'มี',t:1,sp:['มอ','อี']},
+  {w:'สี',e:'🎨',t:1,sp:['สอ','อี']},
+  {w:'เสีย',t:2,sp:['สอ','เอีย']},
+  {w:'เปีย',t:2,sp:['ปอ','เอีย']},
+  {w:'เลีย',t:2,sp:['ลอ','เอีย']},
+  {w:'เสือ',e:'🐯',t:2,sp:['สอ','เอือ']},
+  {w:'เรือ',e:'🚣',t:2,sp:['รอ','เอือ']},
+  {w:'เสื้อ',e:'👕',t:2,sp:['สอ','เอือ','เสือ','ไม้โท']},
+  {w:'เจือ',t:2,sp:['จอ','เอือ']},
+  {w:'เบื่อ',t:2,sp:['บอ','เอือ','เบือ','ไม้เอก']},
+  {w:'เชื่อ',t:2,sp:['ชอ','เอือ','เชือ','ไม้เอก']},
+  {w:'เมื่อ',t:2,sp:['มอ','เอือ','เมือ','ไม้เอก']},
+  {w:'เพื่อ',t:2,sp:['พอ','เอือ','เพือ','ไม้เอก']},
+  {w:'เผื่อ',t:2,sp:['ผอ','เอือ','เผือ','ไม้เอก']},
+  {w:'หัว',t:3,sp:['หอ','อัว']},
+  {w:'วัว',e:'🐄',t:3,sp:['วอ','อัว']},
+  {w:'ตัว',t:3,sp:['ตอ','อัว']},
+  {w:'มัว',t:3,sp:['มอ','อัว']},
+  {w:'รัว',t:3,sp:['รอ','อัว']},
+  {w:'บัว',e:'🪷',t:3,sp:['บอ','อัว']},
+  {w:'ทั่ว',t:3,sp:['ทอ','อัว','ทัว','ไม้เอก']},
+  {w:'ชั่ว',t:3,sp:['ชอ','อัว','ชัว','ไม้เอก']},
+  {w:'งัว',t:3,sp:['งอ','อัว']},
+  {w:'จะ',t:4,sp:['จอ','อะ']},
+  {w:'กะ',t:4,sp:['กอ','อะ']},
+  {w:'ปะ',t:4,sp:['ปอ','อะ']},
+  {w:'ละ',t:4,sp:['ลอ','อะ']},
+  {w:'นะ',t:4,sp:['นอ','อะ']},
+  {w:'เตะ',t:4,sp:['ตอ','เอะ']},
+  {w:'เกะ',t:4,sp:['กอ','เอะ']},
+  {w:'เละ',t:4,sp:['ลอ','เอะ']},
+  {w:'เปะ',t:4,sp:['ปอ','เอะ']},
+  {w:'แกะ',e:'🐑',t:4,sp:['กอ','แอะ']},
+  {w:'แพะ',e:'🐐',t:4,sp:['พอ','แอะ']},
+  {w:'แคะ',t:4,sp:['คอ','แอะ']},
+  {w:'แวะ',t:4,sp:['วอ','แอะ']},
+  {w:'เกาะ',e:'🏝️',t:4,sp:['กอ','เอาะ']},
+  {w:'เคาะ',t:4,sp:['คอ','เอาะ']},
+  {w:'ทำ',t:5,sp:['ทอ','อำ']},
+  {w:'จำ',t:5,sp:['จอ','อำ']},
+  {w:'ดำ',e:'⚫',t:5,sp:['ดอ','อำ']},
+  {w:'คำ',t:5,sp:['คอ','อำ']},
+  {w:'รำ',t:5,sp:['รอ','อำ']},
+  {w:'ลำ',t:5,sp:['ลอ','อำ']},
+  {w:'ขำ',t:5,sp:['ขอ','อำ']},
+  {w:'นำ',t:5,sp:['นอ','อำ']},
+  {w:'น้ำ',e:'💧',t:5,sp:['นอ','อำ','นำ','ไม้โท']},
+  {w:'ซ้ำ',t:5,sp:['ซอ','อำ','ซำ','ไม้โท']},
+  {w:'ช้ำ',t:5,sp:['ชอ','อำ','ชำ','ไม้โท']},
+  {w:'ถ้ำ',t:5,sp:['ถอ','อำ','ถำ','ไม้โท']},
+  {w:'ไก่',e:'🐔',t:6,sp:['กอ','ไอ','ไก','ไม้เอก']},
+  {w:'ไป',t:6,sp:['ปอ','ไอ']},
+  {w:'ไม้',t:6,sp:['มอ','ไอ','ไม','ไม้โท']},
+  {w:'ไฟ',e:'🔥',t:6,sp:['ฟอ','ไอ']},
+  {w:'ไม่',t:6,sp:['มอ','ไอ','ไม','ไม้เอก']},
+  {w:'ได้',t:6,sp:['ดอ','ไอ','ได','ไม้โท']},
+  {w:'ไข่',e:'🥚',t:6,sp:['ขอ','ไอ','ไข','ไม้เอก']},
+  {w:'ใจ',e:'❤️',t:6,sp:['จอ','ไอ']},
+  {w:'ใช่',t:6,sp:['ชอ','ไอ','ใช','ไม้เอก']},
+  {w:'ใส',t:6,sp:['สอ','ไอ']},
+  {w:'ใบ',e:'🍃',t:6,sp:['บอ','ไอ']},
+  {w:'ใน',t:6,sp:['นอ','ไอ']},
+  {w:'เขา',t:6,sp:['ขอ','เอา']},
+  {w:'เรา',t:6,sp:['รอ','เอา']},
+  {w:'เก้า',t:6,sp:['กอ','เอา','เกา','ไม้โท']},
+  {w:'เผา',t:6,sp:['ผอ','เอา']},
+  {w:'เมา',t:6,sp:['มอ','เอา']},
+  {w:'เจ้า',t:6,sp:['จอ','เอา','เจา','ไม้โท']},
+  {w:'เช้า',t:6,sp:['ชอ','เอา','เชา','ไม้โท']},
+  {w:'ลิง',e:'🐒',t:7,sp:['ลอ','อิ','งอ']},
+  {w:'ช้าง',e:'🐘',t:7,sp:['ชอ','อา','งอ','ชาง','ไม้โท']},
+  {w:'หาง',t:7,sp:['หอ','อา','งอ']},
+  {w:'นาง',t:7,sp:['นอ','อา','งอ']},
+  {w:'ทาง',t:7,sp:['ทอ','อา','งอ']},
+  {w:'ยาง',t:7,sp:['ยอ','อา','งอ']},
+  {w:'บาง',t:7,sp:['บอ','อา','งอ']},
+  {w:'ต่าง',t:7,sp:['ตอ','อา','งอ','ตาง','ไม้เอก']},
+  {w:'ห่าง',t:7,sp:['หอ','อา','งอ','หาง','ไม้เอก']},
+  {w:'ของ',t:7,sp:['ขอ','ออ','งอ']},
+  {w:'ทอง',e:'🥇',t:7,sp:['ทอ','ออ','งอ']},
+  {w:'สอง',t:7,sp:['สอ','ออ','งอ']},
+  {w:'ห้อง',t:7,sp:['หอ','ออ','งอ','หอง','ไม้โท']},
+  {w:'ต้อง',t:7,sp:['ตอ','ออ','งอ','ตอง','ไม้โท']},
+  {w:'มอง',t:7,sp:['มอ','ออ','งอ']},
+  {w:'ร้อง',t:7,sp:['รอ','ออ','งอ','รอง','ไม้โท']},
+  {w:'ลอง',t:7,sp:['ลอ','ออ','งอ']},
+  {w:'แดง',e:'🔴',t:7,sp:['ดอ','แอ','งอ']},
+  {w:'แสง',e:'☀️',t:7,sp:['สอ','แอ','งอ']},
+  {w:'แกง',e:'🍲',t:7,sp:['กอ','แอ','งอ']},
+  {w:'แรง',t:7,sp:['รอ','แอ','งอ']},
+  {w:'แพง',t:7,sp:['พอ','แอ','งอ']},
+  {w:'ฝูง',t:7,sp:['ฝอ','อู','งอ']},
+  {w:'จูง',t:7,sp:['จอ','อู','งอ']},
+  {w:'สูง',t:7,sp:['สอ','อู','งอ']},
+  {w:'ยุง',e:'🦟',t:7,sp:['ยอ','อุ','งอ']},
+  {w:'รุ่ง',e:'🌅',t:7,sp:['รอ','อุ','งอ','รุง','ไม้เอก']},
+  {w:'ถึง',t:7,sp:['ถอ','อึ','งอ']},
+  {w:'เสียง',e:'🔊',t:7,sp:['สอ','เอีย','งอ']},
+  {w:'เลี้ยง',t:7,sp:['ลอ','เอีย','งอ','เลียง','ไม้โท']},
+  {w:'โมง',e:'🕐',t:7,sp:['มอ','โอ','งอ']},
+  {w:'มุ่ง',t:7,sp:['มอ','อุ','งอ','มุง','ไม้เอก']},
+  {w:'จาน',e:'🍽️',t:8,sp:['จอ','อา','นอ']},
+  {w:'บ้าน',e:'🏠',t:8,sp:['บอ','อา','นอ','บาน','ไม้โท']},
+  {w:'งาน',t:8,sp:['งอ','อา','นอ']},
+  {w:'นาน',t:8,sp:['นอ','อา','นอ']},
+  {w:'ลาน',t:8,sp:['ลอ','อา','นอ']},
+  {w:'คาน',t:8,sp:['คอ','อา','นอ']},
+  {w:'สาน',t:8,sp:['สอ','อา','นอ']},
+  {w:'ผ่าน',t:8,sp:['ผอ','อา','นอ','ผาน','ไม้เอก']},
+  {w:'ด้าน',t:8,sp:['ดอ','อา','นอ','ดาน','ไม้โท']},
+  {w:'ดิน',e:'🟤',t:8,sp:['ดอ','อิ','นอ']},
+  {w:'บิน',e:'✈️',t:8,sp:['บอ','อิ','นอ']},
+  {w:'กิน',e:'🍚',t:8,sp:['กอ','อิ','นอ']},
+  {w:'หิน',e:'🪨',t:8,sp:['หอ','อิ','นอ']},
+  {w:'จีน',t:8,sp:['จอ','อี','นอ']},
+  {w:'มีน',e:'🐟',t:8,sp:['มอ','อี','นอ']},
+  {w:'ตื่น',t:8,sp:['ตอ','อือ','นอ','ตืน','ไม้เอก']},
+  {w:'คืน',t:8,sp:['คอ','อือ','นอ']},
+  {w:'ยืน',t:8,sp:['ยอ','อือ','นอ']},
+  {w:'ฝืน',t:8,sp:['ฝอ','อือ','นอ']},
+  {w:'เรียน',e:'📖',t:8,sp:['รอ','เอีย','นอ']},
+  {w:'เขียน',e:'✍️',t:8,sp:['ขอ','เอีย','นอ']},
+  {w:'เพื่อน',e:'👫',t:8,sp:['พอ','เอือ','นอ','เพือน','ไม้เอก']},
+  {w:'เดือน',e:'🌙',t:8,sp:['ดอ','เอือ','นอ']},
+  {w:'พูน',t:8,sp:['พอ','อู','นอ']},
+  {w:'ขุน',t:8,sp:['ขอ','อุ','นอ']},
+  {w:'ทุน',t:8,sp:['ทอ','อุ','นอ']},
+  {w:'วาน',t:8,sp:['วอ','อา','นอ']},
+  {w:'ปาน',t:8,sp:['ปอ','อา','นอ']},
+  {w:'บาน',t:8,sp:['บอ','อา','นอ']},
+  {w:'การ',t:8,sp:['กอ','อา','รอ']},
+  {w:'กาล',t:8,sp:['กอ','อา','ลอ']},
+  {w:'ศาล',e:'⚖️',t:8,sp:['สอ','อา','ลอ']},
+  {w:'มูล',t:8,sp:['มอ','อู','ลอ']},
+  {w:'คุณ',t:8,sp:['คอ','อุ','นอ']},
+  {w:'บุญ',t:8,sp:['บอ','อุ','ยอ']},
+  {w:'ชาญ',t:8,sp:['ชอ','อา','ยอ']},
+  {w:'วาฬ',e:'🐋',t:8,sp:['วอ','อา','ลอ']},
+  {w:'ยาม',t:9,sp:['ยอ','อา','มอ']},
+  {w:'ถาม',e:'❓',t:9,sp:['ถอ','อา','มอ']},
+  {w:'ริม',t:9,sp:['รอ','อิ','มอ']},
+  {w:'อิ่ม',e:'😋',t:9,sp:['ออ','อิ','มอ','อิม','ไม้เอก']},
+  {w:'ยิ้ม',e:'😊',t:9,sp:['ยอ','อิ','มอ','ยิม','ไม้โท']},
+  {w:'ดื่ม',e:'🥤',t:9,sp:['ดอ','อือ','มอ','ดืม','ไม้เอก']},
+  {w:'ลืม',t:9,sp:['ลอ','อือ','มอ']},
+  {w:'เกม',e:'🎮',t:9,sp:['กอ','เอ','มอ']},
+  {w:'แยม',e:'🍓',t:9,sp:['ยอ','แอ','มอ']},
+  {w:'แกม',t:9,sp:['กอ','แอ','มอ']},
+  {w:'แถม',t:9,sp:['ถอ','แอ','มอ']},
+  {w:'โดม',t:9,sp:['ดอ','โอ','มอ']},
+  {w:'นาม',t:9,sp:['นอ','อา','มอ']},
+  {w:'งาม',t:9,sp:['งอ','อา','มอ']},
+  {w:'ตาม',t:9,sp:['ตอ','อา','มอ']},
+  {w:'หาม',t:9,sp:['หอ','อา','มอ']},
+  {w:'จาม',t:9,sp:['จอ','อา','มอ']},
+  {w:'ทีม',t:9,sp:['ทอ','อี','มอ']},
+  {w:'เยี่ยม',t:9,sp:['ยอ','เอีย','มอ','เยียม','ไม้เอก']},
+  {w:'มุม',t:9,sp:['มอ','อุ','มอ']},
+  {w:'สุม',t:9,sp:['สอ','อุ','มอ']},
+  {w:'ชุม',t:9,sp:['ชอ','อุ','มอ']},
+  {w:'รุม',t:9,sp:['รอ','อุ','มอ']},
+  {w:'โหม',t:9,sp:['หอ','โอ','มอ']},
+  {w:'โถม',t:9,sp:['ถอ','โอ','มอ']},
+  {w:'โลม',t:9,sp:['ลอ','โอ','มอ']},
+  {w:'ยาย',e:'👵',t:10,sp:['ยอ','อา','ยอ']},
+  {w:'ขาย',t:10,sp:['ขอ','อา','ยอ']},
+  {w:'สาย',t:10,sp:['สอ','อา','ยอ']},
+  {w:'ลาย',t:10,sp:['ลอ','อา','ยอ']},
+  {w:'หาย',t:10,sp:['หอ','อา','ยอ']},
+  {w:'นาย',t:10,sp:['นอ','อา','ยอ']},
+  {w:'พาย',t:10,sp:['พอ','อา','ยอ']},
+  {w:'ทาย',t:10,sp:['ทอ','อา','ยอ']},
+  {w:'ตาย',t:10,sp:['ตอ','อา','ยอ']},
+  {w:'ร้าย',t:10,sp:['รอ','อา','ยอ','ราย','ไม้โท']},
+  {w:'ง่าย',t:10,sp:['งอ','อา','ยอ','งาย','ไม้เอก']},
+  {w:'บ่าย',t:10,sp:['บอ','อา','ยอ','บาย','ไม้เอก']},
+  {w:'คุย',t:10,sp:['คอ','อุ','ยอ']},
+  {w:'โรย',t:10,sp:['รอ','โอ','ยอ']},
+  {w:'เลย',t:10,sp:['ลอ','เอ','ยอ']},
+  {w:'เนย',e:'🧈',t:10,sp:['นอ','เอ','ยอ']},
+  {w:'เคย',t:10,sp:['คอ','เอ','ยอ']},
+  {w:'ดาว',e:'⭐',t:10,sp:['ดอ','อา','วอ']},
+  {w:'กาว',t:10,sp:['กอ','อา','วอ']},
+  {w:'ยาว',t:10,sp:['ยอ','อา','วอ']},
+  {w:'ขาว',e:'⬜',t:10,sp:['ขอ','อา','วอ']},
+  {w:'สาว',t:10,sp:['สอ','อา','วอ']},
+  {w:'หาว',t:10,sp:['หอ','อา','วอ']},
+  {w:'หิว',e:'🤤',t:10,sp:['หอ','อิ','วอ']},
+  {w:'ทิว',t:10,sp:['ทอ','อิ','วอ']},
+  {w:'แมว',e:'🐱',t:10,sp:['มอ','แอ','วอ']},
+  {w:'แก้ว',e:'🥛',t:10,sp:['กอ','แอ','วอ','แกว','ไม้โท']},
+  {w:'เลว',t:10,sp:['ลอ','เอ','วอ']},
+  {w:'เลี้ยว',t:10,sp:['ลอ','เอีย','วอ','เลียว','ไม้โท']},
+  {w:'เคี้ยว',t:10,sp:['คอ','เอีย','วอ','เคียว','ไม้โท']},
+  {w:'ปาก',e:'👄',t:11,sp:['ปอ','อา','กอ']},
+  {w:'จาก',t:11,sp:['จอ','อา','กอ']},
+  {w:'มาก',t:11,sp:['มอ','อา','กอ']},
+  {w:'ลาก',t:11,sp:['ลอ','อา','กอ']},
+  {w:'ฝาก',t:11,sp:['ฝอ','อา','กอ']},
+  {w:'ราก',t:11,sp:['รอ','อา','กอ']},
+  {w:'ยาก',t:11,sp:['ยอ','อา','กอ']},
+  {w:'ดึก',t:11,sp:['ดอ','อึ','กอ']},
+  {w:'ลึก',t:11,sp:['ลอ','อึ','กอ']},
+  {w:'นึก',t:11,sp:['นอ','อึ','กอ']},
+  {w:'ฝึก',t:11,sp:['ฝอ','อึ','กอ']},
+  {w:'สุก',t:11,sp:['สอ','อุ','กอ']},
+  {w:'ทุก',t:11,sp:['ทอ','อุ','กอ']},
+  {w:'ลุก',t:11,sp:['ลอ','อุ','กอ']},
+  {w:'ถูก',t:11,sp:['ถอ','อู','กอ']},
+  {w:'ลูก',e:'🧒',t:11,sp:['ลอ','อู','กอ']},
+  {w:'ฉีก',t:11,sp:['ฉอ','อี','กอ']},
+  {w:'โลก',e:'🌍',t:11,sp:['ลอ','โอ','กอ']},
+  {w:'โบก',t:11,sp:['บอ','โอ','กอ']},
+  {w:'โยก',t:11,sp:['ยอ','โอ','กอ']},
+  {w:'แตก',t:11,sp:['ตอ','แอ','กอ']},
+  {w:'แยก',t:11,sp:['ยอ','แอ','กอ']},
+  {w:'แบก',t:11,sp:['บอ','แอ','กอ']},
+  {w:'เลข',e:'🔢',t:11,sp:['ลอ','เอ','ขอ']},
+  {w:'เชือก',t:11,sp:['ชอ','เอือ','กอ']},
+  {w:'เรียก',t:11,sp:['รอ','เอีย','กอ']},
+  {w:'เลือก',t:11,sp:['ลอ','เอือ','กอ']},
+  {w:'สุข',e:'😊',t:11,sp:['สอ','อุ','ขอ']},
+  {w:'โรค',e:'🤒',t:11,sp:['รอ','โอ','คอ']},
+  {w:'เมฆ',e:'☁️',t:11,sp:['มอ','เอ','คอ']},
+  {w:'ภาค',t:11,sp:['พอ','อา','คอ']},
+  {w:'นาค',e:'🐉',t:11,sp:['นอ','อา','คอ']},
+  {w:'ขีด',t:12,sp:['ขอ','อี','ดอ']},
+  {w:'ปิด',t:12,sp:['ปอ','อิ','ดอ']},
+  {w:'ชิด',t:12,sp:['ชอ','อิ','ดอ']},
+  {w:'คิด',e:'💭',t:12,sp:['คอ','อิ','ดอ']},
+  {w:'จืด',t:12,sp:['จอ','อือ','ดอ']},
+  {w:'ยืด',t:12,sp:['ยอ','อือ','ดอ']},
+  {w:'มืด',e:'🌑',t:12,sp:['มอ','อือ','ดอ']},
+  {w:'ฝืด',t:12,sp:['ฝอ','อือ','ดอ']},
+  {w:'บาด',t:12,sp:['บอ','อา','ดอ']},
+  {w:'ขาด',t:12,sp:['ขอ','อา','ดอ']},
+  {w:'ราด',t:12,sp:['รอ','อา','ดอ']},
+  {w:'วาด',e:'🎨',t:12,sp:['วอ','อา','ดอ']},
+  {w:'สาด',t:12,sp:['สอ','อา','ดอ']},
+  {w:'หาด',e:'🏖️',t:12,sp:['หอ','อา','ดอ']},
+  {w:'พูด',e:'🗣️',t:12,sp:['พอ','อู','ดอ']},
+  {w:'ดูด',t:12,sp:['ดอ','อู','ดอ']},
+  {w:'รูด',t:12,sp:['รอ','อู','ดอ']},
+  {w:'โหด',t:12,sp:['หอ','โอ','ดอ']},
+  {w:'จอด',e:'🅿️',t:12,sp:['จอ','ออ','ดอ']},
+  {w:'ยอด',t:12,sp:['ยอ','ออ','ดอ']},
+  {w:'ลอด',t:12,sp:['ลอ','ออ','ดอ']},
+  {w:'รอด',t:12,sp:['รอ','ออ','ดอ']},
+  {w:'เบียด',t:12,sp:['บอ','เอีย','ดอ']},
+  {w:'เลือด',e:'🩸',t:12,sp:['ลอ','เอือ','ดอ']},
+  {w:'เดือด',t:12,sp:['ดอ','เอือ','ดอ']},
+  {w:'เชือด',t:12,sp:['ชอ','เอือ','ดอ']},
+  {w:'บาท',e:'💰',t:12,sp:['บอ','อา','ทอ']},
+  {w:'ราช',t:12,sp:['รอ','อา','ชอ']},
+  {w:'โทษ',t:12,sp:['ทอ','โอ','สอ']},
+  {w:'พิษ',e:'☠️',t:12,sp:['พอ','อิ','สอ']},
+  {w:'จิต',t:12,sp:['จอ','อิ','ตอ']},
+  {w:'พุธ',t:12,sp:['พอ','อุ','ทอ']},
+  {w:'เพศ',t:12,sp:['พอ','เอ','สอ']},
+  {w:'มาส',t:12,sp:['มอ','อา','สอ']},
+  {w:'อาจ',t:12,sp:['ออ','อา','จอ']},
+  {w:'ดิบ',t:13,sp:['ดอ','อิ','บอ']},
+  {w:'จิบ',t:13,sp:['จอ','อิ','บอ']},
+  {w:'ริบ',t:13,sp:['รอ','อิ','บอ']},
+  {w:'หีบ',t:13,sp:['หอ','อี','บอ']},
+  {w:'รีบ',t:13,sp:['รอ','อี','บอ']},
+  {w:'บีบ',t:13,sp:['บอ','อี','บอ']},
+  {w:'ลูบ',t:13,sp:['ลอ','อู','บอ']},
+  {w:'คืบ',t:13,sp:['คอ','อือ','บอ']},
+  {w:'คาบ',t:13,sp:['คอ','อา','บอ']},
+  {w:'ลาบ',t:13,sp:['ลอ','อา','บอ']},
+  {w:'โอบ',t:13,sp:['ออ','โอ','บอ']},
+  {w:'งอบ',t:13,sp:['งอ','ออ','บอ']},
+  {w:'ตอบ',t:13,sp:['ตอ','ออ','บอ']},
+  {w:'ชอบ',e:'❤️',t:13,sp:['ชอ','ออ','บอ']},
+  {w:'รอบ',t:13,sp:['รอ','ออ','บอ']},
+  {w:'ขอบ',t:13,sp:['ขอ','ออ','บอ']},
+  {w:'สอบ',e:'📝',t:13,sp:['สอ','ออ','บอ']},
+  {w:'มอบ',t:13,sp:['มอ','ออ','บอ']},
+  {w:'แอบ',t:13,sp:['ออ','แอ','บอ']},
+  {w:'แบบ',t:13,sp:['บอ','แอ','บอ']},
+  {w:'เทียบ',t:13,sp:['ทอ','เอีย','บอ']},
+  {w:'เรียบ',t:13,sp:['รอ','เอีย','บอ']},
+  {w:'บาป',t:13,sp:['บอ','อา','ปอ']},
+  {w:'ภาพ',e:'🖼️',t:13,sp:['พอ','อา','พอ']},
+  {w:'รูป',e:'📷',t:13,sp:['รอ','อู','ปอ']},
+  {w:'โลภ',t:13,sp:['ลอ','โอ','พอ']},
+  {w:'ลาภ',t:13,sp:['ลอ','อา','พอ']},
+  {w:'ธูป',t:13,sp:['ทอ','อู','ปอ']},
+  {w:'กัน',t:14,sp:['กอ','อะ','นอ']},
+  {w:'วัน',t:14,sp:['วอ','อะ','นอ']},
+  {w:'มัน',t:14,sp:['มอ','อะ','นอ']},
+  {w:'ฟัน',e:'🦷',t:14,sp:['ฟอ','อะ','นอ']},
+  {w:'ทัน',t:14,sp:['ทอ','อะ','นอ']},
+  {w:'วัง',t:14,sp:['วอ','อะ','งอ']},
+  {w:'ดัง',t:14,sp:['ดอ','อะ','งอ']},
+  {w:'ขัง',t:14,sp:['ขอ','อะ','งอ']},
+  {w:'วัด',e:'🛕',t:14,sp:['วอ','อะ','ดอ']},
+  {w:'จัด',t:14,sp:['จอ','อะ','ดอ']},
+  {w:'ปัด',t:14,sp:['ปอ','อะ','ดอ']},
+  {w:'ลัด',t:14,sp:['ลอ','อะ','ดอ']},
+  {w:'จับ',t:14,sp:['จอ','อะ','บอ']},
+  {w:'รับ',t:14,sp:['รอ','อะ','บอ']},
+  {w:'กับ',t:14,sp:['กอ','อะ','บอ']},
+  {w:'นับ',e:'🔢',t:14,sp:['นอ','อะ','บอ']},
+  {w:'รัก',e:'❤️',t:14,sp:['รอ','อะ','กอ']},
+  {w:'พัก',t:14,sp:['พอ','อะ','กอ']},
+  {w:'คน',e:'🧑',t:15,sp:['คอ','โอะ','นอ']},
+  {w:'ฝน',e:'🌧️',t:15,sp:['ฝอ','โอะ','นอ']},
+  {w:'ขน',t:15,sp:['ขอ','โอะ','นอ']},
+  {w:'บน',t:15,sp:['บอ','โอะ','นอ']},
+  {w:'ชน',t:15,sp:['ชอ','โอะ','นอ']},
+  {w:'ลม',e:'💨',t:15,sp:['ลอ','โอะ','มอ']},
+  {w:'คม',t:15,sp:['คอ','โอะ','มอ']},
+  {w:'นม',e:'🥛',t:15,sp:['นอ','โอะ','มอ']},
+  {w:'สม',t:15,sp:['สอ','โอะ','มอ']},
+  {w:'จบ',t:15,sp:['จอ','โอะ','บอ']},
+  {w:'พบ',t:15,sp:['พอ','โอะ','บอ']},
+  {w:'รบ',t:15,sp:['รอ','โอะ','บอ']},
+  {w:'คบ',t:15,sp:['คอ','โอะ','บอ']},
+  {w:'นก',e:'🐦',t:15,sp:['นอ','โอะ','กอ']},
+  {w:'ตก',t:15,sp:['ตอ','โอะ','กอ']},
+  {w:'ยก',t:15,sp:['ยอ','โอะ','กอ']},
+  {w:'รก',t:15,sp:['รอ','โอะ','กอ']},
+  {w:'กบ',e:'🐸',t:15,sp:['กอ','โอะ','บอ']},
+  {w:'เด็ก',e:'🧒',t:16,sp:['ดอ','เอะ','กอ']},
+  {w:'เล็ก',t:16,sp:['ลอ','เอะ','กอ']},
+  {w:'เป็น',t:16,sp:['ปอ','เอะ','นอ']},
+  {w:'เห็น',t:16,sp:['หอ','เอะ','นอ']},
+  {w:'เย็น',e:'❄️',t:16,sp:['ยอ','เอะ','นอ']},
+  {w:'เซ็น',t:16,sp:['ซอ','เอะ','นอ']},
+  {w:'เก็บ',t:16,sp:['กอ','เอะ','บอ']},
+  {w:'เจ็บ',t:16,sp:['จอ','เอะ','บอ']},
+  {w:'เม็ด',t:16,sp:['มอ','เอะ','ดอ']},
+  {w:'เผ็ด',e:'🌶️',t:16,sp:['ผอ','เอะ','ดอ']},
+  {w:'เป็ด',e:'🦆',t:16,sp:['ปอ','เอะ','ดอ']},
+  {w:'เด็ด',t:16,sp:['ดอ','เอะ','ดอ']},
+  {w:'เต็ม',t:16,sp:['ตอ','เอะ','มอ']},
+  {w:'เค็ม',t:16,sp:['คอ','เอะ','มอ']},
+  {w:'เข็ม',e:'💉',t:16,sp:['ขอ','เอะ','มอ']},
+  {w:'แข็ง',e:'💪',t:16,sp:['ขอ','แอะ','งอ']},
+  {w:'เงิน',e:'💰',t:17,sp:['งอ','เออ','นอ']},
+  {w:'เดิน',e:'🚶',t:17,sp:['ดอ','เออ','นอ']},
+  {w:'เกิน',t:17,sp:['กอ','เออ','นอ']},
+  {w:'เนิน',t:17,sp:['นอ','เออ','นอ']},
+  {w:'เชิญ',t:17,sp:['ชอ','เออ','ยอ']},
+  {w:'เกิด',t:17,sp:['กอ','เออ','ดอ']},
+  {w:'เปิด',t:17,sp:['ปอ','เออ','ดอ']},
+  {w:'เลิก',t:17,sp:['ลอ','เออ','กอ']},
+  {w:'เริ่ม',t:17,sp:['รอ','เออ','มอ','เริม','ไม้เอก']},
+  {w:'เพิ่ม',t:17,sp:['พอ','เออ','มอ','เพิม','ไม้เอก']},
+  {w:'เดิม',t:17,sp:['ดอ','เออ','มอ']},
+  {w:'เริง',t:17,sp:['รอ','เออ','งอ']},
+  {w:'เทิด',t:17,sp:['ทอ','เออ','ดอ']},
+  {w:'สวน',e:'🌳',t:18,sp:['สอ','อัว','นอ']},
+  {w:'กวน',t:18,sp:['กอ','อัว','นอ']},
+  {w:'ชวน',t:18,sp:['ชอ','อัว','นอ']},
+  {w:'ด่วน',t:18,sp:['ดอ','อัว','นอ','ดวน','ไม้เอก']},
+  {w:'ส่วน',t:18,sp:['สอ','อัว','นอ','สวน','ไม้เอก']},
+  {w:'บวก',t:18,sp:['บอ','อัว','กอ']},
+  {w:'ลวก',t:18,sp:['ลอ','อัว','กอ']},
+  {w:'ขวด',e:'🍼',t:18,sp:['ขอ','อัว','ดอ']},
+  {w:'นวด',t:18,sp:['นอ','อัว','ดอ']},
+  {w:'ตวง',t:18,sp:['ตอ','อัว','งอ']},
+  {w:'ช่วง',t:18,sp:['ชอ','อัว','งอ','ชวง','ไม้เอก']},
+  {w:'ม้วน',t:18,sp:['มอ','อัว','นอ','มวน','ไม้โท']},
+  {w:'กรอบ',t:19,sp:['กอ','รอ','ออ','บอ']},
+  {w:'กราบ',t:19,sp:['กอ','รอ','อา','บอ']},
+  {w:'กรง',t:19,sp:['กอ','รอ','โอะ','งอ']},
+  {w:'ครู',e:'🧑‍🏫',t:19,sp:['คอ','รอ','อู']},
+  {w:'ครับ',t:19,sp:['คอ','รอ','อะ','บอ']},
+  {w:'ครีม',t:19,sp:['คอ','รอ','อี','มอ']},
+  {w:'โครง',t:19,sp:['คอ','รอ','โอ','งอ']},
+  {w:'ตรง',t:19,sp:['ตอ','รอ','โอะ','งอ']},
+  {w:'ตรา',t:19,sp:['ตอ','รอ','อา']},
+  {w:'ปรับ',t:19,sp:['ปอ','รอ','อะ','บอ']},
+  {w:'ปราบ',t:19,sp:['ปอ','รอ','อา','บอ']},
+  {w:'พระ',e:'🙏',t:19,sp:['พอ','รอ','อะ']},
+  {w:'พริก',e:'🌶️',t:19,sp:['พอ','รอ','อิ','กอ']},
+  {w:'กรน',t:19,sp:['กอ','รอ','โอะ','นอ']},
+  {w:'เกรง',t:19,sp:['กอ','รอ','เอ','งอ']},
+  {w:'ตรวจ',t:19,sp:['ตอ','รอ','อัว','จอ']},
+  {w:'กลม',t:20,sp:['กอ','ลอ','โอะ','มอ']},
+  {w:'กลาง',t:20,sp:['กอ','ลอ','อา','งอ']},
+  {w:'กลัว',e:'😱',t:20,sp:['กอ','ลอ','อัว']},
+  {w:'กล้า',t:20,sp:['กอ','ลอ','อา','กลา','ไม้โท']},
+  {w:'คลอง',t:20,sp:['คอ','ลอ','ออ','งอ']},
+  {w:'คลาน',t:20,sp:['คอ','ลอ','อา','นอ']},
+  {w:'ปลา',e:'🐟',t:20,sp:['ปอ','ลอ','อา']},
+  {w:'เพลง',e:'🎵',t:20,sp:['พอ','ลอ','เอ','งอ']},
+  {w:'ปลูก',e:'🌱',t:20,sp:['ปอ','ลอ','อู','กอ']},
+  {w:'ปลอม',t:20,sp:['ปอ','ลอ','ออ','มอ']},
+  {w:'กลอง',e:'🥁',t:20,sp:['กอ','ลอ','ออ','งอ']},
+  {w:'เกลือ',e:'🧂',t:20,sp:['กอ','ลอ','เอือ']},
+  {w:'คลาย',t:20,sp:['คอ','ลอ','อา','ยอ']},
+  {w:'ปลาย',t:20,sp:['ปอ','ลอ','อา','ยอ']},
+  {w:'กลับ',t:20,sp:['กอ','ลอ','อะ','บอ']},
+  {w:'เปล',t:20,sp:['ปอ','ลอ','เอ']},
+  {w:'กวาง',e:'🦌',t:21,sp:['กอ','วอ','อา','งอ']},
+  {w:'กว้าง',t:21,sp:['กอ','วอ','อา','งอ','กวาง','ไม้โท']},
+  {w:'ความ',t:21,sp:['คอ','วอ','อา','มอ']},
+  {w:'ควาย',e:'🐃',t:21,sp:['คอ','วอ','อา','ยอ']},
+  {w:'ขวา',e:'➡️',t:21,sp:['ขอ','วอ','อา']},
+  {w:'ขวาน',e:'🪓',t:21,sp:['ขอ','วอ','อา','นอ']},
+  {w:'แขวน',t:21,sp:['ขอ','วอ','แอ','นอ']},
+  {w:'แกว่ง',t:21,sp:['กอ','วอ','แอ','งอ','แกวง','ไม้เอก']},
+  {w:'ขวิด',t:21,sp:['ขอ','วอ','อิ','ดอ']},
+  {w:'ควัน',e:'💨',t:21,sp:['คอ','วอ','อะ','นอ']},
+  {w:'หนู',e:'🐭',t:22,sp:['หอ','นอ','อู']},
+  {w:'หนา',t:22,sp:['หอ','นอ','อา']},
+  {w:'หนี',t:22,sp:['หอ','นอ','อี']},
+  {w:'หมา',e:'🐕',t:22,sp:['หอ','มอ','อา']},
+  {w:'หมู',e:'🐷',t:22,sp:['หอ','มอ','อู']},
+  {w:'หมี',e:'🐻',t:22,sp:['หอ','มอ','อี']},
+  {w:'หมอ',e:'👨‍⚕️',t:22,sp:['หอ','มอ','ออ']},
+  {w:'หญ้า',e:'🌿',t:22,sp:['หอ','ยอ','อา','หญา','ไม้โท']},
+  {w:'หลาย',t:22,sp:['หอ','ลอ','อา','ยอ']},
+  {w:'หลับ',e:'😴',t:22,sp:['หอ','ลอ','อะ','บอ']},
+  {w:'หลอด',t:22,sp:['หอ','ลอ','ออ','ดอ']},
+  {w:'หงาย',t:22,sp:['หอ','งอ','อา','ยอ']},
+  {w:'หวาน',e:'🍬',t:22,sp:['หอ','วอ','อา','นอ']},
+  {w:'หวี',t:22,sp:['หอ','วอ','อี']},
+  {w:'ขนม',e:'🍡',t:23,sp:['ขะ','หนม']},
+  {w:'สนาม',e:'🏟️',t:23,sp:['สะ','หนาม']},
+  {w:'ตลาด',e:'🛒',t:23,sp:['ตะ','หลาด']},
+  {w:'จมูก',e:'👃',t:23,sp:['จะ','หมูก']},
+  {w:'ถนน',e:'🛣️',t:23,sp:['ถะ','หนน']},
+  {w:'สนุก',e:'😄',t:23,sp:['สะ','หนุก']},
+  {w:'ฉลาม',e:'🦈',t:23,sp:['ฉะ','หลาม']},
+  {w:'อร่อย',e:'😋',t:23,sp:['อะ','หร่อย']},
+  {w:'ตลก',e:'🤡',t:23,sp:['ตะ','หลก']},
+  {w:'ขยับ',t:23,sp:['ขะ','หยับ']},
+  {w:'สบาย',e:'😌',t:23,sp:['สะ','บาย']},
+  {w:'เฉลย',t:23,sp:['ฉะ','เหลย']},
+  {w:'ปา',t:24,sp:['ปอ','อา']},
+  {w:'ป่า',e:'🌲',t:24,sp:['ปอ','อา','ปา','ไม้เอก']},
+  {w:'ป้า',t:24,sp:['ปอ','อา','ปา','ไม้โท']},
+  {w:'ขา',e:'🦵',t:24,sp:['ขอ','อา']},
+  {w:'ข่า',t:24,sp:['ขอ','อา','ขา','ไม้เอก']},
+  {w:'ข้า',t:24,sp:['ขอ','อา','ขา','ไม้โท']},
+  {w:'คา',t:24,sp:['คอ','อา']},
+  {w:'ค่า',t:24,sp:['คอ','อา','คา','ไม้เอก']},
+  {w:'ค้า',t:24,sp:['คอ','อา','คา','ไม้โท']},
+  {w:'นา',e:'🌾',t:24,sp:['นอ','อา']},
+  {w:'น่า',t:24,sp:['นอ','อา','นา','ไม้เอก']},
+  {w:'น้า',t:24,sp:['นอ','อา','นา','ไม้โท']},
+  {w:'ดินสอ',e:'✏️',t:25,sp:['ดิน','สอ']},
+  {w:'กระเป๋า',e:'🎒',t:25,sp:['กระ','เป๋า']},
+  {w:'มะม่วง',e:'🥭',t:25,sp:['มะ','ม่วง']},
+  {w:'ผีเสื้อ',e:'🦋',t:25,sp:['ผี','เสื้อ']},
+  {w:'โรงเรียน',e:'🏫',t:25,sp:['โรง','เรียน']},
+  {w:'ปลาทอง',e:'🐠',t:25,sp:['ปลา','ทอง']},
+  {w:'มังกร',e:'🐉',t:25,sp:['มัง','กอน']},
+  {w:'สีเขียว',e:'💚',t:25,sp:['สี','เขียว']},
+  {w:'ดอกไม้',e:'🌸',t:25,sp:['ดอก','ไม้']},
+  {w:'ต้นไม้',e:'🌳',t:25,sp:['ต้น','ไม้']},
+  {w:'น้ำตา',e:'💧',t:25,sp:['น้ำ','ตา']},
+  {w:'เสือดาว',e:'🐆',t:25,sp:['เสือ','ดาว']},
+  {w:'มะนาว',e:'🍋',t:25,sp:['มะ','นาว']},
+  {w:'หมูป่า',e:'🐗',t:25,sp:['หมู','ป่า']},
+  {w:'กระต่าย',e:'🐰',t:25,sp:['กระ','ต่าย']},
+  {w:'อาหาร',e:'🍚',t:25,sp:['อา','หาน']},
+  {w:'นาฬิกา',e:'⏰',t:26,sp:['นา','ลิ','กา']},
+  {w:'มะละกอ',t:26,sp:['มะ','ละ','กอ']},
+  {w:'สับปะรด',e:'🍍',t:26,sp:['สับ','ปะ','รด']},
+  {w:'จักรยาน',e:'🚲',t:26,sp:['จัก','กระ','ยาน']},
+  {w:'โทรศัพท์',e:'📱',t:26,sp:['โท','ระ','สับ']},
+  {w:'ผลไม้',e:'🍎',t:26,sp:['ผน','ละ','ไม้']},
+  {w:'มะเขือเทศ',e:'🍅',t:26,sp:['มะ','เขือ','เทด']},
+  {w:'ตุ๊กตา',e:'🧸',t:26,sp:['ตุ๊ก','กะ','ตา']},
+  {w:'ทานตะวัน',e:'🌻',t:26,sp:['ทาน','ตะ','วัน']},
+  {w:'ปะการัง',e:'🪸',t:26,sp:['ปะ','กา','รัง']}
+];
+WORDS.forEach((x,i)=>x.id='w'+i);
+
+const TIERS = [
+  {n:1,name:'สระเดี่ยว',tag:'อา อี อู (ปูพื้น)',drag:'🐣',cls:'f1',lvl:'1'},
+  {n:2,name:'สระประสม',tag:'เอีย เอือ',drag:'🐣',cls:'f1',lvl:'1'},
+  {n:3,name:'สระอัว',tag:'อัว',drag:'🐣',cls:'f1',lvl:'1'},
+  {n:4,name:'สระเสียงสั้น',tag:'อะ เอะ แอะ เอาะ',drag:'🐣',cls:'f1',lvl:'1'},
+  {n:5,name:'สระเกิน อำ',tag:'อำ',drag:'🐣',cls:'f1',lvl:'1'},
+  {n:6,name:'สระเกิน ไอ ใอ เอา',tag:'ไอ ใอ เอา',drag:'🐣',cls:'f1',lvl:'1'},
+  {n:7,name:'แม่กง',tag:'ตัวสะกด ง',drag:'🐲',cls:'f2',lvl:'A'},
+  {n:8,name:'แม่กน',tag:'ตัวสะกด น (+ ร ล ญ ณ ฬ)',drag:'🐲',cls:'f2',lvl:'A'},
+  {n:9,name:'แม่กม',tag:'ตัวสะกด ม',drag:'🐲',cls:'f2',lvl:'A'},
+  {n:10,name:'แม่เกย + เกอว',tag:'ตัวสะกด ย, ว',drag:'🐲',cls:'f2',lvl:'A'},
+  {n:11,name:'แม่กก',tag:'ตัวสะกด ก (+ ข ค ฆ)',drag:'🐲',cls:'f2',lvl:'A'},
+  {n:12,name:'แม่กด',tag:'ตัวสะกด ด (+ ช ต ถ ท ส ศ ษ จ)',drag:'🐲',cls:'f2',lvl:'A'},
+  {n:13,name:'แม่กบ',tag:'ตัวสะกด บ (+ ป พ ภ)',drag:'🐲',cls:'f2',lvl:'A'},
+  {n:14,name:'สระอะ → หันอากาศ',tag:'อะ + ตัวสะกด → ◌ั',drag:'🐉',cls:'f3',lvl:'B'},
+  {n:15,name:'สระโอะ → ลดรูป',tag:'โอะ + ตัวสะกด → สระหาย',drag:'🐉',cls:'f3',lvl:'B'},
+  {n:16,name:'สระเอะ/แอะ → ไม้ไต่คู้',tag:'เอะ→เ◌็  แอะ→แ◌็',drag:'🐉',cls:'f3',lvl:'B'},
+  {n:17,name:'สระเออ → เ◌ิ',tag:'เออ + ตัวสะกด → เ◌ิ',drag:'🐉',cls:'f3',lvl:'B'},
+  {n:18,name:'สระอัว → ลดรูป',tag:'อัว + ตัวสะกด → ◌ว',drag:'🐉',cls:'f3',lvl:'B'},
+  {n:19,name:'ควบกล้ำ ร',tag:'กร คร ตร ปร พร',drag:'🐊',cls:'f4',lvl:'C'},
+  {n:20,name:'ควบกล้ำ ล',tag:'กล คล ปล พล',drag:'🐊',cls:'f4',lvl:'C'},
+  {n:21,name:'ควบกล้ำ ว',tag:'กว คว ขว',drag:'🐊',cls:'f4',lvl:'C'},
+  {n:22,name:'อักษรนำ ห',tag:'หน หม หญ หล หง หว',drag:'🐊',cls:'f4',lvl:'C'},
+  {n:23,name:'อักษรนำ 2 พยางค์',tag:'อักษรสูง/กลางนำต่ำเดี่ยว มีเสียง ห แทรก',drag:'🐊',cls:'f4',lvl:'C'},
+  {n:24,name:'ผันวรรณยุกต์',tag:'ไม้เอก ◌่  ไม้โท ◌้',drag:'🎶',cls:'f5',lvl:'D'},
+  {n:25,name:'คำสองพยางค์',tag:'อ่านทีละพยางค์',drag:'🎶',cls:'f5',lvl:'D'},
+  {n:26,name:'คำสามพยางค์',tag:'อ่านทีละพยางค์',drag:'🎶',cls:'f5',lvl:'D'},
+];
+
+const LEVELS = [
+  {id:'1',name:'อ่านไม่มีตัวสะกด',e:'🐣',color:'#2fa37a',floors:[1,2,3,4,5,6],dragon:{id:'thai_start',e:'🐣',name:'มังกรเริ่มอ่าน'}},
+  {id:'A',name:'มาตราตัวสะกด',e:'🐲',color:'#7a47b0',floors:[7,8,9,10,11,12,13],dragon:{id:'thai_consonant',e:'🐲',name:'มังกรตัวสะกด'}},
+  {id:'B',name:'สระเปลี่ยน/ลดรูป',e:'🐉',color:'#3a86c8',floors:[14,15,16,17,18],dragon:{id:'thai_vowel',e:'🐉',name:'มังกรสระ'}},
+  {id:'C',name:'อักษรนำ/ควบกล้ำ',e:'🐊',color:'#e8602c',floors:[19,20,21,22,23],dragon:{id:'thai_lead',e:'🐊',name:'มังกรอักษรนำ'}},
+  {id:'D',name:'วรรณยุกต์/หลายพยางค์',e:'🎶',color:'#c0392b',floors:[24,25,26],dragon:{id:'thai_tone',e:'🎶',name:'มังกรวรรณยุกต์'}},
+];
+
+/* ---------- DRAGON DATA (gacha collection) ---------- */
+const DRAGONS = [
+  // common
+  {id:'d1',n:'น้องเขียว',e:'🐲',r:'common'},{id:'d2',n:'เกล็ดหิน',e:'🦎',r:'common'},
+  {id:'d3',n:'ใบไม้',e:'🌿',r:'common'},{id:'d4',n:'ก้อนเมฆ',e:'☁️',r:'common'},
+  {id:'d5',n:'ลมโชย',e:'🍃',r:'common'},{id:'d6',n:'น้องดิน',e:'🦖',r:'common'},
+  // rare
+  {id:'d7',n:'ฟ้าคราม',e:'🐉',r:'rare'},{id:'d8',n:'เกลียวคลื่น',e:'🌊',r:'rare'},
+  {id:'d9',n:'สายฟ้า',e:'⚡',r:'rare'},{id:'d10',n:'ดอกซากุระ',e:'🌸',r:'rare'},
+  {id:'d11',n:'ใบเมเปิล',e:'🍁',r:'rare'},
+  // epic
+  {id:'d12',n:'เปลวเพลิง',e:'🔥',r:'epic'},{id:'d13',n:'ราตรีนิล',e:'🌙',r:'epic'},
+  {id:'d14',n:'แก้วมณี',e:'💎',r:'epic'},{id:'d15',n:'สายรุ้ง',e:'🌈',r:'epic'},
+  // legend
+  {id:'d16',n:'มังกรทองคำ',e:'✨',r:'legend'},{id:'d17',n:'จักรพรรดิ',e:'👑',r:'legend'},
+  {id:'d18',n:'ดาวตก',e:'☄️',r:'legend'},
+];
+const RAR = {common:{th:'ธรรมดา',cls:'r-common',w:62},rare:{th:'หายาก',cls:'r-rare',w:26},
+  epic:{th:'เอพิก',cls:'r-epic',w:9},legend:{th:'ตำนาน',cls:'r-legend',w:3}};
+const HATCH_COST = 20;
+
+/* ---------- STATE / STORAGE ---------- */
+const KEY='dragonthai_v1';
+let S = load();
+function load(){
+  let d={coins:30,owned:[],stars:{},srs:{},jail:{},seen:[],streak:0,lastDaily:null};
+  try{const r=localStorage.getItem(KEY);if(r)d=Object.assign(d,JSON.parse(r));}catch(e){}
+  return d;
+}
+function save(){ try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){} }
+
+/* ---------- LEVEL STRUCTURE ---------- */
+const PER_LEVEL=4;
+function tierWords(t){return WORDS.filter(w=>w.t===t);}
+function tierLevels(t){ // chunk a tier's words into levels of PER_LEVEL
+  const ws=tierWords(t),out=[];
+  for(let i=0;i<ws.length;i+=PER_LEVEL) out.push(ws.slice(i,i+PER_LEVEL));
+  return out;
+}
+const lvKey=(t,i)=>'t'+t+'-'+i;
+function tierStars(t){ // total stars earned in a tier
+  let s=0;tierLevels(t).forEach((_,i)=>{s+=S.stars[lvKey(t,i)]||0;});return s;
+}
+function tierMaxStars(t){return tierLevels(t).length*3;}
+function tierUnlocked(t){ // tier 1 always; others need >=60% stars of previous tier
+  if(t===1)return true;
+  const prev=t-1;return tierStars(prev) >= Math.ceil(tierMaxStars(prev)*0.5);
+}
+function levelUnlocked(t,i){
+  if(!tierUnlocked(t))return false;
+  if(i===0)return true;
+  return (S.stars[lvKey(t,i-1)]||0)>0; // beat previous level
+}
+
+/* ---------- NAVIGATION ---------- */
+function go(id){
+  if(typeof stopSpeak==='function')stopSpeak();   // cut any lingering audio on screen change
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='home')renderHome();
+  if(id==='spire')renderSpire();
+  if(id==='hatch')renderHatch();
+}
+function renderHome(){
+  document.getElementById('coinHome').textContent=S.coins;
+  document.getElementById('streakHome').textContent=S.streak;
+  document.getElementById('dragCntHome').textContent=S.owned.length;
+  document.getElementById('dragTotHome').textContent=DRAGONS.length;
+  const jc=Object.keys(S.jail||{}).length;
+  const hj=document.getElementById('homeJailSub'); if(hj)hj.textContent= jc>0?('มี '+jc+' คำรอปลดปล่อย'):'ปลดปล่อยคำที่ยังไม่คล่อง';
+  renderDaily();
+}
+
+/* ---------- DAILY BONUS ---------- */
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function renderDaily(){
+  const box=document.getElementById('daily'),btn=document.getElementById('dailyBtn'),desc=document.getElementById('dailyDesc');
+  if(S.lastDaily===todayStr()){
+    box.classList.add('claimed');btn.disabled=true;btn.textContent='รับแล้ว';
+    desc.textContent='รับของขวัญวันนี้แล้ว เจอกันใหม่พรุ่งนี้!';
+  }else{
+    box.classList.remove('claimed');btn.disabled=false;btn.textContent='รับเลย';
+    desc.textContent='เข้ามาเล่นทุกวันรับเหรียญฟรี + ต่อสตรีค';
+  }
+}
+document.getElementById('dailyBtn').onclick=function(){
+  if(S.lastDaily===todayStr())return;
+  // streak: consecutive day?
+  const y=new Date(Date.now()-864e5).toISOString().slice(0,10);
+  S.streak = (S.lastDaily===y)? S.streak+1 : 1;
+  S.lastDaily=todayStr();
+  const bonus=10+Math.min(S.streak,7)*2;
+  S.coins+=bonus;save();renderHome();
+  burst('🪙');toast('รับ '+bonus+' เหรียญ! สตรีค '+S.streak+' วัน 🔥');
+};
+
+/* ---------- SPIRE ---------- */
+function renderSpire(){
+  const el=document.getElementById('floors');el.innerHTML='';
+  [...LEVELS].reverse().forEach(L=>{
+    const lvStars=L.floors.reduce((s,fn)=>s+tierStars(fn),0);
+    const lvMax=L.floors.reduce((s,fn)=>s+tierMaxStars(fn),0);
+    const conquered=L.floors.every(fn=>tierConquered(fn));
+    const hdr=document.createElement('div');
+    hdr.className='lvlhdr';
+    hdr.style.background=L.color;
+    hdr.innerHTML=`<span class="lvlbadge">${L.dragon.e} ระดับ ${L.id}</span>
+      <span class="lvlname">${L.name}</span>
+      <span class="lvlprog">${lvStars}/${lvMax}★ ${conquered?L.dragon.e:''}</span>`;
+    el.appendChild(hdr);
+    const row=document.createElement('div');row.className='florow';
+    L.floors.forEach(fn=>{
+      const T=TIERS[fn-1],unlocked=tierUnlocked(fn),got=tierStars(fn),max=tierMaxStars(fn);
+      const f=document.createElement('div');
+      f.className='flonode'+(unlocked?'':' locked');
+      f.style.borderColor=unlocked?L.color:'#eadcbf';
+      f.innerHTML=`<div class="flname">${unlocked?T.name:'🔒 '+T.name}</div>
+        <div class="fltag">${T.tag}</div>
+        <div class="flstars">${'★'.repeat(Math.round(got/Math.max(1,max/3)))} ${got}/${max}</div>`;
+      if(unlocked)f.onclick=()=>{curTier=fn;renderLevels();go('levels');};
+      row.appendChild(f);
+    });
+    el.appendChild(row);
+  });
+}
+
+/* ---------- LEVELS ---------- */
+let curTier=1;
+function renderLevels(){
+  const T=TIERS[curTier-1];
+  document.getElementById('lvTitle').textContent=T.drag+' '+T.name;
+  document.getElementById('lvSub').textContent=T.tag+' · เลือกด่าน';
+  const grid=document.getElementById('lvGrid');grid.innerHTML='';
+  const lvls=tierLevels(curTier);
+  lvls.forEach((words,i)=>{
+    const unlocked=levelUnlocked(curTier,i),stars=S.stars[lvKey(curTier,i)]||0,boss=(i===lvls.length-1);
+    const n=document.createElement('div');
+    n.className='lvnode'+(stars>0?' done':'')+(unlocked?'':' locked')+(boss?' boss':'');
+    n.innerHTML=(boss?'<div class="crown">👑</div>':'')+(unlocked?(i+1):'🔒')+
+      `<div class="ls">${stars>0?'★'.repeat(stars):''}</div>`;
+    if(unlocked)n.onclick=()=>startLevel(curTier,i);
+    grid.appendChild(n);
+  });
+}
+
+/* ---------- QUIZ ENGINE ---------- */
+let Q={tier:1,idx:0,words:[],pos:0,correct:0,coins:0};
+function startLevel(t,i){
+  const words=tierLevels(t)[i].slice();
+  shuffle(words);
+  Q={tier:t,idx:i,words,pos:0,correct:0,coins:0,mode:'floor',freed:0};
+  // mark seen for practice
+  words.forEach(w=>{if(!S.seen.includes(w.id))S.seen.push(w.id);});
+  save();
+  go('quiz');renderQ();
+}
+const SLOW_MS={emoji:5000,spell:6000,read:6000,listen:7000};
+function helpSpell(word){ if(typeof Q==='object')Q.usedHelp=true; spell(word); }
+function renderQ(){
+  if(typeof stopSpeak==='function')stopSpeak();   // cut the previous answer's spelling before showing the next question
+  const dots=document.getElementById('qdots');dots.innerHTML='';
+  Q.words.forEach((_,k)=>{const i=document.createElement('i');
+    i.className=k<Q.pos?'on':(k===Q.pos?'cur':'');dots.appendChild(i);});
+  document.getElementById('qcoin').textContent=Q.coins;
+  document.getElementById('qmascot').textContent=TIERS[Q.tier-1].drag;
+  const w=Q.words[Q.pos];
+  const qtype=questionType(w);
+  Q.qtype=qtype; Q.usedHelp=false;
+  const prompt=document.getElementById('qprompt'),body=document.getElementById('qbody'),opts=document.getElementById('opts');
+  opts.className='opts';body.className='';
+  if(qtype==='emoji'){
+    prompt.textContent='คำนี้คือรูปไหน?';
+    body.innerHTML=`<div class="qword">${w.w}</div>
+      <button class="saybtn" onclick="helpSpell('${w.w}')">🔊 ฟัง & สะกด</button>`;
+    opts.classList.add('emoji');
+    const choices=emojiChoices(w);
+    opts.innerHTML='';
+    choices.forEach(c=>{const b=document.createElement('button');
+      b.className='opt emo';b.textContent=c.e;
+      b.onclick=()=>answer(b,c.w===w.w);opts.appendChild(b);});
+  } else if(qtype==='read'){
+    prompt.textContent='อ่านว่าอะไร?';
+    body.innerHTML=`<div class="qword read">${w.w}</div>
+      <button class="saybtn" onclick="helpSpell('${w.w}')">🔊 ฟัง & สะกด</button>`;
+    const choices=shuffle(w.reads.slice());
+    opts.innerHTML='';
+    choices.forEach(r=>{const b=document.createElement('button');
+      b.className='opt';b.textContent=r;
+      b.onclick=()=>answer(b,r===w.reads[0]);opts.appendChild(b);});
+    } else if(qtype==='spell'){
+    prompt.textContent='สะกดว่าอะไร? เลือกคำที่ถูก';
+    body.innerHTML=`<div class="qword" style="font-size:24px;color:var(--ember);font-family:Mali">${w.sp.join(' - ')}</div>
+      <button class="saybtn" onclick="helpSpell('${w.w}')">🔊 ฟัง & สะกด</button>`;
+    const choices=wordChoices(w);
+    opts.innerHTML='';
+    choices.forEach(c=>{const b=document.createElement('button');
+      b.className='opt';b.textContent=c.w;
+      b.onclick=()=>answer(b,c.w===w.w);opts.appendChild(b);});
+  } else { // listen
+    prompt.textContent='กดฟังเสียง แล้วเลือกคำที่ได้ยิน';
+    body.innerHTML=`<button class="listen-big" onclick="say('${w.w}')">🔊</button>
+      <div style="color:var(--muted);font-size:13px;margin-top:4px">แตะลำโพงเพื่อฟังซ้ำ</div>`;
+    const choices=wordChoices(w);
+    opts.innerHTML='';
+    choices.forEach(c=>{const b=document.createElement('button');
+      b.className='opt';b.textContent=c.w;
+      b.onclick=()=>answer(b,c.w===w.w);opts.appendChild(b);});
+    setTimeout(()=>say(w.w),250);
+  }
+  Q.qReady=Date.now();
+}
+function questionType(w){
+  const canListen = ttsReady && thVoice;
+  if(!w.e) return canListen ? 'listen' : 'spell';   // ไม่มีรูป → ฟังเสียง (หรือสะกดข้อความถ้าไม่มี TTS)
+  if(canListen && Math.random()<0.5) return 'listen';
+  return 'emoji';
+}
+function emojiChoices(w){
+  const pool=WORDS.filter(x=>x.e && x.id!==w.id);
+  shuffle(pool);
+  const arr=[{e:w.e,w:w.w}];
+  for(const p of pool){if(arr.length>=4)break;if(!arr.some(a=>a.e===p.e))arr.push({e:p.e,w:p.w});}
+  return shuffle(arr);
+}
+function wordChoices(w){
+  let pool=WORDS.filter(x=>x.t===w.t && x.id!==w.id);
+  if(pool.length<3)pool=pool.concat(WORDS.filter(x=>x.id!==w.id && !pool.includes(x)));
+  shuffle(pool);
+  const arr=[{w:w.w}];
+  for(const p of pool){if(arr.length>=4)break;if(!arr.some(a=>a.w===p.w))arr.push({w:p.w});}
+  return shuffle(arr);
+}
+function answer(btn,ok){
+  const all=document.querySelectorAll('#opts .opt');
+  all.forEach(b=>b.disabled=true);
+  const w=Q.words[Q.pos];
+  // ---- วัดความคล่อง (เงียบ ๆ เบื้องหลัง) → ขัง/ปล่อยคำ ----
+  const elapsed=Date.now()-(Q.qReady||Date.now());
+  const fluent = ok && elapsed<=(SLOW_MS[Q.qtype]||6000) && !Q.usedHelp;
+  const _id=w.id; let jailMsg='';
+  if(fluent){
+    if(S.jail[_id]!=null){ S.jail[_id]--;
+      if(S.jail[_id]<=0){ delete S.jail[_id]; Q.freed=(Q.freed||0)+1; jailMsg='✨ ปล่อยออกมาแล้ว!'; }
+      else jailMsg='🔓 ใกล้ปล่อยแล้ว!'; }
+  } else { S.jail[_id]=1; }
+  if(ok){
+    btn.classList.add('ok');Q.correct++;Q.coins+=3;
+    document.getElementById('qcoin').textContent=Q.coins;
+    burstAt(btn,'🪙');
+  }else{
+    btn.classList.add('no');
+    // reveal correct
+    all.forEach(b=>{
+      const isRightEmoji=b.classList.contains('emo')&&b.textContent===w.e;
+      const isRightText=!b.classList.contains('emo')&&(b.textContent===w.w||(w.reads&&b.textContent===w.reads[0]));
+      if(isRightEmoji||isRightText)b.classList.add('ok');
+    });
+  }
+  if(fluent && elapsed < (SLOW_MS[Q.qtype]||6000)*0.5) burstAt(btn,'⚡');
+  if(jailMsg && Q.mode==='jail') toast(jailMsg);
+  // ไปข้อต่อไป "หลังเสียงสะกดเล่นจบ" เท่านั้น — ไม่ตัดเสียงกลางคันอีก
+  let advanced=false;
+  const proceed=()=>{
+    if(advanced)return; advanced=true;
+    if(!document.getElementById('quiz').classList.contains('active'))return; // ออกจากด่านไปแล้ว ไม่ต้องไปต่อ
+    Q.pos++;
+    if(Q.pos>=Q.words.length)finishLevel();
+    else renderQ();
+  };
+  spell(w.w, ()=>setTimeout(proceed, ok?250:550));   // เสียงจบ → หน่วงสั้น ๆ ค่อยเปลี่ยนข้อ
+  setTimeout(proceed, 6000);                           // safety net เผื่อเสียงค้าง/ไม่มี TTS
+}
+function tierConquered(t){const lv=tierLevels(t);return (S.stars[lvKey(t,lv.length-1)]||0)>0;}
+function allTiersConquered(){return TIERS.every(T=>tierConquered(T.n));}
+function finishLevel(){
+  if(Q.mode==='jail') return finishJail();
+  const total=Q.words.length;
+  const stars = Q.correct===total?3 : Q.correct>=Math.ceil(total*0.7)?2 : Q.correct>=Math.ceil(total*0.5)?1:0;
+  const k=lvKey(Q.tier,Q.idx);
+  const prev=S.stars[k]||0;
+  const firstClear = prev===0 && stars>0;
+  if(stars>prev)S.stars[k]=stars;
+  let coins=Q.coins + (firstClear?10:0) + stars*2;
+  S.coins+=coins;save();
+  // ----- พิชิตชั้น? (ผ่านด่านบอสของชั้นด้วยดาว>0) → ปลดมังกรเผ่า -----
+  const isBoss = (Q.idx === tierLevels(Q.tier).length-1);
+  let revealDrg=null, revealKing=false;
+  if(isBoss && stars>0){
+    const L = LEVELS.find(L=>L.floors.includes(Q.tier));
+    if(L && Q.tier===Math.max.apply(null,L.floors)){   // จบ floor สุดท้ายของระดับ → มังกรเผ่า
+      const newTribe = awardTribeDragon(L.dragon.id);
+      let newKing=false;
+      if(allTiersConquered()) newKing = awardTribeDragon(THAI_KING.id);
+      if(newKing){ revealDrg=THAI_KING; revealKing=true; }
+      else if(newTribe){ revealDrg=L.dragon; }
+    }
+  }
+  // ----- result screen -----
+  go('result');
+  document.getElementById('resEmoji').textContent = stars===3?'🏆':stars>0?'🎉':'💪';
+  document.getElementById('resTitle').textContent = stars>0?'ผ่านด่าน!':'เกือบแล้ว ลองอีกที!';
+  document.getElementById('resCheer').textContent = stars>0?cheerText(stars):'';
+  document.getElementById('resGlow').style.display = stars===3?'block':'none';
+  const sr=document.getElementById('resStars');sr.innerHTML='';
+  for(let i=0;i<3;i++){const s=document.createElement('span');s.className='s'+(i<stars?' lit':'');s.textContent='★';
+    s.style.animationDelay=(0.25+i*0.22)+'s';sr.appendChild(s);}
+  document.getElementById('resCoins').textContent=coins;
+  document.getElementById('resBonus').innerHTML = firstClear?'<span style="color:var(--jade-d);font-family:Mitr;font-weight:600">+ โบนัสผ่านครั้งแรก 10 🪙</span>':'';
+  // next button
+  const lvls=tierLevels(Q.tier);
+  const nextBtn=document.getElementById('resNext');
+  if(Q.idx+1<lvls.length){
+    nextBtn.style.display='';nextBtn.textContent='ด่านต่อไป ›';
+    nextBtn.onclick=()=>{ if(levelUnlocked(Q.tier,Q.idx+1))startLevel(Q.tier,Q.idx+1); else {renderLevels();go('levels');} };
+  } else {
+    nextBtn.textContent='เยี่ยม! 🐉';nextBtn.onclick=()=>{renderSpire();go('spire');};
+  }
+  // ----- celebration -----
+  if(stars===3){ setTimeout(()=>confetti(80),350); }
+  else if(stars>0){ setTimeout(()=>confetti(40),350); }
+  // โมเมนต์ใหญ่: ได้มังกรเผ่า (โผล่หลังเห็นดาวสักครู่)
+  if(revealDrg){ setTimeout(()=>tribeReveal(revealDrg,revealKing), 1200); }
+}
+function quitQuiz(){ if(confirm('ออกจากด่านนี้? ความคืบหน้าในด่านจะไม่ถูกบันทึก'))go('levels'),renderLevels(); }
+
+/* ---------- HATCH (gacha) ---------- */
+function renderHatch(){
+  document.getElementById('hatchBal').textContent='🪙 เหรียญของเรา: '+S.coins;
+  document.getElementById('hatchCost').textContent=HATCH_COST;
+  document.getElementById('hatchBtn').disabled = S.coins<HATCH_COST;
+}
+let hatching=false;
+function doHatch(){
+  if(hatching)return;
+  if(S.coins<HATCH_COST){toast('เหรียญไม่พอ — ไปเล่นด่านเก็บเหรียญก่อนนะ');return;}
+  hatching=true;
+  S.coins-=HATCH_COST;save();renderHatch();
+  const egg=document.getElementById('egg');
+  egg.classList.add('shake');
+  setTimeout(()=>{
+    egg.classList.remove('shake');
+    const drg=rollDragon();
+    const isNew=!S.owned.includes(drg.id);
+    if(isNew)S.owned.push(drg.id);
+    else {S.coins+=5;save();} // duplicate → small refund
+    save();renderHatch();renderHome();
+    showReveal(drg,isNew);
+    hatching=false;
+  },1600);
+}
+function rollDragon(){
+  const roll=Math.random()*100;let acc=0,rar='common';
+  // weighted pick by rarity (legend rarest first)
+  const order=[['legend',RAR.legend.w],['epic',RAR.epic.w],['rare',RAR.rare.w],['common',RAR.common.w]];
+  for(const [k,wgt] of order){acc+=wgt;if(roll<=acc){rar=k;break;}}
+  const pool=DRAGONS.filter(d=>d.r===rar);
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+function showReveal(d,isNew){
+  const rev=document.getElementById('reveal');
+  const R=RAR[d.r];
+  rev.innerHTML=`<div class="dcard ${R.cls}">
+      <div class="dem">${d.e}</div>
+      <div class="dn">${d.n}</div>
+      <div class="dr">${'★'.repeat(d.r==='legend'?4:d.r==='epic'?3:d.r==='rare'?2:1)} ${R.th}</div>
+      ${isNew?'<div class="dnew">✨ มังกรใหม่!</div>':'<div class="dnew" style="background:#eee;color:#777">มีอยู่แล้ว · +5 🪙</div>'}
+    </div>
+    <button class="btn gold" style="margin-top:18px" onclick="closeReveal()">เยี่ยม!</button>`;
+  rev.classList.add('show');
+  if(d.r==='legend'||d.r==='epic'){for(let i=0;i<14;i++)setTimeout(()=>burst('✨'),i*70);}
+}
+function closeReveal(){document.getElementById('reveal').classList.remove('show');}
+
+/* ---------- DEN (collection) ---------- */
+function renderDen(){
+  document.getElementById('denCnt').textContent=S.owned.length+'/'+DRAGONS.length+' ตัว';
+  const g=document.getElementById('dengrid');g.innerHTML='';
+  DRAGONS.forEach(d=>{
+    const have=S.owned.includes(d.id),R=RAR[d.r];
+    const t=document.createElement('div');
+    t.className='dtile '+(have?('have '+R.cls):'locked');
+    t.innerHTML=`<span class="rar">${have?R.th:'???'}</span>
+      <div class="e">${have?d.e:'🥚'}</div>
+      <div class="nm">${have?d.n:'ยังไม่พบ'}</div>`;
+    if(have)t.onclick=()=>toast(d.n+' · '+R.th+' '+('★'.repeat(d.r==='legend'?4:d.r==='epic'?3:d.r==='rare'?2:1)));
+    g.appendChild(t);
+  });
+}
+
+/* ---------- PRACTICE (Leitner SRS flashcards) ---------- */
+let P={queue:[],pos:0,flipped:false};
+function jailWords(){ return Object.keys(S.jail).map(id=>WORDS.find(w=>w.id===id)).filter(Boolean); }
+function startPractice(){ go('practice'); renderPractice(); }
+function renderPractice(){
+  const jw=jailWords();
+  document.getElementById('pdone').style.display='none';
+  document.getElementById('pintro').style.display='';
+  document.getElementById('jailCount').textContent=jw.length;
+  const btn=document.getElementById('jailStartBtn'), empty=document.getElementById('jailEmpty');
+  if(jw.length===0){ btn.style.display='none'; empty.style.display=''; }
+  else { btn.style.display=''; empty.style.display='none';
+    document.getElementById('jailStartLabel').textContent='🔓 เริ่มช่วยคำ ('+Math.min(10,jw.length)+' คำ)'; }
+}
+function startJail(){
+  let jw=jailWords();
+  if(!jw.length){ renderPractice(); return; }
+  jw.sort((a,b)=>(S.jail[a.id]||0)-(S.jail[b.id]||0)||Math.random()-0.5); // ใกล้ปล่อย (need น้อย) ก่อน
+  const words=jw.slice(0,10); shuffle(words);
+  Q={tier:words[0].t,idx:0,words,pos:0,correct:0,coins:0,mode:'jail',freed:0};
+  go('quiz'); renderQ();
+}
+function finishJail(){
+  S.coins+=Q.coins; save();
+  go('practice');
+  document.getElementById('pintro').style.display='none';
+  document.getElementById('pdone').style.display='';
+  const freed=Q.freed||0, left=Object.keys(S.jail).length;
+  document.getElementById('pdoneEmoji').textContent= freed>0?'🎉':'💪';
+  document.getElementById('pdoneTitle').textContent= freed>0?('ปล่อยได้ '+freed+' คำ!'):'ฝึกครบแล้ว!';
+  document.getElementById('pdoneMsg').textContent= left>0?('ยังมีอีก '+left+' คำในเรือนจำ สู้ ๆ!'):'เรือนจำว่างเปล่า เก่งมากพอดี! 🐉';
+  if(freed>0)setTimeout(()=>confetti(50),300);
+}
+
+/* ---------- TEXT TO SPEECH ---------- */
+let thVoice=null,ttsReady=('speechSynthesis' in window);
+function loadVoices(){
+  if(!ttsReady)return;
+  try{
+    const vs=speechSynthesis.getVoices();
+    const thai = vs.filter(v=> v.lang==='th-TH' || /^th[-_]/i.test(v.lang) || /thai/i.test(v.name));
+    if(!thai.length){ thVoice=null; return; }
+    // เลือกเสียงคุณภาพดีสุด: enhanced/neural/Google ก่อน, เลี่ยง compact (สำเนียงหุ่นยนต์)
+    const score = v => {
+      const n=(v.name||'').toLowerCase(); let s=0;
+      if(/enhanced|premium|neural|natural|network|wavenet/.test(n)) s+=4;
+      if(/google/.test(n)) s+=2;          // Google TTS (Android) เป็นธรรมชาติ
+      if(/siri/.test(n)) s+=2;
+      if(/compact/.test(n)) s-=3;          // เสียงย่อ คุณภาพต่ำ
+      if(v.localService) s+=1;
+      if(v.default) s+=1;
+      return s;
+    };
+    thai.sort((a,b)=>score(b)-score(a));
+    thVoice = thai[0];
+  }catch(e){ttsReady=false;}
+}
+if(ttsReady){loadVoices();speechSynthesis.onvoiceschanged=loadVoices;}
+// strip phinthu (◌ฺ U+0E3A) so the voice reads อักษรนำ syllables smoothly
+function clean(t){return (t||'').replace(/\u0E3A/g,'');}
+function utter(text,rate,onend){
+  const u=new SpeechSynthesisUtterance(clean(text));
+  u.lang='th-TH';u.rate=rate;u.pitch=1.0;
+  if(thVoice)u.voice=thVoice;
+  if(onend){u.onend=onend;u.onerror=onend;}
+  speechSynthesis.speak(u);
+}
+// --- playback control: a token that invalidates any in-flight spelling sequence ---
+let speakGen=0;
+function stopSpeak(){ speakGen++; try{ if(ttsReady)speechSynthesis.cancel(); }catch(e){} }
+// อ่านคำเต็มอย่างเดียว
+const RATE_PIECE=1.08, RATE_FULL=1.14, SPELL_GAP=40;  // เสียงเร็วขึ้น + ช่องว่างระหว่างพยางค์สั้นลง
+function say(text){
+  if(!ttsReady||!text)return;
+  stopSpeak();                       // ยกเลิกเสียง/การสะกดเก่าให้เด็ดขาดก่อน
+  try{utter(text,1.0);}catch(e){}
+}
+// อ่านสะกดทีละส่วน แล้วปิดท้ายด้วยคำเต็ม เช่น แข็ง → ขอ-แอะ-งอ-แข็ง
+function spellSeq(word){
+  const w = (typeof word==='string') ? WORDS.find(x=>x.w===word) : word;
+  const full = w ? w.w : word;
+  let seq;
+  if(w && Array.isArray(w.sp)) seq = w.sp.slice();          // สูตรสะกดที่กำหนดเอง
+  else if(w && w.reads) seq = w.reads[0].split('-');         // อักษรนำ/ร ออ → แยกพยางค์จากคำอ่าน
+  else seq = [];
+  return seq.concat([full]);                                // ปิดท้ายด้วยคำเต็มเสมอ
+}
+function spell(word, onDone){
+  if(!ttsReady){ if(onDone)onDone(); return; }   // ไม่มีเสียง → ไปต่อได้เลย
+  stopSpeak();                       // ตัดของเก่าก่อน แล้วจองรอบใหม่
+  const myGen=speakGen;
+  try{
+    const seq=spellSeq(word);
+    let i=0;
+    const step=()=>{
+      if(myGen!==speakGen) return;   // มีเสียงใหม่เข้ามาแล้ว → รอบนี้ตายทันที ไม่พูดทับ
+      if(i>=seq.length){ if(onDone)onDone(); return; }   // สะกดจบ → แจ้งให้ไปข้อต่อไป
+      const last=(i===seq.length-1);
+      utter(seq[i], last?RATE_FULL:RATE_PIECE, ()=>{
+        if(myGen!==speakGen) return; // เช็คอีกครั้งหลังพูดจบ ก่อนตั้งคิวชิ้นถัดไป
+        i++; setTimeout(step,last?0:SPELL_GAP);
+      });
+    };
+    step();
+  }catch(e){ if(onDone)onDone(); }
+}
+
+/* ---------- FX / TOAST ---------- */
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function burst(ch){
+  const f=document.createElement('div');f.className='fx';f.textContent=ch;
+  f.style.left=(42+Math.random()*16)+'%';f.style.top='46%';
+  document.body.appendChild(f);setTimeout(()=>f.remove(),1000);
+}
+function burstAt(el,ch){
+  const r=el.getBoundingClientRect();
+  const f=document.createElement('div');f.className='fx';f.textContent=ch;
+  f.style.left=(r.left+r.width/2-12)+'px';f.style.top=(r.top-6)+'px';
+  document.body.appendChild(f);setTimeout(()=>f.remove(),1000);
+}
+let toastT;
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+/* ---------- CELEBRATION ---------- */
+const CONFETTI_COLORS=['#e8602c','#f0b32a','#2fa37a','#3a86c8','#7a47b0','#ffd98a','#fff'];
+function confetti(n=70){
+  for(let i=0;i<n;i++){
+    const c=document.createElement('div');c.className='confetti-pc';
+    c.style.left=Math.random()*100+'vw';
+    c.style.background=CONFETTI_COLORS[i%CONFETTI_COLORS.length];
+    const dur=2.2+Math.random()*1.8, delay=Math.random()*0.5;
+    c.style.animation=`fall ${dur}s linear ${delay}s forwards`;
+    if(Math.random()<.5)c.style.width='8px',c.style.height='8px',c.style.borderRadius='50%';
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),(dur+delay)*1000+100);
+  }
+}
+const CHEERS_3=['สุดยอดไปเลย! 🎉','เก่งมากพอดี! 🌟','เพอร์เฟกต์! ⭐','เจ๋งสุด ๆ! 🐉','ดาวครบสามดวง! 🏆'];
+const CHEERS_OK=['เยี่ยมมาก! 👏','ทำได้ดีมาก! 💪','ผ่านแล้ว เก่งจัง! ✨','สู้ ๆ ไปต่อกันเลย! 🔥'];
+function cheerText(stars){
+  const pool = stars===3?CHEERS_3:CHEERS_OK;
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+/* ---- มังกรเผ่าอ่านไทย: พิชิตชั้น N → ปลดมังกรเผ่าตัว N (เขียนลงคลังกลาง World) ---- */
+const THAI_TRIBE = [
+  {id:'thai_start', e:'🐣', name:'มังกรเริ่มอ่าน'},
+  {id:'thai_consonant', e:'🐲', name:'มังกรตัวสะกด'},
+  {id:'thai_vowel', e:'🐉', name:'มังกรสระ'},
+  {id:'thai_lead', e:'🐊', name:'มังกรอักษรนำ'},
+  {id:'thai_tone', e:'🎶', name:'มังกรวรรณยุกต์'},
+];
+const THAI_KING={id:'thai_king', e:'👑', name:'พญามังกรไทย'};
+const WORLD_KEY='worldofdragons_v1';
+function awardTribeDragon(dragonId){
+  // เขียนลง localStorage key กลางที่ World of Dragons อ่าน (แชร์โดเมนเดียวกัน)
+  try{
+    const W=JSON.parse(localStorage.getItem(WORLD_KEY)||'{}');
+    W.tribes=W.tribes||{}; W.tribes.thai=W.tribes.thai||[];
+    if(!W.tribes.thai.includes(dragonId)){
+      W.tribes.thai.push(dragonId); W.updated=Date.now();
+      localStorage.setItem(WORLD_KEY, JSON.stringify(W));
+      return true; // ตัวใหม่
+    }
+  }catch(e){}
+  return false;
+}
+function tribeReveal(drg, isKing){
+  const rev=document.getElementById('tribeRev');
+  rev.classList.toggle('king',!!isKing);
+  document.getElementById('trDrag').textContent=drg.e;
+  document.getElementById('trName').textContent=drg.name;
+  document.querySelector('#tribeRev .label').textContent = isKing?'🏰 พิชิตหอคอยทั้งหมด!':'⚔️ พิชิตชั้นสำเร็จ!';
+  document.getElementById('trFrom').textContent = isKing?'พอดีคือเจ้าแห่งเผ่าอ่านไทยแล้ว!':'เข้าร่วมเผ่าอ่านไทยแล้ว';
+  rev.classList.add('show');
+  confetti(isKing?140:90);
+  if(isKing)setTimeout(()=>confetti(100),600);
+}
+function closeTribeRev(){document.getElementById('tribeRev').classList.remove('show');}
+
+/* ---------- BOOT ---------- */
+renderHome();
+
+</script>
 </body>
 </html>
