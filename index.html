@@ -1,459 +1,1341 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#0a0606" />
-  <title>Dragon Math · Pordee</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Uncial+Antiqua&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=phase6" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Dragon Spelling</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#15123a;
+    --night2:#1d1850;
+    --ink:#0e0b26;
+    --parch:#efe3c4;
+    --parch2:#e2d2a8;
+    --gold:#d9b25b;
+    --gold-bright:#f4d985;
+    --amethyst:#9a7be0;
+    --teal:#3ba89a;
+    --rose:#d65f7e;
+    --leaf:#5fb87a;
+    --line:#4a3f7a;
+    --shadow:rgba(8,6,30,.5);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;height:100%;}
+  body{
+    font-family:'Nunito',sans-serif;color:var(--parch);
+    background:
+      radial-gradient(circle at 15% 8%, #2a2266 0, transparent 42%),
+      radial-gradient(circle at 85% 88%, #2b1d57 0, transparent 46%),
+      radial-gradient(circle at 50% 50%, #1a1545 0, var(--ink) 90%);
+    background-attachment:fixed; min-height:100%;
+    display:flex; flex-direction:column; align-items:center; overflow-x:hidden;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.06;z-index:0;
+    background-image:radial-gradient(#fff .5px,transparent .6px);background-size:7px 7px;}
+  .wrap{width:100%;max-width:480px;padding:16px 16px 48px;position:relative;z-index:1;}
+
+  /* Header / topbar */
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px;}
+  .brand{display:flex;flex-direction:column;line-height:.95;}
+  .brand .t1{font-family:'Grenze Gotisch';font-weight:700;font-size:30px;color:var(--gold-bright);
+    text-shadow:0 2px 0 #6b4f17, 0 0 18px rgba(244,217,133,.35);letter-spacing:.5px;}
+  .brand .t2{font-family:'Cormorant Garamond';font-style:italic;font-size:14px;color:var(--amethyst);letter-spacing:1px;}
+  .ink-badge{display:flex;align-items:center;gap:6px;background:rgba(14,11,38,.7);
+    border:1px solid var(--gold);border-radius:30px;padding:7px 14px;font-weight:800;font-size:16px;color:var(--gold-bright);
+    box-shadow:inset 0 0 14px rgba(154,123,224,.2);}
+
+  .panel{background:linear-gradient(160deg,rgba(239,227,196,.07),rgba(239,227,196,.03));
+    border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:12px;
+    box-shadow:0 8px 22px var(--shadow), inset 0 1px 0 rgba(255,255,255,.05);}
+
+  .hero{text-align:center;margin:2px 0 14px;}
+  .hero-seal{position:relative;width:172px;height:172px;margin:0 auto;}
+  .hero-seal svg{width:100%;height:100%;filter:drop-shadow(0 0 16px rgba(217,178,91,.35));}
+  .seal-spin{transform-origin:100px 100px;animation:seal 60s linear infinite;}
+  @keyframes seal{to{transform:rotate(360deg);}}
+  .hero-dragon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-size:74px;animation:float 4.2s ease-in-out infinite;
+    filter:drop-shadow(0 4px 10px rgba(8,6,30,.6)) drop-shadow(0 0 14px rgba(244,217,133,.4));}
+  @keyframes float{0%,100%{transform:translateY(0) rotate(-3deg);}50%{transform:translateY(-7px) rotate(3deg);}}
+  .hero-spark{position:absolute;color:var(--gold-bright);font-size:14px;opacity:0;animation:twinkle 3.4s ease-in-out infinite;}
+  .hero-spark.s1{top:18%;left:20%;animation-delay:.2s;} .hero-spark.s2{top:24%;right:18%;font-size:11px;animation-delay:1.3s;} .hero-spark.s3{bottom:22%;left:30%;font-size:12px;animation-delay:2.2s;}
+  @keyframes twinkle{0%,100%{opacity:0;transform:scale(.6);}50%{opacity:.9;transform:scale(1.1);}}
+  .hero-tag{font-family:'Cormorant Garamond';font-style:italic;font-size:15px;color:var(--amethyst);margin-top:6px;letter-spacing:1.5px;}
+  .stat-row{display:flex;gap:10px;margin-bottom:14px;}
+  .mini{flex:1;text-align:center;background:rgba(14,11,38,.55);border:1px solid var(--line);border-radius:14px;padding:9px 4px;}
+  .mini b{display:block;font-family:'Cormorant Garamond';font-weight:600;font-size:22px;color:var(--gold-bright);}
+  .mini span{font-size:11px;color:var(--amethyst);letter-spacing:.4px;}
+
+  .section-label{font-family:'Cormorant Garamond';font-weight:600;font-size:18px;color:var(--parch2);
+    letter-spacing:.6px;margin:6px 2px 8px;display:flex;align-items:center;gap:8px;}
+  .section-label::before{content:"";flex:none;width:18px;height:1px;background:linear-gradient(90deg,var(--gold),transparent);}
+
+  /* Menu cards */
+  .menu{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+  .mcard{cursor:pointer;text-align:left;color:var(--parch);
+    background:linear-gradient(160deg,#241c54,#1a1442);border:1px solid var(--line);border-radius:16px;padding:14px;
+    box-shadow:0 4px 0 #0c0926, inset 0 0 20px rgba(154,123,224,.08);transition:transform .12s,box-shadow .12s,border-color .12s;}
+  .mcard:active{transform:translateY(3px);box-shadow:0 1px 0 #0c0926;}
+  .mcard .ic{font-size:26px;display:block;margin-bottom:4px;filter:drop-shadow(0 0 8px rgba(244,217,133,.3));}
+  .mcard .ti{font-family:'Cormorant Garamond';font-weight:600;font-size:18px;color:var(--gold-bright);}
+  .mcard .de{font-size:12px;color:var(--amethyst);}
+  .mcard.lair{grid-column:span 2;border-color:var(--rose);box-shadow:0 4px 0 #0c0926,0 0 16px rgba(214,95,126,.25);}
+  .mcard.lair .ti{color:#f0a0b4;}
+  .mcard.wide{grid-column:span 2;}
+
+  .daily-btn{width:100%;border:none;cursor:pointer;font-family:'Cormorant Garamond';font-weight:600;font-size:16px;
+    color:#2a1d05;background:linear-gradient(180deg,var(--gold-bright),var(--gold));border-radius:14px;padding:11px;
+    box-shadow:0 4px 0 #8a6a1f;letter-spacing:.5px;margin-bottom:12px;}
+  .daily-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #8a6a1f;}
+  .daily-btn.done{background:rgba(14,11,38,.5);color:var(--amethyst);box-shadow:0 4px 0 #0c0926;border:1px solid var(--line);cursor:default;}
+
+  /* Screens */
+  .screen{display:none;} .screen.active{display:block;animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .scr-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .back-btn{border:none;cursor:pointer;background:rgba(14,11,38,.6);color:var(--gold-bright);border:1px solid var(--line);
+    font-family:'Cormorant Garamond';font-size:14px;padding:7px 14px;border-radius:20px;}
+  .scr-head h2{font-family:'Grenze Gotisch';font-weight:600;font-size:24px;color:var(--gold-bright);margin:0;flex:1;}
+
+  /* Run */
+  .prompt{text-align:center;font-family:'Cormorant Garamond';font-style:italic;font-size:17px;color:var(--amethyst);margin-bottom:6px;}
+  .runbar{display:flex;justify-content:space-between;font-size:13px;color:var(--amethyst);margin-bottom:8px;font-weight:700;}
+  .stage{background:linear-gradient(160deg,rgba(239,227,196,.06),rgba(20,16,60,.3));
+    border:1px solid var(--line);border-radius:18px;padding:18px 16px;text-align:center;box-shadow:0 8px 22px var(--shadow);margin-bottom:12px;}
+  .audio-btn{border:none;cursor:pointer;background:linear-gradient(180deg,#3a2f7a,#2a2160);color:var(--gold-bright);
+    border:1px solid var(--gold);border-radius:24px;font-family:'Cormorant Garamond';font-weight:600;font-size:16px;padding:9px 22px;
+    box-shadow:0 3px 0 #15103a;}
+  .audio-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #15103a;}
+  .peek{border:none;cursor:pointer;background:transparent;color:var(--amethyst);border:1px dashed var(--line);
+    border-radius:20px;font-size:13px;padding:6px 14px;margin-left:8px;font-family:'Nunito';font-weight:700;}
+  .vstat{min-height:15px;font-size:11px;color:var(--rose);margin-top:6px;}
+
+  .word-display{font-family:'Nunito';font-weight:800;font-size:clamp(30px,9vw,44px);letter-spacing:3px;
+    margin:14px 0;min-height:52px;color:var(--gold-bright);text-shadow:0 0 14px rgba(244,217,133,.3);}
+  .word-display .miss{color:var(--rose);text-decoration:underline;}
+  .word-display.peeking{color:var(--parch);}
+
+  /* vowel frame */
+  .frame{font-family:'Nunito';font-weight:800;font-size:clamp(34px,11vw,52px);letter-spacing:2px;
+    display:flex;align-items:center;justify-content:center;flex-wrap:wrap;margin:8px 0;color:var(--parch);}
+  .blank{display:inline-block;min-width:42px;border-bottom:5px solid var(--gold);margin:0 5px;color:var(--gold);}
+  .blank.filled{color:var(--leaf);border-color:var(--leaf);} .blank.bad{color:var(--rose);border-color:var(--rose);}
+  .emo{font-size:38px;}
+
+  .input-row{display:flex;gap:8px;margin-bottom:8px;}
+  .kbd{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;}
+  .kbd-row{display:flex;gap:5px;justify-content:center;}
+  .kbd .k{flex:1;min-width:0;border:none;cursor:pointer;font-family:'Nunito';font-weight:800;font-size:18px;
+    color:var(--parch);background:linear-gradient(180deg,#2a2160,#1d1850);border:1px solid var(--line);border-radius:9px;
+    padding:11px 0;box-shadow:0 3px 0 #0c0926;text-transform:lowercase;}
+  .kbd .k:active{transform:translateY(2px);box-shadow:0 1px 0 #0c0926;background:linear-gradient(180deg,#3a2f7a,#241a55);}
+  .kbd .k.wide{flex:1.6;}
+  .kbd .k.del{color:var(--rose);} .kbd .k.enter{color:#2a1d05;background:linear-gradient(180deg,var(--gold-bright),var(--gold));border-color:var(--gold);box-shadow:0 3px 0 #8a6a1f;}
+  .spell-input{flex:1;background:rgba(14,11,38,.6);border:2px solid var(--line);border-radius:14px;
+    font-family:'Nunito';font-weight:800;font-size:24px;letter-spacing:3px;text-align:center;color:var(--gold-bright);
+    padding:13px;outline:none;text-transform:lowercase;}
+  .spell-input:focus{border-color:var(--gold);}
+  .go{border:none;cursor:pointer;background:linear-gradient(180deg,var(--gold-bright),var(--gold));color:#2a1d05;
+    font-family:'Cormorant Garamond';font-weight:600;font-size:17px;padding:0 22px;border-radius:14px;box-shadow:0 3px 0 #8a6a1f;}
+  .go:active{transform:translateY(2px);box-shadow:0 1px 0 #8a6a1f;}
+
+  .opts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:8px;}
+  .opt{border:none;cursor:pointer;background:rgba(36,28,84,.8);border:1px solid var(--line);border-radius:14px;
+    font-family:'Nunito';font-weight:800;font-size:22px;color:var(--parch);padding:14px 0;box-shadow:0 3px 0 #0c0926;}
+  .opt:active{transform:translateY(2px);box-shadow:0 1px 0 #0c0926;}
+  .opt.ok{border-color:var(--leaf);color:var(--leaf);box-shadow:0 3px 0 #1f5a33;}
+  .opt.no{border-color:var(--rose);color:var(--rose);box-shadow:0 3px 0 #7a2d40;}
+
+  .toggle{display:flex;background:rgba(14,11,38,.5);border-radius:12px;padding:4px;width:220px;margin:0 auto 10px;}
+  .toggle button{flex:1;border:none;background:transparent;cursor:pointer;font-family:'Nunito';font-weight:700;font-size:13px;
+    color:var(--amethyst);padding:7px;border-radius:9px;}
+  .toggle button.on{background:rgba(217,178,91,.18);color:var(--gold-bright);}
+
+  .feedback{min-height:24px;text-align:center;font-family:'Cormorant Garamond';font-weight:600;font-size:17px;margin-top:4px;}
+  .feedback.ok{color:var(--leaf);} .feedback.no{color:var(--rose);}
+
+  /* chapter cards */
+  .chapter{display:flex;align-items:center;gap:12px;cursor:pointer;text-align:left;width:100%;color:var(--parch);
+    background:linear-gradient(160deg,#241c54,#1a1442);border:1px solid var(--line);border-radius:15px;padding:13px 15px;margin-bottom:10px;
+    box-shadow:0 4px 0 #0c0926;}
+  .chapter:active{transform:translateY(3px);box-shadow:0 1px 0 #0c0926;}
+  .chapter .cn{width:34px;height:34px;flex:none;border-radius:50%;background:rgba(217,178,91,.15);border:1px solid var(--gold);
+    display:flex;align-items:center;justify-content:center;font-size:18px;}
+  .chapter .cb{flex:1;}
+  .chapter .ct{font-family:'Cormorant Garamond';font-weight:600;font-size:17px;color:var(--gold-bright);}
+  .chapter .cd{font-size:12px;color:var(--amethyst);}
+
+  /* hatch / codex */
+  .hatch-stage{text-align:center;padding:18px;}
+  .scroll-egg{font-size:84px;filter:drop-shadow(0 6px 16px rgba(154,123,224,.5));animation:bob 2.4s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-10px) rotate(3deg)}}
+  .hatch-cost{font-family:'Cormorant Garamond';font-size:16px;color:var(--amethyst);margin:6px 0 12px;}
+  .reveal{font-size:80px;animation:pop .6s cubic-bezier(.2,1.4,.4,1);}
+  @keyframes pop{0%{transform:scale(0) rotate(-30deg);opacity:0}100%{transform:scale(1);opacity:1}}
+  .reveal-name{font-family:'Grenze Gotisch';font-weight:600;font-size:26px;margin-top:6px;}
+  .reveal-blurb{font-family:'Cormorant Garamond';font-style:italic;font-size:15px;color:var(--amethyst);margin-top:2px;}
+
+  .codex-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .dragon{background:rgba(14,11,38,.5);border:1px solid var(--line);border-radius:14px;padding:12px 6px;text-align:center;}
+  .dragon .dm{font-size:38px;}
+  .dragon .dn{font-family:'Cormorant Garamond';font-weight:600;font-size:13px;margin-top:3px;line-height:1.1;}
+  .dragon .dr{font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+  .dragon.locked{opacity:.4;}
+  .dragon.locked .dm{filter:grayscale(1) brightness(.5);}
+  .dragon.locked .dn::after{content:" ???";}
+  .r-common{color:#b7c0cf;} .r-rare{color:#5fa8e0;} .r-epic{color:var(--amethyst);} .r-legendary{color:var(--gold-bright);} .r-mythic{color:#f08aa8;}
+  .dragon.r-rare{border-color:#3a6a9a;} .dragon.r-epic{border-color:#6a4faa;}
+  .dragon.r-legendary{border-color:var(--gold);box-shadow:0 0 12px rgba(217,178,91,.3);}
+  .dragon.r-mythic{border-color:#c060a0;box-shadow:0 0 14px rgba(240,138,168,.35);}
+
+  /* results */
+  .res{text-align:center;}
+  .res .big{font-size:54px;}
+  .res h2{font-family:'Grenze Gotisch';font-weight:600;color:var(--gold-bright);margin:4px 0;}
+  .res-grid{display:flex;gap:9px;margin:12px 0;}
+  .res-grid .c{flex:1;background:rgba(14,11,38,.5);border:1px solid var(--line);border-radius:14px;padding:11px 4px;}
+  .res-grid .c b{display:block;font-family:'Cormorant Garamond';font-weight:600;font-size:22px;color:var(--gold-bright);}
+  .res-grid .c span{font-size:11px;color:var(--amethyst);}
+  .cta{border:none;cursor:pointer;font-family:'Cormorant Garamond';font-weight:600;font-size:16px;padding:12px 24px;border-radius:22px;margin:4px;
+    color:#2a1d05;background:linear-gradient(180deg,var(--gold-bright),var(--gold));box-shadow:0 4px 0 #8a6a1f;}
+  .cta.ghost{background:rgba(14,11,38,.5);color:var(--gold-bright);border:1px solid var(--line);box-shadow:0 4px 0 #0c0926;}
+  .cta:active{transform:translateY(3px);box-shadow:0 1px 0 currentColor;}
+
+  .miss-list{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:8px 0;}
+  .miss-chip{font-family:'Nunito';font-weight:800;font-size:15px;background:rgba(214,95,126,.12);border:1px solid var(--rose);
+    color:#f0a0b4;border-radius:10px;padding:4px 11px;letter-spacing:1px;}
+
+  .spark{position:fixed;font-size:26px;pointer-events:none;animation:rise .9s ease-out forwards;z-index:9;}
+  @keyframes rise{0%{opacity:1;transform:translateY(0) scale(.6)}100%{opacity:0;transform:translateY(-100px) scale(1.5)}}
+  .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:rgba(14,11,38,.95);
+    border:1px solid var(--gold);color:var(--parch);padding:10px 18px;border-radius:24px;font-weight:700;z-index:20;
+    box-shadow:0 6px 20px var(--shadow);max-width:90%;text-align:center;font-size:14px;animation:fade .25s;}
+  .hidden{display:none!important;}
+
+  .seal{font-size:20px;filter:drop-shadow(0 0 6px rgba(244,217,133,.5));}
+  .seal.gold{filter:drop-shadow(0 0 8px rgba(244,217,133,.9));}
+
+  .party-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(14,11,38,.5);border:1px solid var(--line);
+    border-radius:13px;padding:9px 12px;margin-bottom:12px;min-height:42px;}
+  .pb-label{font-family:'Cormorant Garamond';font-weight:600;font-size:14px;color:var(--gold-bright);margin-right:4px;}
+  .pb-d{font-size:24px;filter:drop-shadow(0 0 6px rgba(154,123,224,.5));}
+  .pb-empty{font-size:12px;color:var(--amethyst);}
+  .dragon{position:relative;}
+  .dragon .dab{font-size:10px;color:var(--amethyst);margin-top:4px;line-height:1.2;}
+  .dragon.in-party{border-color:var(--gold);box-shadow:0 0 12px rgba(217,178,91,.4);}
+  .party-tag{position:absolute;top:4px;right:4px;font-size:8px;font-weight:800;letter-spacing:.5px;color:#2a1d05;
+    background:var(--gold-bright);border-radius:6px;padding:2px 5px;}
+  .dup-tag{position:absolute;bottom:4px;right:4px;font-size:9px;font-weight:800;color:var(--teal);background:rgba(14,11,38,.7);border:1px solid var(--line);border-radius:6px;padding:1px 5px;}
+
+  .quests-panel{padding:12px 14px;}
+  .quest{display:flex;align-items:center;gap:10px;padding:6px 0;}
+  .quest+.quest{border-top:1px solid rgba(74,63,122,.4);}
+  .q-main{flex:1;}
+  .q-label{font-size:13px;font-weight:700;color:var(--parch);}
+  .q-bar{height:6px;border-radius:5px;background:rgba(14,11,38,.7);border:1px solid var(--line);overflow:hidden;margin-top:4px;}
+  .q-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--leaf));transition:width .3s;}
+  .q-claim{border:none;cursor:pointer;font-family:'Nunito';font-weight:800;font-size:12px;padding:7px 11px;border-radius:10px;
+    color:#2a1d05;background:linear-gradient(180deg,var(--gold-bright),var(--gold));box-shadow:0 2px 0 #8a6a1f;white-space:nowrap;}
+  .q-claim:disabled{background:rgba(14,11,38,.5);color:var(--amethyst);box-shadow:none;border:1px solid var(--line);cursor:default;}
+  .quest.claimed .q-label{color:var(--amethyst);}
+  .q-done{color:var(--leaf);font-weight:800;font-size:18px;}
+
+  .fry-card{background:linear-gradient(160deg,#1d2e2a,#13241f);border-color:#4a8a6a;box-shadow:0 4px 0 #0c0926,0 0 18px rgba(95,184,122,.18);}
+  .fq-hero{text-align:center;background:rgba(14,11,38,.5);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px;}
+  .fq-big b{font-family:'Grenze Gotisch';font-size:40px;color:var(--gold-bright);}
+  .fq-big span{font-family:'Cormorant Garamond';font-size:15px;color:var(--amethyst);margin-left:6px;}
+  .fq-ring{height:12px;border-radius:8px;background:rgba(14,11,38,.7);border:1px solid var(--line);overflow:hidden;margin:10px 0;}
+  .fq-ring i{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--leaf));transition:width .4s;}
+  .fq-stats{display:flex;gap:8px;}
+  .fq-stats>div{flex:1;background:rgba(14,11,38,.4);border:1px solid var(--line);border-radius:10px;padding:8px 4px;}
+  .fq-stats b{display:block;font-size:20px;color:var(--parch);font-weight:800;}
+  .fq-stats span{font-size:10px;color:var(--amethyst);}
+  .fq-note{text-align:center;font-family:'Cormorant Garamond';font-size:14px;color:var(--gold-bright);margin-bottom:12px;}
+  .go-big{width:100%;cursor:pointer;font-family:'Nunito';font-weight:800;font-size:17px;color:#072018;
+    background:linear-gradient(180deg,var(--leaf),var(--teal));border:none;border-radius:14px;padding:14px;box-shadow:0 4px 0 #1c5a44;margin-bottom:16px;}
+  .go-big:active{transform:translateY(3px);box-shadow:0 1px 0 #1c5a44;}
+  .fq-sets-title{font-family:'Cormorant Garamond';font-weight:600;color:var(--parch2);margin-bottom:8px;letter-spacing:.4px;}
+  .fq-sets{display:flex;flex-direction:column;gap:7px;}
+  .fq-set{display:flex;align-items:center;gap:9px;}
+  .fq-set.locked{opacity:.5;}
+  .fq-set-n{font-size:12px;font-weight:700;color:var(--parch);width:64px;flex:none;}
+  .fq-set-bar{flex:1;height:8px;border-radius:6px;background:rgba(14,11,38,.7);border:1px solid var(--line);overflow:hidden;}
+  .fq-set-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-bright));}
+  .fq-set-c{font-size:11px;color:var(--amethyst);width:46px;text-align:right;flex:none;}
+  .spire-choose{display:flex;gap:8px;margin:-4px 0 12px;}
+  .spire-mini{flex:1;cursor:pointer;font-family:'Nunito';font-weight:700;font-size:12px;color:var(--amethyst);
+    background:rgba(14,11,38,.5);border:1px solid var(--line);border-radius:11px;padding:9px 8px;}
+  .spire-mini:active{transform:translateY(2px);}
+  .hero-orbit{position:absolute;inset:0;animation:orbit 48s linear infinite;}
+  @keyframes orbit{to{transform:rotate(360deg);}}
+  .hero-orbit .orb{position:absolute;font-size:19px;transform:translate(-50%,-50%);filter:drop-shadow(0 0 5px rgba(154,123,224,.5));animation:counter 48s linear infinite;}
+  @keyframes counter{to{transform:translate(-50%,-50%) rotate(-360deg);}}
+
+  /* Spire card + Duel */
+  .spire-card{width:100%;cursor:pointer;text-align:left;color:var(--parch);display:flex;align-items:center;gap:13px;
+    background:linear-gradient(160deg,#3a1d2e,#241433);border:1px solid #8a4a6a;border-radius:16px;padding:14px 16px;margin-bottom:12px;
+    box-shadow:0 4px 0 #0c0926,0 0 18px rgba(214,95,126,.22),inset 0 0 20px rgba(154,123,224,.1);}
+  .spire-card:active{transform:translateY(3px);box-shadow:0 1px 0 #0c0926;}
+  .spire-ic{font-size:30px;filter:drop-shadow(0 0 8px rgba(244,217,133,.4));}
+  .spire-body{flex:1;display:flex;flex-direction:column;}
+  .spire-ti{font-family:'Grenze Gotisch';font-weight:600;font-size:21px;color:var(--gold-bright);}
+  .spire-de{font-size:12px;color:var(--amethyst);}
+  .spire-floor{font-family:'Cormorant Garamond';font-size:13px;color:var(--amethyst);text-align:center;}
+  .spire-floor b{display:block;font-size:22px;color:var(--gold-bright);}
+
+  .enemy{text-align:center;margin-bottom:10px;}
+  .enemy-emoji{font-size:64px;filter:drop-shadow(0 6px 14px rgba(8,6,30,.6));animation:menace 3s ease-in-out infinite;}
+  .enemy-emoji.hit{animation:shake .3s;}
+  @keyframes menace{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-5px) scale(1.04)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px) rotate(-4deg)}60%{transform:translateX(9px) rotate(4deg)}}
+  .enemy-name{font-family:'Cormorant Garamond';font-weight:600;font-size:17px;color:#f0a0b4;margin-top:2px;}
+  .hpbar{position:relative;height:20px;border-radius:11px;background:rgba(14,11,38,.7);border:1px solid var(--line);overflow:hidden;margin:6px auto 0;max-width:300px;}
+  .hpbar i{position:absolute;inset:0;width:100%;transform-origin:left;transition:width .35s ease;border-radius:11px;}
+  .enemy-hp i{background:linear-gradient(90deg,#d65f7e,#a83050);}
+  .player-hp i{background:linear-gradient(90deg,#5fb87a,#3a8f6a);}
+  .hpbar span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.6);}
+
+  .combo-wrap{margin:4px 0 10px;}
+  .combo-bar{height:8px;border-radius:6px;background:rgba(14,11,38,.7);border:1px solid var(--line);overflow:hidden;}
+  .combo-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold-bright));transition:width .25s;}
+  .combo-txt{text-align:center;font-family:'Cormorant Garamond';font-weight:600;font-size:14px;color:var(--amethyst);margin-top:3px;letter-spacing:1px;}
+  .combo-txt.hot{color:var(--gold-bright);text-shadow:0 0 10px rgba(244,217,133,.6);}
+  .duel-stage{padding:14px;}
+  .player-bar{display:flex;align-items:center;gap:10px;margin-top:10px;font-family:'Cormorant Garamond';font-size:14px;color:var(--parch2);}
+  .player-bar .hpbar{flex:1;margin:0;max-width:none;}
+  .party{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:10px;min-height:22px;}
+  .party .pd{font-size:20px;filter:drop-shadow(0 0 5px rgba(154,123,224,.4));}
+  .party .pd.none{font-size:12px;color:var(--amethyst);font-family:'Nunito';filter:none;}
+  footer{text-align:center;font-size:11px;color:#6a5fa0;margin-top:22px;}
+</style>
 </head>
 <body>
-  <!-- Animated background -->
-  <div class="bg-layer bg-embers" aria-hidden="true"></div>
-  <div class="bg-layer bg-grain" aria-hidden="true"></div>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand"><span class="t1">Dragon Spelling</span><span class="t2">The Illuminated Spellbook</span></div>
+    <div class="ink-badge">🖋️ <span id="ink">0</span></div>
+  </div>
 
-  <main id="app">
-    <!-- ========== HOME SCREEN ========== -->
-    <section id="screen-home" class="screen active">
-      <div class="hero">
-        <div class="hero-crest">🐉</div>
-        <h1 class="hero-title">Dragon Math</h1>
-        <p class="hero-sub">The Lair of <span id="player-name">Pordee</span></p>
+  <!-- HOME -->
+  <div id="home" class="screen active">
+    <div class="hero">
+      <div class="hero-seal">
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+          <defs>
+            <radialGradient id="hg" cx="50%" cy="45%" r="60%">
+              <stop offset="0%" stop-color="#3a2f7a" stop-opacity=".9"/>
+              <stop offset="60%" stop-color="#1d1850" stop-opacity=".5"/>
+              <stop offset="100%" stop-color="#15123a" stop-opacity="0"/>
+            </radialGradient>
+            <linearGradient id="gg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#f4d985"/>
+              <stop offset="50%" stop-color="#d9b25b"/>
+              <stop offset="100%" stop-color="#a8842f"/>
+            </linearGradient>
+          </defs>
+          <circle cx="100" cy="100" r="92" fill="url(#hg)"/>
+          <circle class="seal-spin" cx="100" cy="100" r="86" fill="none" stroke="url(#gg)" stroke-width="2.5" stroke-dasharray="2 11" stroke-linecap="round"/>
+          <circle cx="100" cy="100" r="76" fill="none" stroke="url(#gg)" stroke-width="2" opacity=".85"/>
+          <circle cx="100" cy="100" r="71" fill="none" stroke="url(#gg)" stroke-width="1" opacity=".5"/>
+          <!-- corner flourishes -->
+          <path d="M100 14 q7 9 0 18 q-7 -9 0 -18Z" fill="url(#gg)"/>
+          <path d="M100 186 q7 -9 0 -18 q-7 9 0 18Z" fill="url(#gg)"/>
+          <path d="M14 100 q9 7 18 0 q-9 -7 -18 0Z" fill="url(#gg)"/>
+          <path d="M186 100 q-9 7 -18 0 q9 -7 18 0Z" fill="url(#gg)"/>
+        </svg>
+        <div class="hero-dragon">🐲</div>
+        <div class="hero-orbit" id="hero-orbit"></div>
+        <span class="hero-spark s1">✦</span>
+        <span class="hero-spark s2">✧</span>
+        <span class="hero-spark s3">✦</span>
       </div>
-
-      <div class="stats-strip">
-        <div class="stat">
-          <span class="stat-icon">🪙</span>
-          <span class="stat-value" id="home-coins">0</span>
-          <span class="stat-label">Gold</span>
-        </div>
-        <div class="stat">
-          <span class="stat-icon">🐲</span>
-          <span class="stat-value" id="home-dragons">0</span>
-          <span class="stat-label">Dragons</span>
-        </div>
-        <div class="stat">
-          <span class="stat-icon">🏯</span>
-          <span class="stat-value" id="home-floor">1</span>
-          <span class="stat-label">Tower</span>
-        </div>
-      </div>
-
-      <nav class="menu">
-        <button class="menu-card" data-nav="practice">
-          <span class="menu-icon">⚔️</span>
-          <span class="menu-title">Train</span>
-          <span class="menu-desc">Sharpen your mind</span>
-        </button>
-        <button class="menu-card" data-nav="tables">
-          <span class="menu-icon">✖️</span>
-          <span class="menu-title">Table Trials</span>
-          <span class="menu-desc">Master the times-tables</span>
-        </button>
-        <button class="menu-card" data-nav="forge">
-          <span class="menu-icon">🔨</span>
-          <span class="menu-title">Factor Forge</span>
-          <span class="menu-desc">Break numbers · simplify</span>
-        </button>
-        <button class="menu-card menu-card-primary" data-nav="battle-setup">
-          <span class="menu-icon">🏯</span>
-          <span class="menu-title">Dragon Tower</span>
-          <span class="menu-desc">Battle · Floor <span id="menu-floor">1</span></span>
-        </button>
-        <button class="menu-card" data-nav="shop">
-          <span class="menu-icon">🔥</span>
-          <span class="menu-title">Shop</span>
-          <span class="menu-desc">Summon dragons</span>
-          <span id="daily-dot" class="daily-dot"></span>
-        </button>
-        <button class="menu-card" data-nav="hoard">
-          <span class="menu-icon">💎</span>
-          <span class="menu-title">Hoard</span>
-          <span class="menu-desc">Your collection</span>
-        </button>
-      </nav>
-
-      <a href="https://1492w.github.io/world-of-dragons/" style="display:block;text-align:center;margin:4px auto 14px;max-width:300px;background:linear-gradient(135deg,#3a2f7a,#241a52);color:#f4d985;text-decoration:none;font-family:'Cinzel',serif;font-weight:600;font-size:14px;padding:12px;border-radius:12px;border:1px solid rgba(244,217,133,.35);letter-spacing:.5px">🏰 World of Dragons</a>
-
-      <div class="home-foot">
-        <button class="text-btn" id="restore-btn" style="color:var(--gold-bright);font-size:14px;">🎁 Restore Pordee's Dragons</button>
-        <br/>
-        <button class="text-btn" id="reset-btn">Reset progress</button>
-      </div>
-    </section>
-
-    <!-- ========== PRACTICE SETUP ========== -->
-    <section id="screen-practice" class="screen">
-      <header class="screen-header">
-        <button class="back-btn" data-nav="home">‹ Lair</button>
-        <h2>Training Grounds</h2>
-        <div class="coins-mini"><span>🪙</span><span id="practice-coins">0</span></div>
-      </header>
-
-      <div class="section-body">
-        <h3 class="section-label">Mode</h3>
-        <div class="option-grid">
-          <button class="option-card mode-option selected" data-mode="sprint">
-            <span class="opt-icon">⏱️</span>
-            <span class="opt-title">Sprint</span>
-            <span class="opt-desc">60 seconds. Answer as many as you can.</span>
-          </button>
-          <button class="option-card mode-option" data-mode="streak">
-            <span class="opt-icon">🔥</span>
-            <span class="opt-title">Streak</span>
-            <span class="opt-desc">Keep going. One mistake ends the run.</span>
-          </button>
-          <button class="option-card mode-option" data-mode="beat">
-            <span class="opt-icon">🏁</span>
-            <span class="opt-title">Beat Your Time</span>
-            <span class="opt-desc">20 questions. Beat your best time.</span>
-          </button>
-        </div>
-
-        <h3 class="section-label">Operations</h3>
-        <div class="op-row">
-          <button class="op-chip selected" data-op="add">+</button>
-          <button class="op-chip selected" data-op="sub">−</button>
-          <button class="op-chip" data-op="mul">×</button>
-          <button class="op-chip" data-op="div">÷</button>
-        </div>
-
-        <h3 class="section-label">Dragons at your side <span class="muted">(up to 3)</span></h3>
-        <div id="practice-dragon-picker" class="dragon-picker"></div>
-      </div>
-
-      <div class="screen-footer">
-        <button class="btn-primary btn-large" id="practice-start">Begin Training 🔥</button>
-      </div>
-    </section>
-
-    <!-- ========== PRACTICE PLAY ========== -->
-    <section id="screen-play" class="screen play-screen">
-      <header class="play-header">
-        <button class="quit-btn" id="quit-play">✕</button>
-        <div class="play-stats">
-          <div class="play-stat"><span id="play-timer">60</span><small>time</small></div>
-          <div class="play-stat"><span id="play-score">0</span><small>correct</small></div>
-          <div class="play-stat"><span id="play-coins-run">0</span><small>🪙 gold</small></div>
-        </div>
-      </header>
-
-      <div class="play-stage">
-        <div id="play-question" class="question"></div>
-        <div id="play-answer" class="answer-display">&nbsp;</div>
-        <div id="play-feedback" class="feedback"></div>
-      </div>
-
-      <div class="keypad" id="keypad">
-        <button data-key="1">1</button><button data-key="2">2</button><button data-key="3">3</button>
-        <button data-key="4">4</button><button data-key="5">5</button><button data-key="6">6</button>
-        <button data-key="7">7</button><button data-key="8">8</button><button data-key="9">9</button>
-        <button data-key="-" class="key-sign">±</button><button data-key="0">0</button><button data-key="del" class="key-del">⌫</button>
-      </div>
-    </section>
-
-    <!-- ========== RESULTS ========== -->
-    <section id="screen-results" class="screen">
-      <div class="results-card">
-        <div class="results-crest">🐉</div>
-        <h2 id="results-title">Victory</h2>
-        <p id="results-sub" class="results-sub"></p>
-
-        <div class="results-grid" id="results-grid"></div>
-
-        <div class="results-coins">
-          <div class="coin-burst">🪙</div>
-          <div class="coin-amount">+<span id="results-coins">0</span></div>
-          <div class="coin-label">gold earned</div>
-        </div>
-
-        <div id="results-drop" class="results-drop hidden">
-          <div class="drop-title">A dragon appears!</div>
-          <div class="drop-card" id="results-drop-card"></div>
-        </div>
-
-        <div id="results-slow" class="results-slow hidden"></div>
-
-        <div class="results-actions">
-          <button class="btn-ghost" data-nav="home">To Lair</button>
-          <button class="btn-primary" id="results-again">Again</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== SHOP ========== -->
-    <section id="screen-shop" class="screen">
-      <header class="screen-header">
-        <button class="back-btn" data-nav="home">‹ Lair</button>
-        <h2>Dragon Shop</h2>
-        <div class="coins-mini"><span>🪙</span><span id="shop-coins">0</span></div>
-      </header>
-      <div class="section-body">
-        <div class="shop-tabs">
-          <button class="shop-tab selected" data-tab="dragons">🐉 Dragons</button>
-          <button class="shop-tab" data-tab="eggs">🥚 Eggs</button>
-        </div>
-        <div id="shop-grid" class="shop-grid"></div>
-      </div>
-    </section>
-
-    <!-- ========== HOARD ========== -->
-    <section id="screen-hoard" class="screen">
-      <header class="screen-header">
-        <button class="back-btn" data-nav="home">‹ Lair</button>
-        <h2>Your Hoard</h2>
-        <div class="coins-mini"><span>🪙</span><span id="hoard-coins">0</span></div>
-      </header>
-      <div class="section-body">
-        <div id="hoard-grid" class="hoard-grid"></div>
-      </div>
-    </section>
-
-    <!-- ========== BATTLE SETUP ========== -->
-    <section id="screen-battle-setup" class="screen">
-      <header class="screen-header">
-        <button class="back-btn" data-nav="home">‹ Lair</button>
-        <h2>Tower · Floor <span id="battle-floor-label">1</span></h2>
-        <div class="coins-mini"><span>🪙</span><span id="battle-coins">0</span></div>
-      </header>
-      <div class="section-body">
-        <div id="battle-preview" class="battle-preview">
-          <div class="enemy-preview">
-            <div class="enemy-emoji" id="enemy-emoji">🐲</div>
-            <div class="enemy-name" id="enemy-name">Shadow Wyrmling</div>
-            <div class="enemy-stats">
-              <span>❤️ <span id="enemy-hp">100</span> HP</span>
-              <span>🪙 <span id="enemy-reward">25</span> reward</span>
-            </div>
-          </div>
-        </div>
-
-        <h3 class="section-label">Your Team <span class="muted">(up to 3)</span></h3>
-        <div id="battle-dragon-picker" class="dragon-picker"></div>
-
-        <div class="battle-rules">
-          <h4>Battle Rules</h4>
-          <ul>
-            <li><strong>&lt; 2s</strong> answer → <span class="hot">Critical!</span> (30 dmg)</li>
-            <li><strong>&lt; 4s</strong> answer → 20 dmg</li>
-            <li><strong>&lt; 6s</strong> answer → 15 dmg</li>
-            <li>Slow or wrong → You lose 1 ❤️</li>
-            <li>You have <strong>3 ❤️</strong>. Zero = defeat.</li>
-          </ul>
-        </div>
-      </div>
-      <div class="screen-footer">
-        <button class="btn-primary btn-large" id="battle-start">Enter the Tower ⚔️</button>
-      </div>
-    </section>
-
-    <!-- ========== BATTLE PLAY ========== -->
-    <section id="screen-battle" class="screen battle-screen">
-      <header class="battle-header">
-        <button class="quit-btn" id="quit-battle">✕</button>
-        <div class="floor-badge">Floor <span id="battle-floor-num">1</span></div>
-        <div class="hearts" id="battle-hearts">❤️❤️❤️</div>
-      </header>
-
-      <div class="battle-arena">
-        <div class="enemy-card">
-          <div class="enemy-emoji-lg" id="battle-enemy-emoji">🐲</div>
-          <div class="enemy-name-lg" id="battle-enemy-name">Shadow Wyrmling</div>
-          <div class="hp-bar">
-            <div class="hp-fill" id="battle-hp-fill"></div>
-            <div class="hp-text"><span id="battle-hp-cur">100</span> / <span id="battle-hp-max">100</span></div>
-          </div>
-        </div>
-
-        <div class="floating-fx" id="battle-fx"></div>
-
-        <div class="battle-timer">
-          <div class="timer-ring">
-            <svg viewBox="0 0 100 100">
-              <circle class="ring-bg" cx="50" cy="50" r="45" />
-              <circle class="ring-fg" id="timer-ring-fg" cx="50" cy="50" r="45" />
-            </svg>
-            <div class="timer-num" id="battle-time">10</div>
-          </div>
-        </div>
-
-        <div class="battle-question" id="battle-question"></div>
-        <div class="battle-answer" id="battle-answer">&nbsp;</div>
-      </div>
-
-      <div class="keypad" id="battle-keypad">
-        <button data-bkey="1">1</button><button data-bkey="2">2</button><button data-bkey="3">3</button>
-        <button data-bkey="4">4</button><button data-bkey="5">5</button><button data-bkey="6">6</button>
-        <button data-bkey="7">7</button><button data-bkey="8">8</button><button data-bkey="9">9</button>
-        <button data-bkey="-" class="key-sign">±</button><button data-bkey="0">0</button><button data-bkey="del" class="key-del">⌫</button>
-      </div>
-    </section>
-
-    <!-- ========== TABLE TRIALS (select) ========== -->
-    <section id="screen-tables" class="screen">
-      <header class="screen-header">
-        <button class="back-btn" data-nav="home">‹ Lair</button>
-        <h2>Table Trials</h2>
-        <div class="coins-mini"><span>🪙</span><span id="tables-coins">0</span></div>
-      </header>
-      <div class="section-body">
-        <p class="tables-intro">Pick a dragon rune and master its times-table. Answer fast (under 3s) without stumbling to seal a fact. 🐉</p>
-        <div id="gauntlet-wrap" class="hidden">
-          <h3 class="section-label gauntlet-label">🔥 Dragon's Gauntlet <span class="muted">reclaim the runes that escaped you</span></h3>
-          <div id="gauntlet-grid" class="gauntlet-grid"></div>
-        </div>
-        <h3 class="section-label">Times-tables</h3>
-        <div id="tables-grid" class="rune-grid"></div>
-      </div>
-    </section>
-
-    <!-- ========== TABLE RUN (play) ========== -->
-    <section id="screen-tablerun" class="screen play-screen">
-      <header class="play-header">
-        <button class="quit-btn" id="quit-tablerun">✕</button>
-        <div class="tablerun-titlewrap">
-          <div class="tablerun-title" id="tablerun-title">Trial of ×2</div>
-          <div class="tablerun-prog" id="tablerun-prog">1 / 12</div>
-        </div>
-      </header>
-      <div class="tablerun-tip" id="tablerun-tip"></div>
-      <div class="play-stage">
-        <div id="tablerun-q" class="question"></div>
-        <div id="tablerun-answer" class="battle-answer">&nbsp;</div>
-        <div id="tablerun-feedback" class="feedback"></div>
-        <div id="tablerun-mastery" class="tt-dots"></div>
-      </div>
-      <div class="keypad" id="tablerun-keypad">
-        <button data-tkey="1">1</button><button data-tkey="2">2</button><button data-tkey="3">3</button>
-        <button data-tkey="4">4</button><button data-tkey="5">5</button><button data-tkey="6">6</button>
-        <button data-tkey="7">7</button><button data-tkey="8">8</button><button data-tkey="9">9</button>
-        <button data-tkey="ok" class="key-sign">✓</button><button data-tkey="0">0</button><button data-tkey="del" class="key-del">⌫</button>
-      </div>
-    </section>
-
-    <!-- ========== FACTOR FORGE (select) ========== -->
-    <section id="screen-forge" class="screen">
-      <header class="screen-header">
-        <button class="back-btn" data-nav="home">‹ Lair</button>
-        <h2>Factor Forge</h2>
-        <div class="coins-mini"><span>🪙</span><span id="forge-coins">0</span></div>
-      </header>
-      <div class="section-body">
-        <p class="tables-intro">Break numbers into prime shards, then simplify fractions — the secret to fast division. 🔨</p>
-        <div id="forge-gauntlet-wrap" class="hidden">
-          <h3 class="section-label gauntlet-label">🔥 Forge Gauntlet <span class="muted">redo the ones that slipped</span></h3>
-          <div id="forge-gauntlet-grid" class="gauntlet-grid"></div>
-        </div>
-        <h3 class="section-label">Modes</h3>
-        <div class="forge-modes">
-          <button class="forge-mode" id="forge-mode-shatter">
-            <span class="forge-emoji">💎</span>
-            <span class="forge-body">
-              <span class="forge-title">Prime Shatter</span>
-              <span class="forge-desc">27 → 3 × 3 × 3 · break to prime shards</span>
-            </span>
-            <span class="gauntlet-go">▶</span>
-          </button>
-          <button class="forge-mode" id="forge-mode-simplify">
-            <span class="forge-emoji">✂️</span>
-            <span class="forge-body">
-              <span class="forge-title">Simplify</span>
-              <span class="forge-desc">27/15 → 9/5 · reduce with common factors</span>
-            </span>
-            <span class="gauntlet-go">▶</span>
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== FACTOR FORGE (run) ========== -->
-    <section id="screen-forgerun" class="screen play-screen">
-      <header class="play-header">
-        <button class="quit-btn" id="quit-forgerun">✕</button>
-        <div class="tablerun-titlewrap">
-          <div class="tablerun-title" id="forgerun-title">Prime Shatter</div>
-          <div class="tablerun-prog" id="forgerun-prog">1 / 10</div>
-        </div>
-      </header>
-      <div class="tablerun-tip" id="forgerun-prompt"></div>
-      <div class="play-stage">
-        <div id="forgerun-target" class="forge-target"></div>
-        <div id="forgerun-work" class="forge-work"></div>
-        <div id="forgerun-answer" class="battle-answer">&nbsp;</div>
-        <div id="forgerun-feedback" class="feedback"></div>
-      </div>
-      <div class="keypad" id="forgerun-keypad">
-        <button data-fkey="1">1</button><button data-fkey="2">2</button><button data-fkey="3">3</button>
-        <button data-fkey="4">4</button><button data-fkey="5">5</button><button data-fkey="6">6</button>
-        <button data-fkey="7">7</button><button data-fkey="8">8</button><button data-fkey="9">9</button>
-        <button data-fkey="del" class="key-del">⌫</button><button data-fkey="0">0</button><button data-fkey="ok" class="key-sign">✓</button>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- ========== MODALS ========== -->
-  <!-- Hatch modal -->
-  <div id="modal-hatch" class="modal">
-    <div class="modal-card modal-hatch-card">
-      <div class="modal-header">
-        <h3 id="hatch-title">The egg hatches...</h3>
-      </div>
-      <div class="hatch-stage">
-        <div id="hatch-egg" class="hatch-egg-phase">🥚</div>
-        <div id="hatch-reveal" class="hatch-reveal">
-          <div class="hatch-burst"></div>
-          <div id="hatch-emoji" class="hatch-dragon-emoji">🐲</div>
-          <div id="hatch-name" class="hatch-dragon-name">Dragon</div>
-          <div id="hatch-rarity" class="modal-rarity"></div>
-          <div id="hatch-desc" class="hatch-dragon-desc"></div>
-        </div>
-      </div>
-      <button class="btn-primary btn-large" data-close-modal="modal-hatch">Claim</button>
+      <div class="hero-tag">spell to wake the dragons</div>
+    </div>
+    <div class="stat-row">
+      <div class="mini"><b id="st-dragons">0</b><span>DRAGONS</span></div>
+      <div class="mini"><b id="st-spelled">0</b><span>SPELLED</span></div>
+      <div class="mini"><b id="st-mistakes">0</b><span>IN LAIR</span></div>
+    </div>
+    <button id="daily" class="daily-btn" onclick="claimDaily()">✦ Daily Verse — claim ink ✦</button>
+    <div class="panel quests-panel">
+      <div style="font-family:'Cormorant Garamond';font-weight:600;font-size:15px;color:var(--parch2);margin-bottom:8px;letter-spacing:.4px;">🗓️ Daily Quests</div>
+      <div id="quests"></div>
+    </div>
+    <button class="spire-card" onclick="enterSpire()">
+      <span class="spire-ic">⚔️</span>
+      <span class="spire-body">
+        <span class="spire-ti">Spire of Words</span>
+        <span class="spire-de">Battle Word Wraiths — spell to strike</span>
+      </span>
+      <span class="spire-floor">Floor <b id="spire-floor-lbl">1</b></span>
+    </button>
+    <div id="spire-choose" class="spire-choose"></div>
+    <button class="spire-card fry-card" onclick="openFry()">
+      <span class="spire-ic">📜</span>
+      <span class="spire-body">
+        <span class="spire-ti">Fry Quest</span>
+        <span class="spire-de">Master the 1000 most-used words</span>
+      </span>
+      <span class="spire-floor"><b id="fry-count-lbl">0</b>/1000</span>
+    </button>
+    <div class="section-label">Quests</div>
+    <div class="menu">
+      <button class="mcard" onclick="nav('play')"><span class="ic">📖</span><span class="ti">Spellbook</span><span class="de">Chapters to illuminate</span></button>
+      <button class="mcard" onclick="nav('hatch')"><span class="ic">📜</span><span class="ti">Scriptorium</span><span class="de">Hatch sealed scrolls</span></button>
+      <button class="mcard" onclick="nav('codex')"><span class="ic">🐉</span><span class="ti">Codex</span><span class="de">Your dragon hoard</span></button>
+      <button class="mcard lair" id="lair-card" onclick="startMistakeLair()"><span class="ic">🔥</span><span class="ti">Mistake Lair</span><span class="de">Tame the words that beat you</span></button>
     </div>
   </div>
 
-  <!-- Ascend modal -->
-  <div id="modal-ascend" class="modal">
-    <div class="modal-card modal-ascend-card">
-      <div class="ascend-aura"></div>
-      <div class="modal-header">
-        <h3>✨ ASCENDED ✨</h3>
-      </div>
-      <div id="ascend-emoji" class="hatch-dragon-emoji ascend-glow">✨🐲</div>
-      <div id="ascend-name" class="hatch-dragon-name">Ember Lord</div>
-      <div id="ascend-rarity" class="modal-rarity"></div>
-      <div id="ascend-desc" class="hatch-dragon-desc"></div>
-      <button class="btn-primary btn-large" data-close-modal="modal-ascend">Behold</button>
+  <!-- DUEL -->
+  <div id="duel" class="screen">
+    <div class="scr-head"><button class="back-btn" onclick="quitDuel()">✕ Retreat</button><h2 id="duel-title">Spire · Floor 1</h2></div>
+    <div class="enemy">
+      <div class="enemy-emoji" id="enemy-emoji">👾</div>
+      <div class="enemy-name" id="enemy-name">Word Wraith</div>
+      <div class="hpbar enemy-hp"><i id="enemy-hp-fill"></i><span id="enemy-hp-txt">30 / 30</span></div>
     </div>
+    <div class="combo-wrap"><div class="combo-bar"><i id="combo-fill"></i></div><div class="combo-txt" id="combo-txt">COMBO ×1</div></div>
+    <div class="stage duel-stage">
+      <button class="audio-btn" onclick="speakDuel()">🔊 Hear it</button>
+      <button class="peek" onclick="peekDuel()">👁 Peek</button>
+      <div id="duel-display" class="word-display"></div>
+      <div class="vstat" id="duel-vstat"></div>
+    </div>
+    <div class="input-row">
+      <input class="spell-input" id="duel-input" type="text" readonly inputmode="none" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" placeholder="spell to attack…">
+      <button class="go" onclick="submitDuel()">⚔️</button>
+    </div>
+    <div class="kbd" id="kbd-duel"></div>
+    <div class="feedback" id="duel-feedback"></div>
+    <div class="player-bar">
+      <span>🛡️ You</span>
+      <div class="hpbar player-hp"><i id="player-hp-fill"></i><span id="player-hp-txt">100 / 100</span></div>
+    </div>
+    <div class="party" id="duel-party"></div>
   </div>
 
-  <!-- Daily bonus modal -->
-  <div id="modal-daily" class="modal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3>Daily Bonus</h3>
+  <!-- FRY QUEST: dashboard -->
+  <div id="fqhome" class="screen">
+    <div class="scr-head"><button class="back-btn" onclick="nav('home')">‹ Lair</button><h2>Fry Quest</h2></div>
+    <div class="fq-hero">
+      <div class="fq-big"><b id="fq-mastered">0</b><span>/ 1000 mastered</span></div>
+      <div class="fq-ring"><i id="fq-ring-fill"></i></div>
+      <div class="fq-stats">
+        <div><b id="fq-progress">0</b><span>learning</span></div>
+        <div><b id="fq-due">0</b><span>due today</span></div>
+        <div><b id="fq-pace">0</b><span>mastered/7d</span></div>
       </div>
-      <div class="daily-streak">Day <span id="daily-streak-preview">1</span></div>
-      <div class="daily-reward" id="daily-reward-preview">+30 Gold</div>
-      <div class="daily-streak-info">
-        🔥 Keep your streak going! Miss a day and it resets.
-        <br/>Day 7 = Rare Egg · Day 14 = Mythic Egg
-      </div>
-      <div class="modal-actions">
-        <button class="btn-ghost" id="daily-close-btn">Later</button>
-        <button class="btn-primary" id="daily-claim-btn">Claim</button>
-      </div>
-      <div class="daily-confirm" id="daily-reward-text" style="display:none"></div>
     </div>
+    <div class="fq-note" id="fq-pace-note"></div>
+    <button class="go-big" id="fq-begin" onclick="fqBegin()">▶ Begin practice</button>
+    <div class="fq-sets-title">The ten hundreds</div>
+    <div id="fq-sets" class="fq-sets"></div>
   </div>
 
-  <!-- Toast -->
-  <div id="toast" class="toast"></div>
+  <!-- FRY QUEST: practice run -->
+  <div id="fqrun" class="screen">
+    <div class="scr-head"><button class="back-btn" onclick="fqQuit()">✕ Done</button><h2 id="fq-title">Practice</h2></div>
+    <div class="runbar"><span id="fq-prog">0 / 0</span><span id="fq-tag">📜 Fry</span></div>
+    <div class="prompt" id="fq-prompt">Listen, then spell the word</div>
+    <div class="stage">
+      <button class="audio-btn" onclick="fqSpeak()">🔊 Hear it</button>
+      <button class="peek" onclick="fqPeek()">👁 Peek</button>
+      <div id="fq-display" class="word-display"></div>
+      <div class="vstat" id="fq-vstat"></div>
+    </div>
+    <div class="input-row">
+      <input class="spell-input" id="fq-input" type="text" readonly inputmode="none" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" placeholder="spell it…">
+      <button class="go" onclick="fqSubmit()">✓</button>
+    </div>
+    <div class="kbd" id="kbd-fq"></div>
+    <div class="feedback" id="fq-feedback"></div>
+  </div>
 
-  <script src="game.js?v=phase6"></script>
+  <!-- PLAY (chapters) -->
+  <div id="play" class="screen">
+    <div class="scr-head"><button class="back-btn" onclick="nav('home')">‹ Lair</button><h2>Spellbook</h2></div>
+    <div id="chapters"></div>
+  </div>
+
+  <!-- RUN -->
+  <div id="run" class="screen">
+    <div class="scr-head"><button class="back-btn" onclick="quitRun()">✕ Quit</button><h2 id="run-title">Chapter</h2></div>
+    <div class="runbar"><span id="run-prog">1 / 10</span><span id="run-ink">+0 🖋️</span></div>
+    <div class="prompt" id="run-prompt"></div>
+    <div class="stage">
+      <button class="audio-btn" onclick="speakCur()">🔊 Hear it</button>
+      <button class="peek" id="peek-btn" onclick="peek()">👁 Peek</button>
+      <div id="run-display" class="word-display"></div>
+      <div id="run-frame" class="frame hidden"></div>
+      <div class="vstat" id="run-vstat"></div>
+    </div>
+    <div class="toggle hidden" id="vowel-toggle">
+      <button id="md-tap" class="on" onclick="setVowelMode('tap')">👆 Choose</button>
+      <button id="md-type" onclick="setVowelMode('type')">⌨️ Type</button>
+    </div>
+    <div id="opts" class="opts hidden"></div>
+    <div class="input-row" id="input-row">
+      <input class="spell-input" id="spell-input" type="text" readonly inputmode="none" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" placeholder="spell it…">
+      <button class="go" onclick="submitRun()">✓</button>
+    </div>
+    <div class="kbd" id="kbd-run"></div>
+    <div class="feedback" id="run-feedback"></div>
+  </div>
+
+  <!-- HATCH -->
+  <div id="hatch" class="screen">
+    <div class="scr-head"><button class="back-btn" onclick="nav('home')">‹ Lair</button><h2>Scriptorium</h2></div>
+    <div class="panel hatch-stage">
+      <div id="hatch-visual"><div class="scroll-egg">📜</div></div>
+      <div class="hatch-cost">A Sealed Scroll costs <b style="color:var(--gold-bright)">50 🖋️</b></div>
+      <div id="hatch-result"></div>
+      <button class="cta" onclick="hatch()" id="hatch-btn">Unseal a Scroll</button>
+    </div>
+    <p style="text-align:center;font-size:12px;color:var(--amethyst);">Duplicates melt into <b>+20 🖋️</b> of ink dust.</p>
+  </div>
+
+  <!-- CODEX -->
+  <div id="codex" class="screen">
+    <div class="scr-head"><button class="back-btn" onclick="nav('home')">‹ Lair</button><h2>Codex</h2></div>
+    <p style="text-align:center;font-size:13px;color:var(--amethyst);margin-top:0;">Each dragon grants <b id="ink-bonus">+0%</b> ink. Tap an owned dragon to add it to your battle party. Duplicates recycle into ink. ♻</p>
+    <div id="party-bar" class="party-bar"></div>
+    <div id="codex-grid" class="codex-grid"></div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results" class="screen res">
+    <div class="big" id="res-emoji">🎉</div>
+    <h2 id="res-title">Chapter complete</h2>
+    <div class="res-grid">
+      <div class="c"><b id="res-correct">0</b><span>spelled</span></div>
+      <div class="c"><b id="res-lightning">0</b><span>⚡ lightning</span></div>
+      <div class="c"><b id="res-ink">0</b><span>🖋️ ink</span></div>
+    </div>
+    <div id="res-miss"></div>
+    <button class="cta" id="res-again">Again</button>
+    <button class="cta ghost" onclick="nav('home')">To the Lair</button>
+  </div>
+
+  <a href="https://1492w.github.io/world-of-dragons/" style="display:block;text-align:center;margin:14px auto 6px;max-width:300px;background:linear-gradient(135deg,#3a2f7a,#241a52);color:#f4d985;text-decoration:none;font-family:'Cinzel',serif;font-weight:600;font-size:14px;padding:12px;border-radius:12px;border:1px solid rgba(244,217,133,.35);letter-spacing:.5px">🏰 World of Dragons</a>
+  <footer>1492W · for Pordee · spell to wake the dragons</footer>
+</div>
+
+<script>
+/* ===================== DATA ===================== */
+const V5=['a','e','i','o','u'];
+
+// Vowel chapter (fill the vowel) — compact VowelSpell port
+const VOWELS=[
+  {word:'cat',pre:'c',v:'a',post:'t',emo:'🐱',opts:V5},
+  {word:'bed',pre:'b',v:'e',post:'d',emo:'🛏️',opts:V5},
+  {word:'pig',pre:'p',v:'i',post:'g',emo:'🐷',opts:V5},
+  {word:'hot',pre:'h',v:'o',post:'t',emo:'🔥',opts:V5},
+  {word:'cup',pre:'c',v:'u',post:'p',emo:'☕',opts:V5},
+  {word:'bag',pre:'b',v:'a',post:'g',emo:'🛍️',opts:V5},
+  {word:'net',pre:'n',v:'e',post:'t',emo:'🥅',opts:V5},
+  {word:'pin',pre:'p',v:'i',post:'n',emo:'📌',opts:V5},
+  {word:'dog',pre:'d',v:'o',post:'g',emo:'🐶',opts:V5},
+  {word:'bus',pre:'b',v:'u',post:'s',emo:'🚌',opts:V5},
+  {word:'hat',pre:'h',v:'a',post:'t',emo:'🎩',opts:V5},
+  {word:'hen',pre:'h',v:'e',post:'n',emo:'🐔',opts:V5},
+  {word:'box',pre:'b',v:'o',post:'x',emo:'📦',opts:V5},
+  {word:'sun',pre:'s',v:'u',post:'n',emo:'☀️',opts:V5},
+  {word:'jam',pre:'j',v:'a',post:'m',emo:'🍓',opts:V5},
+  {word:'leg',pre:'l',v:'e',post:'g',emo:'🦵',opts:V5},
+  {word:'mug',pre:'m',v:'u',post:'g',emo:'☕',opts:V5},
+  {word:'fox',pre:'f',v:'o',post:'x',emo:'🦊',opts:V5},
+  {word:'cake',pre:'c',v:'a',post:'ke',emo:'🎂',opts:V5},
+  {word:'bike',pre:'b',v:'i',post:'ke',emo:'🚲',opts:V5},
+  {word:'home',pre:'h',v:'o',post:'me',emo:'🏠',opts:V5},
+  {word:'gate',pre:'g',v:'a',post:'te',emo:'🚪',opts:V5},
+  {word:'kite',pre:'k',v:'i',post:'te',emo:'🪁',opts:V5},
+  {word:'rose',pre:'r',v:'o',post:'se',emo:'🌹',opts:V5},
+  {word:'cube',pre:'c',v:'u',post:'be',emo:'🧊',opts:V5},
+  {word:'name',pre:'n',v:'a',post:'me',emo:'📛',opts:V5},
+  {word:'time',pre:'t',v:'i',post:'me',emo:'⏰',opts:V5},
+  {word:'nose',pre:'n',v:'o',post:'se',emo:'👃',opts:V5},
+  {word:'five',pre:'f',v:'i',post:'ve',emo:'5️⃣',opts:V5},
+  {word:'bone',pre:'b',v:'o',post:'ne',emo:'🦴',opts:V5},
+  {word:'rain',pre:'r',v:'ai',post:'n',emo:'🌧️',opts:['ai','ay','ee','oa']},
+  {word:'tail',pre:'t',v:'ai',post:'l',emo:'🐕',opts:['ai','ay','ee','oa']},
+  {word:'paint',pre:'p',v:'ai',post:'nt',emo:'🎨',opts:['ai','ay','ee','oa']},
+  {word:'day',pre:'d',v:'ay',post:'',emo:'📅',opts:['ay','ai','ee','oa']},
+  {word:'play',pre:'pl',v:'ay',post:'',emo:'🎮',opts:['ay','ai','ee','oa']},
+  {word:'tree',pre:'tr',v:'ee',post:'',emo:'🌳',opts:['ee','ea','ie','oo']},
+  {word:'feet',pre:'f',v:'ee',post:'t',emo:'🦶',opts:['ee','ea','ie','oo']},
+  {word:'green',pre:'gr',v:'ee',post:'n',emo:'💚',opts:['ee','ea','ie','oo']},
+  {word:'seat',pre:'s',v:'ea',post:'t',emo:'💺',opts:['ea','ee','ie','oo']},
+  {word:'leaf',pre:'l',v:'ea',post:'f',emo:'🍃',opts:['ea','ee','ie','oo']},
+  {word:'boat',pre:'b',v:'oa',post:'t',emo:'⛵',opts:['oa','ow','oo','au']},
+  {word:'road',pre:'r',v:'oa',post:'d',emo:'🛣️',opts:['oa','ow','oo','au']},
+  {word:'coat',pre:'c',v:'oa',post:'t',emo:'🧥',opts:['oa','ow','oo','au']},
+  {word:'snow',pre:'sn',v:'ow',post:'',emo:'❄️',opts:['ow','oa','oo','au']},
+  {word:'light',pre:'l',v:'igh',post:'t',emo:'💡',opts:['igh','ie','y','ee']},
+  {word:'night',pre:'n',v:'igh',post:'t',emo:'🌙',opts:['igh','ie','y','ee']},
+  {word:'high',pre:'h',v:'igh',post:'',emo:'⛰️',opts:['igh','ie','y','ee']},
+  {word:'moon',pre:'m',v:'oo',post:'n',emo:'🌙',opts:['oo','ou','ue','oa']},
+  {word:'book',pre:'b',v:'oo',post:'k',emo:'📖',opts:['oo','ou','ue','oa']},
+  {word:'food',pre:'f',v:'oo',post:'d',emo:'🍔',opts:['oo','ou','ue','oa']},
+  {word:'zoo',pre:'z',v:'oo',post:'',emo:'🦁',opts:['oo','ou','ue','oa']},
+  {word:'boy',pre:'b',v:'oy',post:'',emo:'👦',opts:['oy','oi','ay','ey']},
+  {word:'coin',pre:'c',v:'oi',post:'n',emo:'🪙',opts:['oi','oy','ay','ey']},
+  {word:'toy',pre:'t',v:'oy',post:'',emo:'🧸',opts:['oy','oi','ay','ey']},
+  {word:'soil',pre:'s',v:'oi',post:'l',emo:'🌱',opts:['oi','oy','ay','ey']},
+  {word:'car',pre:'c',v:'ar',post:'',emo:'🚗',opts:['ar','or','er','ur']},
+  {word:'star',pre:'st',v:'ar',post:'',emo:'⭐',opts:['ar','or','er','ur']},
+  {word:'corn',pre:'c',v:'or',post:'n',emo:'🌽',opts:['or','ar','er','ur']},
+  {word:'fork',pre:'f',v:'or',post:'k',emo:'🍴',opts:['or','ar','er','ur']},
+  {word:'bird',pre:'b',v:'ir',post:'d',emo:'🐦',opts:['ir','er','ur','ar']},
+  {word:'girl',pre:'g',v:'ir',post:'l',emo:'👧',opts:['ir','er','ur','ar']},
+  {word:'hurt',pre:'h',v:'ur',post:'t',emo:'🤕',opts:['ur','er','ir','or']},
+  {word:'fern',pre:'f',v:'er',post:'n',emo:'🌿',opts:['er','ur','ir','ar']},
+];
+
+// Spell It chapters
+const COMMON_WORDS=['ship','sheep','green','black','jump','play','night','friend','because','people','said','where','dragon','island','prison'];
+const PORDEE_WORDS=['woke','gone','impossible','quickly','shocked','weapons','floor','poison','surprise','different','around','mysterious','security','revolver','supposed','heading','picked','actually','realizes','their','there','castle','guard','half','full','thought','just','went','back'];
+
+const CHAPTERS=[
+  {id:'vowels',type:'vowel',icon:'🔤',title:'Vowels',desc:'Fill the missing vowel'},
+  {id:'common',type:'spell',icon:'✍️',title:'Common Words',desc:'Hear it, spell it',words:COMMON_WORDS},
+  {id:'tricky',type:'spell',icon:'🗝️',title:'Tricky Words',desc:'The ones that trip writers up',words:PORDEE_WORDS},
+];
+
+// Dragons (distinct spelling-themed roster)
+const FRY=["the", "of", "and", "a", "to", "in", "is", "you", "that", "it", "he", "was", "for", "on", "are", "as", "with", "his", "they", "i", "at", "be", "this", "have", "from", "or", "one", "had", "by", "words", "but", "not", "what", "all", "were", "we", "when", "your", "can", "said", "there", "use", "an", "each", "which", "she", "do", "how", "their", "if", "will", "up", "other", "about", "out", "many", "then", "them", "these", "so", "some", "her", "would", "make", "like", "him", "into", "time", "has", "look", "two", "more", "write", "go", "see", "number", "no", "way", "could", "people", "my", "than", "first", "water", "been", "called", "who", "oil", "sit", "now", "find", "long", "down", "day", "did", "get", "come", "made", "may", "part", "over", "new", "sound", "take", "only", "little", "work", "know", "place", "years", "live", "me", "back", "give", "most", "very", "after", "things", "our", "just", "name", "good", "sentence", "man", "think", "say", "great", "where", "help", "through", "much", "before", "line", "right", "too", "means", "old", "any", "same", "tell", "boy", "follow", "came", "want", "show", "also", "around", "form", "three", "small", "set", "put", "end", "does", "another", "well", "large", "must", "big", "even", "such", "because", "turn", "here", "why", "ask", "went", "men", "read", "need", "land", "different", "home", "us", "move", "try", "kind", "hand", "picture", "again", "change", "off", "play", "spell", "air", "away", "animal", "house", "point", "page", "letter", "mother", "answer", "found", "study", "still", "learn", "should", "america", "world", "high", "every", "near", "add", "food", "between", "own", "below", "country", "plant", "last", "school", "father", "keep", "tree", "never", "start", "city", "earth", "eyes", "light", "thought", "head", "under", "story", "saw", "left", "don't", "few", "while", "along", "might", "close", "something", "seem", "next", "hard", "open", "example", "begin", "life", "always", "those", "both", "paper", "together", "got", "group", "often", "run", "important", "until", "children", "side", "feet", "car", "mile", "night", "walk", "white", "sea", "began", "grow", "took", "river", "four", "carry", "state", "once", "book", "hear", "stop", "without", "second", "late", "miss", "idea", "enough", "eat", "face", "watch", "far", "indian", "real", "almost", "let", "above", "girl", "sometimes", "mountains", "cut", "young", "talk", "soon", "list", "song", "being", "leave", "family", "it's", "body", "music", "color", "stand", "sun", "questions", "fish", "area", "mark", "dog", "horse", "birds", "problem", "complete", "room", "knew", "since", "ever", "piece", "told", "usually", "didn't", "friends", "easy", "heard", "order", "red", "door", "sure", "become", "top", "ship", "across", "today", "during", "short", "better", "best", "however", "low", "hours", "black", "products", "happened", "whole", "measure", "remember", "early", "waves", "reached", "listen", "wind", "rock", "space", "covered", "fast", "several", "hold", "himself", "toward", "five", "step", "morning", "passed", "vowel", "true", "hundred", "against", "pattern", "numeral", "table", "north", "slowly", "money", "map", "farm", "pulled", "draw", "voice", "seen", "cold", "cried", "plan", "notice", "south", "sing", "war", "ground", "fall", "king", "town", "i'll", "unit", "figure", "certain", "field", "travel", "wood", "fire", "upon", "done", "english", "road", "half", "ten", "fly", "gave", "box", "finally", "wait", "correct", "oh", "quickly", "person", "became", "shown", "minutes", "strong", "verb", "stars", "front", "feel", "fact", "inches", "street", "decided", "contain", "course", "surface", "produce", "building", "ocean", "class", "note", "nothing", "rest", "carefully", "scientists", "inside", "wheels", "stay", "green", "known", "island", "week", "less", "machine", "base", "ago", "stood", "plane", "system", "behind", "ran", "round", "boat", "game", "force", "brought", "understand", "warm", "common", "bring", "explain", "dry", "though", "language", "shape", "deep", "thousands", "yes", "clear", "equation", "yet", "government", "filled", "heat", "full", "hot", "check", "object", "am", "rule", "among", "noun", "power", "cannot", "able", "six", "size", "dark", "ball", "material", "special", "heavy", "fine", "pair", "circle", "include", "built", "can't", "matter", "square", "syllables", "perhaps", "bill", "felt", "suddenly", "test", "direction", "center", "farmers", "ready", "anything", "divided", "general", "energy", "subject", "europe", "moon", "region", "return", "believe", "dance", "members", "picked", "simple", "cells", "paint", "mind", "love", "cause", "rain", "exercise", "eggs", "train", "blue", "wish", "drop", "developed", "window", "difference", "distance", "heart", "site", "sum", "summer", "wall", "forest", "probably", "legs", "sat", "main", "winter", "wide", "written", "length", "reason", "kept", "interest", "arms", "brother", "race", "present", "beautiful", "store", "job", "edge", "past", "sign", "record", "finished", "discovered", "wild", "happy", "beside", "gone", "sky", "grass", "million", "west", "lay", "weather", "root", "instruments", "meet", "third", "months", "paragraph", "raised", "represent", "soft", "whether", "clothes", "flowers", "shall", "teacher", "held", "describe", "drive", "cross", "speak", "solve", "appear", "metal", "son", "either", "ice", "sleep", "village", "factors", "result", "jumped", "snow", "ride", "care", "floor", "hill", "pushed", "baby", "buy", "century", "outside", "everything", "tall", "already", "instead", "phrase", "soil", "bed", "copy", "free", "hope", "spring", "case", "laughed", "nation", "quite", "type", "themselves", "temperature", "bright", "lead", "everyone", "method", "section", "lake", "iron", "within", "dictionary", "hair", "age", "amount", "scale", "pounds", "although", "per", "broken", "moment", "tiny", "possible", "gold", "milk", "quiet", "natural", "lot", "stone", "act", "build", "middle", "speed", "count", "consonant", "someone", "sail", "rolled", "bear", "wonder", "smiled", "angle", "fraction", "africa", "killed", "melody", "bottom", "trip", "hole", "poor", "let's", "fight", "surprise", "french", "died", "beat", "exactly", "remain", "dress", "cat", "couldn't", "fingers", "row", "least", "catch", "climbed", "wrote", "shouted", "continued", "itself", "else", "plains", "gas", "england", "burning", "design", "joined", "foot", "law", "ears", "glass", "you're", "grew", "skin", "valley", "cents", "key", "president", "brown", "trouble", "cool", "cloud", "lost", "sent", "symbols", "wear", "bad", "save", "experiment", "engine", "alone", "drawing", "east", "choose", "single", "touch", "information", "express", "mouth", "yard", "equal", "decimal", "yourself", "control", "practice", "report", "straight", "rise", "statement", "stick", "party", "seeds", "suppose", "woman", "coast", "bank", "period", "wire", "pay", "clean", "visit", "bit", "whose", "received", "garden", "please", "strange", "caught", "fell", "team", "god", "captain", "direct", "ring", "serve", "child", "desert", "increase", "history", "cost", "maybe", "business", "separate", "break", "uncle", "hunting", "flow", "lady", "students", "human", "art", "feeling", "supply", "corner", "electric", "insects", "crops", "tone", "hit", "sand", "doctor", "provide", "thus", "won't", "cook", "bones", "mall", "board", "modern", "compound", "mine", "wasn't", "fit", "addition", "belong", "safe", "soldiers", "guess", "silent", "trade", "rather", "compare", "crowd", "poem", "enjoy", "elements", "indicate", "except", "expect", "flat", "seven", "interesting", "sense", "string", "blow", "famous", "value", "wings", "movement", "pole", "exciting", "branches", "thick", "blood", "lie", "spot", "bell", "fun", "loud", "consider", "suggested", "thin", "position", "entered", "fruit", "tied", "rich", "dollars", "send", "sight", "chief", "japanese", "stream", "planets", "rhythm", "eight", "science", "major", "observe", "tube", "necessary", "weight", "meat", "lifted", "process", "army", "hat", "property", "particular", "swim", "terms", "current", "park", "sell", "shoulder", "industry", "wash", "block", "spread", "cattle", "wife", "sharp", "company", "radio", "we'll", "action", "capital", "factories", "settled", "yellow", "isn't", "southern", "truck", "fair", "printed", "wouldn't", "ahead", "chance", "born", "level", "triangle", "molecules", "france", "repeated", "column", "western", "church", "sister", "oxygen", "plural", "various", "agreed", "opposite", "wrong", "chart", "prepared", "pretty", "solution", "fresh", "shop", "suffix", "especially", "shoes", "actually", "nose", "afraid", "dead", "sugar", "adjective", "fig", "office", "huge", "gun", "similar", "death", "score", "forward", "stretched", "experience", "rose", "allow", "fear", "workers", "washington", "greek", "women", "bought", "led", "march", "northern", "create", "british", "difficult", "match", "win", "doesn't", "steel", "total", "deal", "determine", "evening", "hoe", "rope", "cotton", "apple", "details", "entire", "corn", "substances", "smell", "tools", "conditions", "cows", "track", "arrived", "located", "sir", "seat", "division", "effect", "underline", "view"];
+const FRY_SET=100;
+const DRAGONS=[
+  {id:'inkling',name:'Inkling',emoji:'🐲',rarity:'common',blurb:'A spark of wet ink, freshly hatched.'},
+  {id:'vowelwisp',name:'Vowel Wisp',emoji:'🦎',rarity:'common',blurb:'Hums the five vowel songs.'},
+  {id:'glyphpup',name:'Glyph Pup',emoji:'🐉',rarity:'common',blurb:'Chews on spare letters.'},
+  {id:'quilldrake',name:'Quill Drake',emoji:'🪶',rarity:'common',blurb:'Wings of a thousand feathers-pens.'},
+  {id:'digraph',name:'Digraph Drake',emoji:'🐊',rarity:'rare',blurb:'Two letters, one roar: sh, ch, th.'},
+  {id:'magice',name:'Magic-E Wyrm',emoji:'✨',rarity:'rare',blurb:'Lands silently and makes vowels grow long.'},
+  {id:'blend',name:'Blend Basilisk',emoji:'🦂',rarity:'rare',blurb:'Slithers through bl, st, tr without a gap.'},
+  {id:'silent',name:'Silent Serpent',emoji:'🐍',rarity:'epic',blurb:'Carries letters you never hear: kn, wr, mb.'},
+  {id:'diphthong',name:'Diphthong Dragon',emoji:'🐲',rarity:'epic',blurb:'Glides on oi and ou, two sounds in one breath.'},
+  {id:'schwa',name:'Schwa Shade',emoji:'👻',rarity:'epic',blurb:'The faint "uh" that haunts every long word.'},
+  {id:'homophone',name:'Homophone Hydra',emoji:'🐉',rarity:'legendary',blurb:'Two heads argue: their, there, they\u2019re.'},
+  {id:'suffix',name:'Suffix Sphinx',emoji:'🦁',rarity:'legendary',blurb:'Guards the rules of -ing, -ed, -er.'},
+  {id:'wordsmith',name:'The Wordsmith',emoji:'🐲',rarity:'mythic',blurb:'Forged every word in the Spellbook.'},
+  {id:'capital',name:'Capital Cub',emoji:'🐯',rarity:'common',blurb:'Roars the first letter of every name.'},
+  {id:'dotsprite',name:'Dot Sprite',emoji:'🟣',rarity:'common',blurb:'Dots every i and crosses every t.'},
+  {id:'rhyme',name:'Rhyme Wyrm',emoji:'🎶',rarity:'rare',blurb:'Coils words that sound the same.'},
+  {id:'plural',name:'Plural Python',emoji:'🐍',rarity:'rare',blurb:'Adds the -s and -es without a hiss.'},
+  {id:'prefix',name:'Prefix Phoenix',emoji:'🦅',rarity:'epic',blurb:'Re-, un-, dis- burst into flame at the front.'},
+  {id:'syllable',name:'Syllable Salamander',emoji:'🦎',rarity:'epic',blurb:'Breaks long words into safe little beats.'},
+  {id:'grammar',name:'Grammar Griffin',emoji:'🦁',rarity:'legendary',blurb:'Keeper of every spelling rule.'},
+  {id:'lexicon',name:'Lexicon Leviathan',emoji:'🐋',rarity:'mythic',blurb:'A whole dictionary swims in its wake.'},
+];
+const RARITY_W={common:60,rare:25,epic:11,legendary:3.5,mythic:0.5};
+// Recycle value when a hatch produces a dragon already owned (Ink refund by rarity)
+const RECYCLE={common:15,rare:35,epic:70,legendary:150,mythic:300};
+// Each dragon grants a duel power; equip up to 3 (party) in the Codex.
+const ABIL={
+  inkling:{ink:1.15,desc:'+15% ink from duels'},
+  vowelwisp:{revealFirst:true,desc:'Reveals the first letter'},
+  glyphpup:{atk:6,desc:'+6 attack'},
+  quilldrake:{time:1.0,desc:'+1.0s easier timing'},
+  digraph:{revealLen:true,desc:'Shows the word length'},
+  magice:{time:1.5,desc:'+1.5s easier timing'},
+  blend:{atk:10,desc:'+10 attack'},
+  silent:{shield:true,desc:'Shields one miss each floor'},
+  diphthong:{crit:0.6,desc:'+0.6× bigger criticals'},
+  schwa:{revealFirst:true,ink:1.1,desc:'Reveals first letter · +10% ink'},
+  homophone:{ink:2,desc:'Doubles duel ink'},
+  suffix:{atk:18,desc:'+18 attack'},
+  wordsmith:{atk:25,crit:0.5,revealLen:true,desc:'+25 atk · bigger crits · shows length'},
+  capital:{atk:5,desc:'+5 attack'},
+  dotsprite:{ink:1.12,desc:'+12% ink from duels'},
+  rhyme:{time:1.2,desc:'+1.2s easier timing'},
+  plural:{revealLen:true,desc:'Shows the word length'},
+  prefix:{atk:14,comboStart:2,desc:'+14 atk · starts combo at ×1.2'},
+  syllable:{hp:30,time:0.8,desc:'+30 max HP · +0.8s timing'},
+  grammar:{atk:16,ink:1.5,desc:'+16 atk · +50% ink'},
+  lexicon:{atk:22,crit:0.4,hp:40,shield:true,desc:'+22 atk · big crits · +40 HP · shields a miss'},
+};
+function partyIds(){
+  let p=(state.party||[]).filter(id=>state.owned[id]);
+  if(!p.length){
+    const wt={common:1,rare:2,epic:4,legendary:7,mythic:12};
+    p=Object.keys(state.owned).map(id=>DRAGONS.find(d=>d.id===id)).filter(Boolean)
+      .sort((a,b)=>wt[b.rarity]-wt[a.rarity]).slice(0,3).map(d=>d.id);
+  }
+  return p.slice(0,3);
+}
+function partyFx(){
+  const fx={atk:0,crit:0,time:0,ink:1,shield:false,revealFirst:false,revealLen:false,hp:0,comboStart:0};
+  partyIds().forEach(id=>{ const a=ABIL[id]; if(!a)return;
+    fx.atk+=a.atk||0; fx.crit+=a.crit||0; fx.time+=a.time||0; fx.ink*=a.ink||1; fx.hp+=a.hp||0;
+    fx.comboStart=Math.max(fx.comboStart,a.comboStart||0);
+    fx.shield=fx.shield||!!a.shield; fx.revealFirst=fx.revealFirst||!!a.revealFirst; fx.revealLen=fx.revealLen||!!a.revealLen; });
+  return fx;
+}
+
+/* ===================== STORAGE ===================== */
+const KEY='dragonSpelling_v1';
+const DEFAULT={ink:0,owned:{},mistakes:{},best:{},seeded:false,lastDaily:null,dailyStreak:0,spelled:0,voiceURI:null,spireFloor:1,spireBest:0,party:[],seals:{},quests:{},dupes:{},fry:{}};
+function load(){try{return Object.assign({},DEFAULT,JSON.parse(localStorage.getItem(KEY))||{})}catch(e){return Object.assign({},DEFAULT,window._m||{})}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){window._m=state}}
+let state=load();
+if(!state.seeded){ state.mistakes={}; PORDEE_WORDS.forEach(w=>state.mistakes[w]=1); state.seeded=true; save(); }
+
+/* ===================== SPEED TIERS ===================== */
+const TIER={ spell:{blaze:4,swift:7,fast:12}, vowel:{blaze:2,swift:3,fast:5} };
+function inkMult(){ return 1 + Object.keys(state.owned).length*0.03; }
+
+/* ===================== NAV / RENDER ===================== */
+const $=s=>document.querySelector(s);
+function nav(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $('#'+id).classList.add('active');
+  if(id==='home') refreshHome();
+  if(id==='play') renderChapters();
+  if(id==='codex') renderCodex();
+  if(id==='hatch'){ $('#hatch-result').innerHTML=''; $('#hatch-visual').innerHTML='<div class="scroll-egg">📜</div>'; }
+  window.scrollTo(0,0);
+}
+function refreshHome(){
+  $('#ink').textContent=Math.floor(state.ink);
+  $('#st-dragons').textContent=Object.keys(state.owned).length;
+  $('#st-spelled').textContent=state.spelled||0;
+  const mc=Object.keys(state.mistakes).length;
+  $('#st-mistakes').textContent=mc;
+  $('#lair-card').style.display = mc? '' : 'none';
+  const fl=$('#spire-floor-lbl'); if(fl) fl.textContent=state.spireFloor||1;
+  const fcl=$('#fry-count-lbl'); if(fcl) fcl.textContent=fqMasteredCount();
+  const sc=$('#spire-choose');
+  if(sc){
+    const f=state.spireFloor||1;
+    sc.innerHTML = f>6
+      ? `<button class="spire-mini" onclick="spireGo(6)">↺ Practice medium · F6</button>`+
+        `<button class="spire-mini" onclick="spireGo(1)">⤴ From the start · F1</button>`
+      : '';
+  }
+  const today=new Date().toISOString().slice(0,10);
+  const d=$('#daily');
+  if(state.lastDaily===today){ d.classList.add('done'); d.textContent='✦ Daily Verse claimed — come back tomorrow ✦'; }
+  else { d.classList.remove('done'); d.textContent='✦ Daily Verse — claim ink ✦'; }
+  renderQuests(); renderOrbit();
+}
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function ensureQuests(){ const t=todayStr(); if(!state.quests||state.quests.date!==t){ state.quests={date:t,spelled:0,lair:0,floors:0,claimed:{}}; save(); } }
+const QUESTS=[
+  {id:'spell',label:'Spell 10 words',target:10,reward:20,key:'spelled'},
+  {id:'lair',label:'Tame 5 Lair words',target:5,reward:25,key:'lair'},
+  {id:'floor',label:'Win a Spire floor',target:1,reward:30,key:'floors'},
+];
+function questBump(key,n){ ensureQuests(); state.quests[key]=(state.quests[key]||0)+(n||1); save(); }
+function renderQuests(){
+  ensureQuests(); const el=$('#quests'); if(!el) return; el.innerHTML='';
+  QUESTS.forEach(q=>{
+    const val=Math.min(state.quests[q.key]||0,q.target), done=val>=q.target, claimed=!!state.quests.claimed[q.id];
+    const row=document.createElement('div'); row.className='quest'+(claimed?' claimed':'');
+    row.innerHTML=`<div class="q-main"><div class="q-label">${q.label}</div><div class="q-bar"><i style="width:${val/q.target*100}%"></i></div></div>`+
+      (claimed?'<span class="q-done">✓</span>':`<button class="q-claim" ${done?'':'disabled'} onclick="claimQuest('${q.id}')">${done?'+'+q.reward+' 🖋️':val+'/'+q.target}</button>`);
+    el.appendChild(row);
+  });
+}
+function claimQuest(id){
+  ensureQuests(); const q=QUESTS.find(x=>x.id===id); if(!q) return;
+  if((state.quests[q.key]||0)<q.target || state.quests.claimed[id]) return;
+  state.quests.claimed[id]=1; state.ink+=q.reward; save(); topInk(); renderQuests(); sparkle('🖋️'); toast('Quest done: +'+q.reward+' 🖋️');
+}
+function renderOrbit(){
+  const el=$('#hero-orbit'); if(!el) return; el.innerHTML='';
+  const owned=Object.keys(state.owned).map(id=>DRAGONS.find(d=>d.id===id)).filter(Boolean).slice(0,8);
+  const n=owned.length; if(!n) return;
+  owned.forEach((d,i)=>{
+    const ang=(i/n)*Math.PI*2, R=84;
+    const s=document.createElement('span'); s.className='orb'; s.textContent=d.emoji;
+    s.style.left=(86+Math.cos(ang)*R)+'px'; s.style.top=(86+Math.sin(ang)*R)+'px';
+    el.appendChild(s);
+  });
+}
+function topInk(){ $('#ink').textContent=Math.floor(state.ink); }
+function claimDaily(){
+  const today=new Date().toISOString().slice(0,10);
+  if(state.lastDaily===today) return;
+  const yest=new Date(Date.now()-864e5).toISOString().slice(0,10);
+  state.dailyStreak = (state.lastDaily===yest)? (state.dailyStreak||0)+1 : 1;
+  let gain=40 + Math.min(40,(state.dailyStreak-1)*10);
+  state.ink+=gain; state.lastDaily=today; save(); refreshHome();
+  toast('Daily Verse: +'+gain+' 🖋️ (streak '+state.dailyStreak+')');
+}
+
+function renderChapters(){
+  const el=$('#chapters'); el.innerHTML='';
+  CHAPTERS.forEach(ch=>{
+    const seal=(state.seals&&state.seals[ch.id])||0;
+    const badge = seal===2? '<span class="seal gold">⚡</span>' : seal===1? '<span class="seal">🐉</span>' : '<span style="color:var(--gold)">›</span>';
+    const b=document.createElement('button'); b.className='chapter'; b.onclick=()=>startChapter(ch.id);
+    b.innerHTML=`<span class="cn">${ch.icon}</span><span class="cb"><span class="ct">${ch.title}</span><br><span class="cd">${ch.desc}</span></span>${badge}`;
+    el.appendChild(b);
+  });
+}
+function renderCodex(){
+  $('#ink-bonus').textContent='+'+Math.round((inkMult()-1)*100)+'%';
+  const party=partyIds();
+  const pb=$('#party-bar');
+  if(pb){
+    pb.innerHTML='<span class="pb-label">⚔️ Battle party ('+party.length+'/3)</span>'+
+      (party.length? party.map(id=>{const d=DRAGONS.find(x=>x.id===id);return `<span class="pb-d" title="${ABIL[id]?ABIL[id].desc:''}">${d.emoji}</span>`;}).join('')
+        : '<span class="pb-empty">tap a dragon below to add it</span>');
+  }
+  const g=$('#codex-grid'); g.innerHTML='';
+  DRAGONS.forEach(d=>{
+    const owned=!!state.owned[d.id];
+    const inParty=party.includes(d.id);
+    const dupes=(state.dupes&&state.dupes[d.id])||0;
+    const el=document.createElement('div');
+    el.className='dragon r-'+d.rarity+(owned?'':' locked')+(inParty?' in-party':'');
+    const abil=ABIL[d.id]?`<div class="dab">${ABIL[d.id].desc}</div>`:'';
+    el.innerHTML=`<div class="dm">${d.emoji}</div><div class="dn">${d.name}</div><div class="dr r-${d.rarity}">${d.rarity}</div>${owned?abil:''}`+
+      (inParty?'<div class="party-tag">IN PARTY</div>':'')+(owned&&dupes?`<div class="dup-tag">♻×${dupes}</div>`:'');
+    if(owned){ el.title=d.blurb; el.style.cursor='pointer'; el.onclick=()=>toggleParty(d.id); }
+    g.appendChild(el);
+  });
+}
+function toggleParty(id){
+  if(!state.owned[id]) return;
+  let p=(state.party||[]).filter(x=>state.owned[x]);
+  if(p.includes(id)) p=p.filter(x=>x!==id);
+  else { if(p.length>=3){ toast('Party is full (3) — remove one first'); return; } p.push(id); }
+  state.party=p; save(); renderCodex();
+}
+
+/* ===================== RUN ENGINE ===================== */
+let run=null, vowelMode=state.vowelMode||'tap';
+function startChapter(id){
+  const ch=CHAPTERS.find(c=>c.id===id);
+  if(ch.type==='vowel'){
+    const items=VOWELS.slice().sort(()=>Math.random()-0.5).slice(0,12);
+    begin({kind:'vowel',title:ch.title,items,chapterId:id,retry:()=>startChapter(id)});
+  } else {
+    const items=ch.words.slice().sort(()=>Math.random()-0.5).slice(0,12).map(w=>({word:w}));
+    begin({kind:'spell',title:ch.title,items,chapterId:id,retry:()=>startChapter(id)});
+  }
+}
+function startMistakeLair(){
+  const words=Object.keys(state.mistakes);
+  if(!words.length){ toast('The Lair is empty — well done! 🐉'); return; }
+  const items=words.sort(()=>Math.random()-0.5).slice(0,12).map(w=>({word:w}));
+  begin({kind:'spell',lair:true,title:'🔥 Mistake Lair',items,retry:()=>startMistakeLair()});
+}
+function begin(opts){
+  run={kind:opts.kind,lair:!!opts.lair,title:opts.title,chapterId:opts.chapterId||null,queue:opts.items,goal:opts.items.length,
+       retry:opts.retry,cleared:0,correct:0,ink:0,lightning:0,times:[],finished:false,locked:false,answer:''};
+  $('#run-title').textContent=opts.title;
+  nav('run'); next();
+}
+function next(){
+  if(!run) return;
+  if(!run.queue.length) return finish();
+  run.cur=run.queue.shift(); run.stumble=false; run.qStart=Date.now(); run.peeked=false;
+  $('#run-prog').textContent=run.cleared+' / '+run.goal;
+  $('#run-ink').textContent='+'+run.ink+' 🖋️';
+  $('#run-feedback').textContent=''; $('#run-feedback').className='feedback';
+  $('#run-vstat').textContent='';
+  const isVowel=run.kind==='vowel';
+  $('#run-frame').classList.toggle('hidden',!isVowel);
+  $('#run-display').classList.toggle('hidden',isVowel);
+  $('#vowel-toggle').classList.toggle('hidden',!isVowel);
+  $('#peek-btn').classList.toggle('hidden',isVowel);
+  if(isVowel){ renderFrame(); renderVowelInput(); $('#run-prompt').textContent='Fill the missing vowel'; }
+  else {
+    $('#opts').classList.add('hidden'); $('#input-row').classList.remove('hidden');
+    $('#kbd-run').classList.remove('hidden');
+    $('#run-display').textContent='• • •';
+    const inp=$('#spell-input'); inp.value=''; inp.disabled=false;
+    $('#run-prompt').textContent= run.lair? 'Tame this word — spell it' : 'Listen, then spell the word';
+  }
+  setTimeout(speakCur,250);
+}
+function speakCur(){ if(run&&run.cur) speak(run.cur.word); }
+function peek(){
+  if(!run||run.kind==='vowel'||run.locked) return;
+  run.peeked=true;
+  const d=$('#run-display'); d.textContent=run.cur.word; d.classList.add('peeking');
+  setTimeout(()=>{ if(run&&!run.locked){ d.textContent='• • •'; d.classList.remove('peeking'); } },1200);
+}
+/* vowel rendering */
+function renderFrame(){
+  const c=run.cur;
+  $('#run-frame').innerHTML=`<span>${c.pre}</span><span class="blank" id="vblank">${'＿'.repeat(Math.max(1,c.v.length))}</span><span>${c.post}</span> <span class="emo">${c.emo}</span>`;
+}
+function setVowelMode(m){ vowelMode=m; state.vowelMode=m; save();
+  $('#md-tap').classList.toggle('on',m==='tap'); $('#md-type').classList.toggle('on',m==='type');
+  if(run&&run.kind==='vowel'&&!run.locked) renderVowelInput(); }
+function renderVowelInput(){
+  $('#md-tap').classList.toggle('on',vowelMode==='tap'); $('#md-type').classList.toggle('on',vowelMode==='type');
+  if(vowelMode==='tap'){
+    $('#input-row').classList.add('hidden'); $('#opts').classList.remove('hidden');
+    $('#kbd-run').classList.add('hidden');
+    const o=$('#opts'); o.innerHTML='';
+    run.cur.opts.slice().sort(()=>Math.random()-0.5).forEach(opt=>{
+      const b=document.createElement('button'); b.className='opt'; b.textContent=opt;
+      b.onclick=()=>chooseVowel(opt,b); o.appendChild(b);
+    });
+  } else {
+    $('#opts').classList.add('hidden'); $('#input-row').classList.remove('hidden');
+    $('#kbd-run').classList.remove('hidden');
+    const inp=$('#spell-input'); inp.value='';
+  }
+}
+function chooseVowel(opt,btn){
+  if(run.locked) return;
+  const ok=opt===run.cur.v;
+  document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+  btn.classList.add(ok?'ok':'no');
+  if(!ok){ const r=[...document.querySelectorAll('.opt')].find(b=>b.textContent===run.cur.v); if(r)r.classList.add('ok'); }
+  gradeVowel(ok);
+}
+function submitRun(){
+  if(!run||run.locked) return;
+  if(run.kind==='vowel'){
+    const val=($('#spell-input').value||'').trim().toLowerCase();
+    if(!val) return;
+    gradeVowel(val===run.cur.v);
+  } else {
+    const val=($('#spell-input').value||'').trim().toLowerCase();
+    if(!val) return;
+    gradeSpell(val);
+  }
+}
+function gradeVowel(ok){
+  run.locked=true;
+  const c=run.cur, fr=$('#vblank'), fb=$('#run-feedback');
+  const elapsed=(Date.now()-run.qStart)/1000;
+  if(fr){ fr.textContent=c.v; fr.classList.add(ok?'filled':'bad'); }
+  finalizeItem(ok,elapsed,c.word,'vowel',fb);
+}
+function gradeSpell(val){
+  run.locked=true;
+  const c=run.cur, fb=$('#run-feedback'); $('#spell-input').disabled=true;
+  const elapsed=(Date.now()-run.qStart)/1000;
+  const ok = val===c.word.toLowerCase();
+  if(!ok){
+    // show correct with mismatched letters highlighted
+    const correct=c.word; let html='';
+    for(let i=0;i<correct.length;i++){ const t=val[i]; html+= (t&&t.toLowerCase()===correct[i].toLowerCase())? correct[i] : `<span class="miss">${correct[i]}</span>`; }
+    $('#run-display').innerHTML=html; $('#run-display').classList.remove('peeking');
+  } else { $('#run-display').textContent=c.word; }
+  finalizeItem(ok,elapsed,c.word,'spell',fb);
+}
+function finalizeItem(ok,elapsed,word,kind,fb){
+  const T=TIER[kind];
+  const clean = ok && !run.peeked && !run.stumble;
+  let tier,reward,label;
+  if(ok){
+    run.correct++; run.times.push(elapsed);
+    const prevBest=state.best[word];
+    if(clean && elapsed<T.blaze){ tier='blaze'; reward= kind==='spell'?6:4; label='⚡ LIGHTNING!'; run.lightning++; }
+    else if(clean && elapsed<T.swift){ tier='swift'; reward= kind==='spell'?4:3; label='⚡ Swift!'; }
+    else if(clean && elapsed<T.fast){ tier='fast'; reward= kind==='spell'?3:2; label='✓ Correct'; }
+    else { tier='slow'; reward=1; label= run.peeked?'✓ (peeked)':'✓ keep practicing'; }
+    if(prevBest==null||elapsed<prevBest){ state.best[word]=Math.round(elapsed*100)/100; if(tier!=='slow'){reward+=1;label+=' · Record! 🏅';} }
+    // mistake pile: clear only on a clean fast clear; otherwise keep/learn
+    if(clean && elapsed<T.fast){ delete state.mistakes[word]; }
+    else { state.mistakes[word]=1; }
+    run.cleared++;
+    if(tier==='blaze'){ sparkle('⚡'); } else if(tier==='swift') sparkle('✨');
+  } else {
+    tier='wrong'; reward=0; label='✗ '+word;
+    state.mistakes[word]=1; run.stumble=true;
+  }
+  const gain=Math.round(reward*inkMult());
+  state.ink+=gain; state.spelled=(state.spelled||0)+ (ok?1:0);
+  if(ok){ questBump('spelled'); if(run.lair) questBump('lair'); }
+  run.ink+=gain;
+  fb.textContent=label + (ok? '   '+elapsed.toFixed(1)+'s  +'+gain+' 🖋️' : '');
+  fb.className='feedback '+(ok?'ok':'no');
+  $('#run-ink').textContent='+'+run.ink+' 🖋️'; topInk();
+  save();
+  setTimeout(()=>{ run.locked=false; next(); }, ok? 950 : 1700);
+}
+function finish(){
+  if(!run) return; run.finished=true;
+  const times=run.times.slice();
+  const avg=times.length?(times.reduce((a,b)=>a+b,0)/times.length):null;
+  nav('results');
+  const caps=document.querySelectorAll('#results .res-grid .c span');
+  if(caps[0])caps[0].textContent='spelled'; if(caps[1])caps[1].textContent='⚡ lightning'; if(caps[2])caps[2].textContent='🖋️ ink';
+  $('#res-again').textContent='Again';
+  $('#res-emoji').textContent = run.lightning>=run.goal? '🏆' : (run.correct===run.goal? '🐉':'📖');
+  $('#res-title').textContent = run.lair? (Object.keys(state.mistakes).length===0?'Lair cleared!':'Mistake Lair') : run.title+' complete';
+  $('#res-correct').textContent=run.correct+'/'+run.goal;
+  $('#res-lightning').textContent=run.lightning;
+  $('#res-ink').textContent=run.ink;
+  // bonus for clearing the lair
+  if(run.lair && Object.keys(state.mistakes).length===0){ state.ink+=50; save(); }
+  // chapter mastery seal
+  if(run.chapterId && run.correct===run.goal){
+    const lvl = run.lightning>=run.goal ? 2 : 1;
+    if(!state.seals) state.seals={};
+    if((state.seals[run.chapterId]||0)<lvl){ state.seals[run.chapterId]=lvl; save(); }
+  }
+  const miss=Object.keys(state.mistakes);
+  const rm=$('#res-miss');
+  if(miss.length){ rm.innerHTML='<div style="font-family:Cormorant Garamond;color:#f0a0b4;margin:6px 0;">Still in the Lair</div><div class="miss-list">'+miss.slice(0,14).map(w=>`<span class="miss-chip">${w}</span>`).join('')+(miss.length>14?`<span class="miss-chip">+${miss.length-14}</span>`:'')+'</div>'; }
+  else rm.innerHTML='<div style="color:var(--leaf);font-family:Cormorant Garamond;font-size:18px;margin:8px;">No words left in the Lair! 🐉</div>';
+  $('#res-again').onclick = run.retry || (()=>nav('home'));
+  topInk();
+}
+function quitRun(){ if(run&&!run.finished){ run.finished=true; save(); } nav('home'); }
+
+/* ===================== HATCH (gacha) ===================== */
+function pickRarity(){
+  const total=Object.values(RARITY_W).reduce((a,b)=>a+b,0); let r=Math.random()*total;
+  for(const k in RARITY_W){ if((r-=RARITY_W[k])<=0) return k; } return 'common';
+}
+function hatch(){
+  if(state.ink<50){ toast('Not enough ink — go spell some words! 🖋️'); return; }
+  state.ink-=50; topInk();
+  const rar=pickRarity();
+  const pool=DRAGONS.filter(d=>d.rarity===rar);
+  const d=pool[Math.floor(Math.random()*pool.length)];
+  const dup=!!state.owned[d.id];
+  let refund=0;
+  if(dup){ refund=RECYCLE[d.rarity]||15; state.ink+=refund; if(!state.dupes)state.dupes={}; state.dupes[d.id]=(state.dupes[d.id]||0)+1; }
+  else { state.owned[d.id]=1; }
+  save();
+  $('#hatch-visual').innerHTML=`<div class="reveal">${d.emoji}</div>`;
+  $('#hatch-result').innerHTML=`<div class="reveal-name r-${d.rarity}">${d.name}</div>
+    <div class="reveal-blurb">${d.rarity.toUpperCase()} · ${dup?'duplicate ♻ +'+refund+' 🖋️':d.blurb}</div>`;
+  if(rar==='legendary'||rar==='mythic'){ for(let i=0;i<6;i++) setTimeout(()=>sparkle(rar==='mythic'?'🌟':'✨'),i*90); }
+}
+
+/* ===================== TTS (locked to English US) ===================== */
+const ttsOK=('speechSynthesis' in window);
+let voices=[], curVoice=null;
+function loadVoices(){ if(!ttsOK) return; voices=speechSynthesis.getVoices()||[]; pickUS(); }
+function pickUS(){
+  if(!voices.length){ curVoice=null; return; }
+  const us=voices.filter(v=>(v.lang||'').toLowerCase().replace('_','-').startsWith('en-us'));
+  const score=v=>{ const n=(v.name||'').toLowerCase(); let s=0;
+    if(/google/.test(n))s+=20; if(/samantha|aria|jenny|guy|natural|neural|premium|enhanced/.test(n))s+=14;
+    if(/microsoft/.test(n))s+=8; if(v.localService===false)s+=3; return s; };
+  if(us.length){ curVoice=us.sort((a,b)=>score(b)-score(a))[0]; return; }
+  // fallback: any english, else null (engine will use en-US tag)
+  const en=voices.filter(v=>(v.lang||'').toLowerCase().startsWith('en'));
+  curVoice = en.length? en[0] : null;
+}
+function speak(word){
+  const stat=$('#run-vstat');
+  if(!ttsOK){ if(stat)stat.textContent='No speech on this browser'; return; }
+  if(!voices.length) loadVoices();
+  if(!curVoice) pickUS();
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(word);
+    u.lang='en-US';
+    if(curVoice) u.voice=curVoice;
+    u.rate=.75;
+    let started=false; u.onstart=()=>started=true;
+    speechSynthesis.speak(u);
+    setTimeout(()=>{ if(!started&&stat) stat.textContent='Tap “Hear it”, or open in a browser for audio'; },800);
+  }catch(e){}
+}
+if(ttsOK){ loadVoices(); speechSynthesis.onvoiceschanged=loadVoices; }
+
+/* ===================== FX ===================== */
+function sparkle(ch){ const s=document.createElement('div'); s.className='spark'; s.textContent=ch;
+  s.style.left=(42+Math.random()*16)+'%'; s.style.top='44%'; document.body.appendChild(s); setTimeout(()=>s.remove(),900); }
+let toastT=null;
+function toast(msg){ let t=document.querySelector('.toast'); if(t)t.remove();
+  t=document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t);
+  clearTimeout(toastT); toastT=setTimeout(()=>t.remove(),2200); }
+
+/* ===================== In-app A–Z keyboard (no device suggestions) ===================== */
+const KB_ROWS=[['q','w','e','r','t','y','u','i','o','p'],['a','s','d','f','g','h','j','k','l'],['z','x','c','v','b','n','m']];
+function buildKbd(containerId,target){
+  const el=document.getElementById(containerId); if(!el) return; el.innerHTML='';
+  KB_ROWS.forEach((row,ri)=>{
+    const r=document.createElement('div'); r.className='kbd-row';
+    row.forEach(ch=>{ const b=document.createElement('button'); b.className='k'; b.textContent=ch; b.onclick=()=>kbPress(target,ch); r.appendChild(b); });
+    if(ri===2){ const del=document.createElement('button'); del.className='k del wide'; del.textContent='⌫'; del.onclick=()=>kbPress(target,'del'); r.appendChild(del); }
+    el.appendChild(r);
+  });
+  const er=document.createElement('div'); er.className='kbd-row';
+  const ent=document.createElement('button'); ent.className='k enter wide'; ent.textContent= target==='duel'?'⚔️ Attack':'✓ Enter'; ent.onclick=()=>kbPress(target,'enter');
+  er.appendChild(ent); el.appendChild(er);
+}
+function kbInput(target){ return target==='duel'?$('#duel-input'):target==='fq'?$('#fq-input'):$('#spell-input'); }
+function kbPress(target,ch){
+  const inp=kbInput(target); if(!inp) return;
+  if(ch==='del') inp.value=inp.value.slice(0,-1);
+  else if(ch==='enter'){ target==='duel'?submitDuel():target==='fq'?fqSubmit():submitRun(); return; }
+  else if(inp.value.length<18) inp.value+=ch;
+}
+buildKbd('kbd-run','run'); buildKbd('kbd-duel','duel'); buildKbd('kbd-fq','fq');
+/* desktop physical keyboard (inputs are readonly, so route keys ourselves) */
+document.addEventListener('keydown',e=>{
+  let target=null;
+  if($('#run').classList.contains('active')) target='run';
+  else if($('#duel').classList.contains('active')) target='duel';
+  else if($('#fqrun').classList.contains('active')) target='fq';
+  if(!target) return;
+  if(/^[a-zA-Z]$/.test(e.key)){ kbPress(target,e.key.toLowerCase()); e.preventDefault(); }
+  else if(e.key==='Backspace'){ kbPress(target,'del'); e.preventDefault(); }
+  else if(e.key==='Enter'){ kbPress(target,'enter'); e.preventDefault(); }
+});
+
+/* ===================== SPELL DUEL / SPIRE ===================== */
+const WRAITHS=['👾','👹','🧟','🦇','🕷️','🐗','🦑','🪼','🐉'];
+// Spire word tiers — gentle ramp, curated in-game sets (no Mistake Lair injection)
+const SP_T1=['cat','dog','sun','fish','jump','ship','frog','hand','rain','tree','milk','nest','play','blue','star','bird','cake','duck','wind','gold']; // easy-moderate, 3–5 letters
+// medium core — large & varied so floors 6–20 don't repeat (mostly regular spelling)
+const SP_T2=['boat','moon','green','black','night','light','snow','cloud','beach','sheep','dream','grass','sweet','train','spoon','bread','chair','table','house','mouse','smile','paint','brave','climb','sword','storm','river','stone','crown','torch']; // easy-medium 4–5
+const SP_T3=['dragon','water','happy','found','sound','around','school','friend','family','garden','flower','picked','forest','market','animal','basket','window','summer','winter','yellow','pocket','dinner','rabbit','jacket','planet','sister','brother','morning','number','finger','candle','silver','magic','hunter','village','dragonfly']; // medium 5–7
+const SP_T4=['because','people','where','island','prison','thought','different','beautiful','surprise','together','castle','knight','bridge','listen','answer','journey']; // tricky / irregular
+const SP_T5=['impossible','mysterious','separate','security','supposed','realizes','weapons','adventure','necessary','definitely']; // hardest curated
+function dragonPower(){
+  const w={common:1,rare:2,epic:4,legendary:7,mythic:12};
+  let p=0; Object.keys(state.owned).forEach(id=>{ const d=DRAGONS.find(x=>x.id===id); if(d)p+=w[d.rarity]||0; });
+  return p;
+}
+// Long medium core (floors 6–20) so Pordee masters mid words before any tricky.
+// Bosses (floor%5) review the segment — harder by HP, not by word spikes.
+function floorWords(floor){
+  if(floor<=3)  return SP_T1;                 // easy-moderate
+  if(floor<=5)  return SP_T1.concat(SP_T2);   // floor 5 boss: easy review
+  if(floor<=20) return SP_T2.concat(SP_T3);   // floors 6–20: medium core (bosses 10/15/20 review medium)
+  if(floor<=25) return SP_T3.concat(SP_T4);   // 21+: tricky begins, still some medium
+  if(floor<=29) return SP_T4;                 // tricky
+  return SP_T4.concat(SP_T5);                  // hardest curated
+}
+let duel=null;
+function enterSpire(){ startFloor(state.spireFloor||1); }
+function spireGo(floor){ startFloor(floor); }
+function startFloor(floor){
+  const boss = floor%5===0;
+  const eHP = Math.round((28 + floor*12) * (boss?2.2:1));
+  const fx=partyFx();
+  const pMax=100+(fx.hp||0);
+  duel={floor,boss,eMax:eHP,eHP,pMax,pHP:pMax,combo:fx.comboStart||0,maxCombo:fx.comboStart||0,ink:0,
+        words:floorWords(floor).slice().sort(()=>Math.random()-0.5),wi:0,locked:false,finished:false,
+        fx,shieldReady:fx.shield,
+        emoji: boss?'🐲':WRAITHS[Math.min(WRAITHS.length-1,Math.floor((floor-1)/2))]};
+  $('#duel-title').textContent='Spire · Floor '+floor+(boss?' · BOSS':'');
+  $('#enemy-emoji').textContent=duel.emoji;
+  $('#enemy-name').textContent= boss? 'Elder Word Wraith' : 'Word Wraith';
+  renderParty(); drawBars(); drawCombo();
+  nav('duel'); duelNext();
+}
+function renderParty(){
+  const el=$('#duel-party'); el.innerHTML='';
+  const owned=Object.keys(state.owned);
+  if(!owned.length){ el.innerHTML='<span class="pd none">No dragons yet — hatch some to boost attack!</span>'; return; }
+  const wt={common:1,rare:2,epic:4,legendary:7,mythic:12};
+  owned.map(id=>DRAGONS.find(d=>d.id===id)).filter(Boolean)
+    .sort((a,b)=>wt[b.rarity]-wt[a.rarity]).slice(0,6)
+    .forEach(d=>{ const s=document.createElement('span'); s.className='pd'; s.textContent=d.emoji; s.title=d.name; el.appendChild(s); });
+  const tag=document.createElement('span'); tag.className='pd none'; tag.textContent='+'+dragonPower()+' atk'; el.appendChild(tag);
+}
+function drawBars(){
+  $('#enemy-hp-fill').style.width=Math.max(0,duel.eHP/duel.eMax*100)+'%';
+  $('#enemy-hp-txt').textContent=Math.max(0,duel.eHP)+' / '+duel.eMax;
+  $('#player-hp-fill').style.width=Math.max(0,duel.pHP/duel.pMax*100)+'%';
+  $('#player-hp-txt').textContent=Math.max(0,duel.pHP)+' / '+duel.pMax;
+}
+function drawCombo(){
+  const c=Math.min(duel.combo,10);
+  $('#combo-fill').style.width=(c/10*100)+'%';
+  const t=$('#combo-txt'); t.textContent='COMBO ×'+(1+c*0.1).toFixed(1).replace(/\.0$/,'');
+  t.classList.toggle('hot',duel.combo>=5);
+}
+function duelNext(){
+  if(!duel||duel.finished) return;
+  if(duel.wi>=duel.words.length){ duel.words=duel.words.sort(()=>Math.random()-0.5); duel.wi=0; }
+  duel.cur=duel.words[duel.wi++]; duel.qStart=Date.now(); duel.peeked=false;
+  const dd=$('#duel-display'); dd.classList.remove('peeking');
+  const fx=duel.fx||{};
+  if(fx.revealFirst){ dd.textContent=duel.cur[0]+' '+'_ '.repeat(Math.max(0,duel.cur.length-1)).trim(); }
+  else if(fx.revealLen){ dd.textContent='_ '.repeat(duel.cur.length).trim(); }
+  else dd.textContent='• • •';
+  $('#duel-feedback').textContent=''; $('#duel-feedback').className='feedback';
+  $('#duel-vstat').textContent='';
+  const inp=$('#duel-input'); inp.value=''; inp.disabled=false; setTimeout(()=>{speakDuel();},200);
+}
+function speakDuel(){ if(duel&&duel.cur) speak(duel.cur); }
+function peekDuel(){
+  if(!duel||duel.locked) return; duel.peeked=true;
+  const d=$('#duel-display'); d.textContent=duel.cur; d.classList.add('peeking');
+  setTimeout(()=>{ if(duel&&!duel.locked){ d.textContent='• • •'; d.classList.remove('peeking'); } },1100);
+}
+function submitDuel(){
+  if(!duel||duel.locked||duel.finished) return;
+  const val=($('#duel-input').value||'').trim().toLowerCase();
+  if(!val) return;
+  duel.locked=true; $('#duel-input').disabled=true;
+  const word=duel.cur, fb=$('#duel-feedback');
+  const elapsed=(Date.now()-duel.qStart)/1000;
+  const ok=val===word.toLowerCase();
+  if(ok){
+    const fx=duel.fx||{}, tb=fx.time||0;
+    let tierMult,tName;
+    if(!duel.peeked && elapsed<TIER.spell.blaze+tb){tierMult=2.2+(fx.crit||0);tName='⚡ CRITICAL!';}
+    else if(!duel.peeked && elapsed<TIER.spell.swift+tb){tierMult=1.6;tName='Strong hit!';}
+    else if(!duel.peeked && elapsed<TIER.spell.fast+tb){tierMult=1.2;tName='Hit!';}
+    else {tierMult=.7;tName='Weak hit';}
+    duel.combo++; duel.maxCombo=Math.max(duel.maxCombo,duel.combo);
+    const comboMult=1+Math.min(duel.combo,10)*0.1;
+    const dmg=Math.max(1,Math.round((10+dragonPower()+(fx.atk||0))*tierMult*comboMult));
+    duel.eHP-=dmg; duel.ink += Math.round((tierMult>=2.2?3:tierMult>=1.6?2:1)*(fx.ink||1));
+    delete state.mistakes[word]; questBump('spelled');
+    $('#duel-display').textContent=word;
+    fb.textContent=tName+'  −'+dmg+' HP'+(duel.combo>=2?'  (×'+comboMult.toFixed(1)+')':''); fb.className='feedback ok';
+    const ee=$('#enemy-emoji'); ee.classList.remove('hit'); void ee.offsetWidth; ee.classList.add('hit');
+    if(tierMult>=2.2) sparkle('⚡');
+    drawBars(); drawCombo();
+    if(duel.eHP<=0) return setTimeout(winFloor,650);
+    setTimeout(()=>{ duel.locked=false; duelNext(); },800);
+  } else {
+    duel.combo=0;
+    let html=''; for(let i=0;i<word.length;i++){ const t=val[i]; html+=(t&&t.toLowerCase()===word[i].toLowerCase())?word[i]:`<span class="miss">${word[i]}</span>`; }
+    $('#duel-display').innerHTML=html;
+    state.mistakes[word]=1;
+    if(duel.shieldReady){
+      duel.shieldReady=false;
+      fb.textContent='✗ '+word+'   🛡️ Silent Serpent shields you!'; fb.className='feedback no';
+      drawBars(); drawCombo(); save();
+      setTimeout(()=>{ duel.locked=false; duelNext(); },1500);
+    } else {
+      const hit=Math.round(12+duel.floor*1.5);
+      duel.pHP-=hit;
+      fb.textContent='✗ '+word+'   wraith strikes −'+hit+' HP'; fb.className='feedback no';
+      drawBars(); drawCombo(); save();
+      if(duel.pHP<=0) return setTimeout(loseFloor,1100);
+      setTimeout(()=>{ duel.locked=false; duelNext(); },1500);
+    }
+  }
+}
+function freeDrop(){
+  const r=Math.random(); const rar = r<0.55?'rare':r<0.85?'epic':r<0.97?'legendary':'mythic';
+  let pool=DRAGONS.filter(d=>d.rarity===rar && !state.owned[d.id]);
+  if(!pool.length) pool=DRAGONS.filter(d=>!state.owned[d.id]);
+  if(!pool.length){ state.ink+=30; return null; }
+  const d=pool[Math.floor(Math.random()*pool.length)]; state.owned[d.id]=1; return d;
+}
+function winFloor(){
+  duel.finished=true;
+  const reward=Math.round((20+duel.floor*6)*(duel.boss?2:1)*inkMult());
+  duel.ink+=reward; state.ink+=duel.ink;
+  if(duel.floor>=(state.spireBest||0)) state.spireBest=duel.floor;
+  state.spireFloor=Math.max(state.spireFloor||1, duel.floor+1); questBump('floors');
+  let dropMsg=''; if(duel.boss){ const d=freeDrop(); if(d) dropMsg=' · A '+d.name+' joins you!'; }
+  save(); showDuelResult(true,reward,dropMsg);
+}
+function loseFloor(){ duel.finished=true; state.ink+=duel.ink; save(); showDuelResult(false,0,''); }
+function showDuelResult(win,reward,dropMsg){
+  nav('results');
+  $('#res-emoji').textContent=win?(duel.boss?'👑':'⚔️'):'💀';
+  $('#res-title').textContent=win?('Floor '+duel.floor+' cleared!'):('Defeated on Floor '+duel.floor);
+  $('#res-correct').textContent='F'+duel.floor;
+  $('#res-lightning').textContent=duel.maxCombo;
+  $('#res-ink').textContent=duel.ink;
+  $('#res-miss').innerHTML = win
+    ? `<div style="color:var(--leaf);font-family:Cormorant Garamond;font-size:17px;margin:8px;">+${reward} 🖋️ reward${dropMsg}</div>`
+    : `<div style="color:#f0a0b4;font-family:Cormorant Garamond;font-size:16px;margin:8px;">The wraith won this floor — try again, you keep your ink.</div>`;
+  const caps=document.querySelectorAll('#results .res-grid .c span');
+  if(caps[0])caps[0].textContent='floor'; if(caps[1])caps[1].textContent='max combo'; if(caps[2])caps[2].textContent='🖋️ ink';
+  $('#res-again').textContent = win? 'Next floor ▶' : 'Retry floor';
+  $('#res-again').onclick = ()=> startFloor(win? duel.floor+1 : duel.floor);
+  topInk();
+}
+function quitDuel(){ if(duel&&!duel.finished){ state.ink+=duel.ink; duel.finished=true; save(); } nav('home'); }
+
+/* ===================== FRY QUEST (1000 high-frequency words · Leitner SRS) ===================== */
+const FQ_INT=[0,1,3,7,14];   // days-until-due by box (0..4); box 5 = mastered
+const FQ_NEW_PER=6;          // new words introduced per session (~6/day → 1000 in 6 months)
+const FQ_SESSION=16;         // max items per session
+function fqDay(){ return Math.floor(Date.now()/86400000); }
+function fqRec(w){ return state.fry[w]; }
+function fqMasteredCount(){ return Object.values(state.fry).filter(r=>r.b>=5).length; }
+function fqLearningCount(){ return Object.values(state.fry).filter(r=>r.b<5).length; }
+function fqDueList(){ const t=fqDay(); return Object.keys(state.fry).filter(w=>{const r=state.fry[w]; return r.b<5 && r.d<=t;}); }
+function fqUnlockedSets(){ let u=1; for(let s=0;s<10;s++){ const sl=FRY.slice(s*100,s*100+100); const mc=sl.filter(w=>fqRec(w)&&fqRec(w).b>=5).length; if(mc>=80) u=Math.min(10,s+2); else break; } return u; }
+function fqNextNewWords(n){ const limit=fqUnlockedSets()*100, out=[]; for(let i=0;i<limit&&out.length<n;i++){ const w=FRY[i]; if(!state.fry[w]) out.push(w); } return out; }
+function openFry(){ renderFryHome(); nav('fqhome'); }
+function renderFryHome(){
+  const m=fqMasteredCount();
+  $('#fq-mastered').textContent=m;
+  $('#fq-progress').textContent=fqLearningCount();
+  $('#fq-due').textContent=fqDueList().length;
+  const t=fqDay(); const pace=Object.values(state.fry).filter(r=>r.b>=5&&r.md!=null&&(t-r.md)<7).length;
+  $('#fq-pace').textContent=pace;
+  $('#fq-ring-fill').style.width=(m/1000*100)+'%';
+  const need=39;
+  $('#fq-pace-note').textContent = m>=1000 ? 'Goal complete — every Fry word mastered! 🐉'
+    : (pace>=need ? `On track 🎯  (${pace} this week · ~${need}/wk hits 1000 in 6 months)` : `Aim ~${need}/week to reach 1000 in 6 months  (this week: ${pace})`);
+  const el=$('#fq-sets'); el.innerHTML=''; const unlocked=fqUnlockedSets();
+  for(let s=0;s<10;s++){
+    const sl=FRY.slice(s*100,s*100+100);
+    const mc=sl.filter(w=>fqRec(w)&&fqRec(w).b>=5).length;
+    const locked=s>=unlocked;
+    const row=document.createElement('div'); row.className='fq-set'+(locked?' locked':'');
+    row.innerHTML=`<span class="fq-set-n">${locked?'🔒 ':''}Set ${s+1}</span><div class="fq-set-bar"><i style="width:${mc}%"></i></div><span class="fq-set-c">${mc}/100</span>`;
+    el.appendChild(row);
+  }
+}
+let fq=null;
+function fqBegin(){
+  const due=fqDueList(), neu=fqNextNewWords(FQ_NEW_PER);
+  let queue=due.concat(neu);
+  if(!queue.length){ toast('All caught up — no reviews due right now! 🐉'); return; }
+  queue=queue.slice(0,FQ_SESSION).sort(()=>Math.random()-0.5);
+  fq={queue,i:0,total:queue.length,correct:0,mastered:0,locked:false,finished:false};
+  $('#fq-title').textContent='Fry Practice';
+  nav('fqrun'); $('#kbd-fq').classList.remove('hidden'); fqNext();
+}
+function fqNext(){
+  if(!fq||fq.finished) return;
+  if(fq.i>=fq.queue.length) return fqFinish();
+  fq.cur=fq.queue[fq.i++]; fq.qStart=Date.now(); fq.peeked=false;
+  $('#fq-display').textContent='• • •'; $('#fq-display').classList.remove('peeking');
+  $('#fq-feedback').textContent=''; $('#fq-feedback').className='feedback';
+  $('#fq-prog').textContent=fq.i+' / '+fq.total;
+  const inp=$('#fq-input'); inp.value=''; inp.disabled=false;
+  setTimeout(fqSpeak,200);
+}
+function fqSpeak(){ if(fq&&fq.cur) speak(fq.cur); }
+function fqPeek(){ if(!fq||fq.locked) return; fq.peeked=true; const d=$('#fq-display'); d.textContent=fq.cur; d.classList.add('peeking'); setTimeout(()=>{ if(fq&&!fq.locked){ d.textContent='• • •'; d.classList.remove('peeking'); } },1100); }
+function fqSubmit(){
+  if(!fq||fq.locked||fq.finished) return;
+  const val=($('#fq-input').value||'').trim().toLowerCase(); if(!val) return;
+  fq.locked=true; $('#fq-input').disabled=true;
+  const w=fq.cur, fb=$('#fq-feedback');
+  const elapsed=(Date.now()-fq.qStart)/1000;
+  const ok=val===w.toLowerCase();
+  const t=fqDay();
+  let r=state.fry[w]||{b:0,d:t,md:null};
+  if(ok){
+    fq.correct++;
+    if(!fq.peeked) r.b=Math.min(5,r.b+1);     // peeked correct holds the box (no free promotion)
+    r.d=t+(FQ_INT[Math.min(r.b,FQ_INT.length-1)]||14);
+    if(r.b>=5 && r.md==null){ r.md=t; fq.mastered++; }
+    $('#fq-display').textContent=w;
+    fb.textContent=(r.b>=5?'🐉 Mastered!':'✓ '+(fq.peeked?'(peeked)':'box '+r.b))+'  '+elapsed.toFixed(1)+'s';
+    fb.className='feedback ok';
+    if(r.b>=5) sparkle('🐉'); else if(!fq.peeked && elapsed<TIER.spell.swift) sparkle('✨');
+  } else {
+    r.b=0; r.d=t;
+    let html=''; for(let i=0;i<w.length;i++){ const c=val[i]; html+=(c&&c.toLowerCase()===w[i].toLowerCase())?w[i]:`<span class="miss">${w[i]}</span>`; }
+    $('#fq-display').innerHTML=html;
+    fb.textContent='✗ '+w; fb.className='feedback no';
+  }
+  state.fry[w]=r; questBump('spelled'); save();
+  setTimeout(()=>{ fq.locked=false; fqNext(); }, ok?900:1700);
+}
+function fqFinish(){ fq.finished=true; save(); renderFryHome(); nav('fqhome'); toast(`Session done · ${fq.correct}/${fq.total} right · ${fq.mastered} newly mastered 🐉`); }
+function fqQuit(){ if(fq) fq.finished=true; save(); renderFryHome(); nav('fqhome'); }
+
+refreshHome();
+</script>
 </body>
 </html>
