@@ -245,6 +245,10 @@ footer{text-align:center;color:var(--muted);font-size:11px;margin-top:18px;opaci
 .lvlhdr .lvlbadge{font-family:'Mitr';font-weight:700;font-size:16px;color:#fff;text-shadow:0 1px 2px #0005}
 .lvlhdr .lvlname{font-family:'Sarabun';font-weight:600;font-size:13px;color:#ffffffe6;flex:1;min-width:90px}
 .lvlhdr .lvlprog{font-family:'Mitr';font-size:12px;color:#fff;background:#0003;padding:2px 8px;border-radius:8px}
+.lvlhdr.locked{background:#ddd2bd;box-shadow:none;opacity:.92;border:1.5px dashed #b6a684}
+.lvlhdr.locked .lvlbadge{color:#7a6b50;text-shadow:none}
+.lvlhdr.locked .lvlname{color:#897854}
+.lvlhdr.locked .lvlprog{background:#0000000f;color:#7a6b50}
 .florow{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:7px;margin:0 2px 2px}
 .flonode{background:#fffaf0;border-radius:13px;padding:9px 7px;text-align:center;cursor:pointer;border:2px solid #eadcbf;box-shadow:0 2px 5px #0003;transition:transform .06s}
 .flonode:active{transform:scale(.96)}
@@ -1024,7 +1028,23 @@ document.getElementById('dailyBtn').onclick=function(){
 /* ---------- SPIRE ---------- */
 function renderSpire(){
   const el=document.getElementById('floors');el.innerHTML='';
-  [...LEVELS].reverse().forEach(L=>{
+  // เผยทีละระดับ: แสดงระดับที่ปลดล็อคแล้วเต็ม + แง้มระดับถัดไป 1 ระดับ (ล็อค) ที่เหลือซ่อนไว้ ลดความท้อ
+  const visible=[];
+  for(let i=0;i<LEVELS.length;i++){
+    if(tierUnlocked(LEVELS[i].floors[0])){ visible.push({L:LEVELS[i],locked:false}); }
+    else { visible.push({L:LEVELS[i],locked:true}); break; }   // ระดับแรกที่ยังล็อค = teaser แล้วหยุด
+  }
+  // แสดงจากบนลงล่าง (ระดับสูงกว่าอยู่บน)
+  [...visible].reverse().forEach(({L,locked})=>{
+    if(locked){
+      const hdr=document.createElement('div');
+      hdr.className='lvlhdr locked';
+      hdr.innerHTML=`<span class="lvlbadge">🔒 ระดับ ${L.id}</span>
+        <span class="lvlname">รางวัล: ${L.dragon.name} ${L.dragon.e}</span>
+        <span class="lvlprog">จบระดับนี้ก่อน!</span>`;
+      el.appendChild(hdr);
+      return;
+    }
     const lvStars=L.floors.reduce((s,fn)=>s+tierStars(fn),0);
     const lvMax=L.floors.reduce((s,fn)=>s+tierMaxStars(fn),0);
     const conquered=L.floors.every(fn=>tierConquered(fn));
