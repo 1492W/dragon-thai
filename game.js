@@ -283,9 +283,22 @@ function checkMathMilestone(floor){
   if(ms && awardMathTribe(ms.id)) return ms;
   return null;
 }
-// catch-up: backfill any already-passed milestones (after restore / approx floor)
+// catch-up: award any already-passed milestones (after restore / approx floor)
+// แสดง reveal ทีละตัวสำหรับมังกรที่ "เพิ่งได้" เพื่อให้พอดีเห็นตอนได้
 function backfillMathTribe(){
-  MATH_MILESTONES.forEach(m => { if((state.highestFloor||1) >= m.floor) awardMathTribe(m.id); });
+  const newly = [];
+  MATH_MILESTONES.forEach(m => {
+    if((state.highestFloor||1) >= m.floor && awardMathTribe(m.id)) newly.push(m);
+  });
+  if(newly.length){
+    let i = 0;
+    const showNext = () => {
+      if(i >= newly.length) return;
+      const m = newly[i]; i++;
+      showTribeReveal(m, showNext);
+    };
+    setTimeout(showNext, 1300);   // หลังเกมโหลดเสร็จ ค่อยโชว์ทีละตัว
+  }
 }
 function injectTribeOverlay(){
   if(document.getElementById('mathTribeRev')) return;
@@ -317,7 +330,7 @@ function injectTribeOverlay(){
     <div class="mtDrag" id="mtDrag">🐲</div>
     <div class="mtName" id="mtName">Dragon</div>
     <div class="mtSub" id="mtSub">Joined your World of Dragons</div>
-    <button class="mtBtn" onclick="document.getElementById('mathTribeRev').classList.remove('show')">Claim \u2728</button>
+    <button class="mtBtn">Claim \u2728</button>
   </div>`;
   document.body.appendChild(ov);
 }
@@ -330,7 +343,7 @@ function mtConfetti(n){
     document.body.appendChild(c); setTimeout(()=>c.remove(),3400);
   }
 }
-function showTribeReveal(ms){
+function showTribeReveal(ms, onClose){
   injectTribeOverlay();
   const ov=document.getElementById('mathTribeRev');
   document.getElementById('mtDrag').textContent=ms.e;
@@ -341,6 +354,8 @@ function showTribeReveal(ms){
   ov.classList.add('show');
   mtConfetti(ms.legend?90:55);
   if(ms.legend) setTimeout(()=>mtConfetti(70),650);
+  // ปุ่ม Claim → ปิด + เรียกตัวถัดไป (ถ้ามี chain)
+  ov.querySelector('.mtBtn').onclick = () => { ov.classList.remove('show'); if(onClose) setTimeout(onClose, 420); };
 }
 
 function resetState() {
