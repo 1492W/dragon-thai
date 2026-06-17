@@ -128,7 +128,29 @@ const DRAGONS = {
   void_a:      { id: 'void_a',      name: 'Abyss Sovereign',   emoji: '✨🌀', rarity: 'mythic',   price: 0, ascendedFrom: 'void',      desc: '(Ascended) 2.5× damage, shield x4.', ability: { damageMul: 2.5, shield: 4, streakShield: 2 } },
   cosmos_a:    { id: 'cosmos_a',    name: 'Galactic Overlord', emoji: '✨🌌', rarity: 'mythic',   price: 0, ascendedFrom: 'cosmos',   desc: '(Ascended) +90% dmg, +5s, +125% gold, 50% crit.', ability: { damageMul: 1.9, timeBonus: 5, coinMul: 2.25, critChance: 0.5 } },
   solar_a:     { id: 'solar_a',     name: 'Sun Emperor',       emoji: '✨☀️', rarity: 'mythic',   price: 0, ascendedFrom: 'solar',    desc: '(Ascended) 3× damage, 75% crit, shield x4.', ability: { damageMul: 3.0, critChance: 0.75, shield: 4 } },
-  primordial_a: { id: 'primordial_a', name: 'World Wyrm',      emoji: '✨🌋', rarity: 'mythic',   price: 0, ascendedFrom: 'primordial', desc: '(Ascended) 3× dmg & gold, +8s, 60% crit.', ability: { damageMul: 3.0, coinMul: 3.0, timeBonus: 8, critChance: 0.6 } }
+  primordial_a: { id: 'primordial_a', name: 'World Wyrm',      emoji: '✨🌋', rarity: 'mythic',   price: 0, ascendedFrom: 'primordial', desc: '(Ascended) 3× dmg & gold, +8s, 60% crit.', ability: { damageMul: 3.0, coinMul: 3.0, timeBonus: 8, critChance: 0.6 } },
+  // ----- Divine (radiant top tier) -----
+  aurora: {
+    id: 'aurora', name: 'Aurora Empress', emoji: '🌈',
+    rarity: 'divine', price: 16000,
+    desc: 'Prismatic majesty: 2.4× damage, 2.4× gold, +6s, 45% crit.',
+    ability: { damageMul: 2.4, coinMul: 2.4, timeBonus: 6, critChance: 0.45 }
+  },
+  eclipse: {
+    id: 'eclipse', name: 'Eclipse Deity', emoji: '🌗',
+    rarity: 'divine', price: 22000,
+    desc: 'Devourer of light: 3× damage, shield ×3, 60% crit.',
+    ability: { damageMul: 3.0, shield: 3, critChance: 0.6 }
+  },
+  genesis: {
+    id: 'genesis', name: 'Genesis Dragon', emoji: '🌠',
+    rarity: 'divine', price: 30000,
+    desc: 'Maker of worlds: 3× damage & gold, +8s, 55% crit.',
+    ability: { damageMul: 3.0, coinMul: 3.0, timeBonus: 8, critChance: 0.55 }
+  },
+  aurora_a:  { id: 'aurora_a',  name: 'Aurora Sovereign', emoji: '✨🌈', rarity: 'divine', price: 0, ascendedFrom: 'aurora',  desc: '(Ascended) 3× dmg & gold, +8s, 60% crit.', ability: { damageMul: 3.0, coinMul: 3.0, timeBonus: 8, critChance: 0.6 } },
+  eclipse_a: { id: 'eclipse_a', name: 'Eclipse Overlord', emoji: '✨🌗', rarity: 'divine', price: 0, ascendedFrom: 'eclipse', desc: '(Ascended) 3.5× dmg, shield ×5, 70% crit.', ability: { damageMul: 3.5, shield: 5, critChance: 0.7 } },
+  genesis_a: { id: 'genesis_a', name: 'Genesis Sovereign', emoji: '✨🌠', rarity: 'divine', price: 0, ascendedFrom: 'genesis', desc: '(Ascended) 3.5× dmg & gold, +10s, 65% crit, shield ×3.', ability: { damageMul: 3.5, coinMul: 3.5, timeBonus: 10, critChance: 0.65, shield: 3 } }
 };
 
 const DRAGON_ORDER = [
@@ -136,18 +158,20 @@ const DRAGON_ORDER = [
   'swift','fire','guardian','frost','earth',
   'fortune','crystal','storm','shadow',
   'elder','celestial','void',
-  'cosmos','solar','primordial'
+  'cosmos','solar','primordial',
+  'aurora','eclipse','genesis'
 ];
 
 const ASCENDED_ORDER = [
   'hatchling_a','ember_a','swift_a','fire_a','guardian_a','frost_a','earth_a',
   'fortune_a','crystal_a','storm_a','shadow_a',
   'elder_a','celestial_a','void_a',
-  'cosmos_a','solar_a','primordial_a'
+  'cosmos_a','solar_a','primordial_a',
+  'aurora_a','eclipse_a','genesis_a'
 ];
 
 // Rarity tiers (for sorting, drop weights, egg hatching)
-const RARITY_TIER = { common: 0, rare: 1, epic: 2, legendary: 3, mythic: 4 };
+const RARITY_TIER = { common: 0, rare: 1, epic: 2, legendary: 3, mythic: 4, divine: 5 };
 
 // Egg types
 const EGGS = {
@@ -156,7 +180,9 @@ const EGGS = {
   rare:   { id: 'rare',   name: 'Rare Egg',    emoji: '🟢', price: 900,
             weights: { rare: 0.40, epic: 0.45, legendary: 0.15 } },
   mythic: { id: 'mythic', name: 'Mythic Egg',  emoji: '🟣', price: 2500,
-            weights: { epic: 0.55, legendary: 0.35, mythic: 0.10 } }
+            weights: { epic: 0.55, legendary: 0.35, mythic: 0.10 } },
+  divine: { id: 'divine', name: 'Divine Egg',  emoji: '🔮', price: 6000,
+            weights: { legendary: 0.45, mythic: 0.45, divine: 0.10 } }
 };
 
 // Enemy names by floor tier
